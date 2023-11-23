@@ -15,13 +15,13 @@ router.get('/check-db-connection', async (req, res) => {
     }
 });
 
-router.get('/demotable', async (req, res) => {
-    const tableContent = await appService.fetchDemotableFromDb();
+router.get('/selectTable', async (req, res) => {
+    const tableContent = await appService.selectTable();
     res.json({data: tableContent});
 });
 
 router.post("/initiate-demotable", async (req, res) => {
-    const initiateResult = await appService.initiateDemotable();
+    const initiateResult = await appService.initiateTables();
     if (initiateResult) {
         res.json({ success: true });
     } else {
