@@ -11,23 +11,23 @@ const dbConfig = {
 };
 
 
-const tables = new Map();
-tables.set('Stadium2', ['st_address','city']);
-tables.set('Stadium3', ['s_name','address','s_capacity']);
-tables.set('Match2', ['','']);
-tables.set('Match3', ['','']);
-tables.set('Country', ['','']);
-tables.set('Manager', ['','']);
-tables.set('Team', ['','']);
-tables.set('Player', ['','']);
-tables.set('GoalDetails', ['','']);
-tables.set('PlayIn', ['','']);
-tables.set('Funds', ['','']);
-tables.set('Sponsor', ['','']);
-tables.set('Forward', ['','']);
-tables.set('Midfield', ['','']);
-tables.set('Goalkeeper', ['','']);
-tables.set('Defender', ['','']);
+const dbTables = new Map();
+dbTables.set('Stadium2', ['st_address','city']);
+dbTables.set('Stadium3', ['s_name','address','s_capacity']);
+dbTables.set('Match2', ['DATE','phase']);
+dbTables.set('Match3', ['matchID','stadiumName','m_result','DATE','m_time']);
+dbTables.set('Country', ['c_name','ranking','teamID']);
+dbTables.set('Manager', ['','']);
+dbTables.set('Team', ['','']);
+dbTables.set('Player', ['','']);
+dbTables.set('GoalDetails', ['','']);
+dbTables.set('PlayIn', ['','']);
+dbTables.set('Funds', ['','']);
+dbTables.set('Sponsor', ['','']);
+dbTables.set('Forward', ['','']);
+dbTables.set('Midfield', ['','']);
+dbTables.set('Goalkeeper', ['','']);
+dbTables.set('Defender', ['','']);
 
 
 // ----------------------------------------------------------
@@ -63,16 +63,34 @@ async function testOracleConnection() {
     });
 }
 
-async function selectTable(selectedTable, projection, filter) {
+async function selectTable(selectedTables, projections, filter) {
     return await withOracleDB(async (connection) => {
         // console.log('before execute');
         // const result = await connection.execute(
         //     `SELECT * from Stadium2`
         // );
-        if (!tables.includes(selectedTable)) {
-            throw new Error('Invalid Table Name');
+        let tables = '';
+        let columns;
+        let availableColumns = [];
+
+        // check if table names are valid
+        for (const tbl of selectedTables) {
+            if (!dbTables.has(tbl)) {
+                throw new Error('Invalid Table Name: ' + tbl);
+            } else {
+                availableColumns = availableColumns.concat(dbTables.get(tbl));
+            }
         }
-        const query = `SELECT * FROM ` + selectedTable;
+
+        // check if column names are valid
+        for (const colm of projections) {
+            if (!availableColumns.includes(colm)) {
+                throw new Error('Invalid Column Name: ' + colm);
+            }
+        }
+
+        const query = `SELECT ` + projections.join(", ")
+                        + ` FROM ` + selectedTables.join(", ");
         const result = await connection.execute(query);
         // console.log('after execute');
         return result.rows;

@@ -16,7 +16,7 @@ router.get('/check-db-connection', async (req, res) => {
 });
 
 router.get('/select-table', async (req, res) => {
-    const tableContent = await appService.selectTable("Stadium2", "st_address", 'asd');
+    const tableContent = await appService.selectTable(["Stadium2"], ["st_address","city"], 'asd');
     res.json({data: tableContent});
 });
 
