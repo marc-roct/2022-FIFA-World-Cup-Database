@@ -1,3 +1,5 @@
+
+
 const oracledb = require('oracledb');
 const loadEnvFile = require('./utils/envUtil');
 
@@ -86,6 +88,129 @@ async function insertDemotable(id, name) {
         return false;
     });
 }
+
+export async function initiateCountryTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE COUNTRY`);
+        } catch(err) {
+            console.log('Table might not exist, proceeding to create...');
+        }
+
+        const result = await connection.execute(`
+            CREATE TABLE Country
+            (
+                name    VARCHAR PRIMARY KEY,
+                ranking INTEGER
+            )
+        `);
+        return true;
+    }).catch((err) => {
+        console.error('Error creating Country table:', err);
+        return false;
+    });
+}
+
+export async function insertCountryTable(name, ranking) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO TEAM (name, ranking) VALUES (:name, :ranking)`,
+            {name, ranking},
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        console.error('Error in insertCountryTable:', err);
+        return false;
+    });
+}
+
+export async function initiateManagerTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE MANAGER`);
+        } catch(err) {
+            console.log('Table might not exist, proceeding to create...');
+        }
+
+        const result = await connection.execute(`
+            CREATE TABLE Manager
+            (
+                managerID   integer PRIMARY KEY,
+                name        VARCHAR,
+                age         INTEGER,
+                nationality VARCHAR
+            )
+
+        `);
+        return true;
+    }).catch((err) => {
+        console.error('Error creating Manager table:', err);
+        return false;
+    });
+}
+
+export async function insertManagerTable(managerID, name, age, nationality) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO MANAGER (managerID, name, age, nationality) VALUES (:managerID, :name, :age, :nationality)`,
+            {managerID, name, age, nationality},
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        console.error('Error in insertManagerTable:', err);
+        return false;
+    });
+}
+
+export async function initiateTeamTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE TEAM`);
+        } catch(err) {
+            console.log('Table might not exist, proceeding to create...');
+        }
+
+        const result = await connection.execute(`
+            CREATE TABLE Team
+            (
+                teamID      INTEGER PRIMARY KEY,
+                Size        INTEGER,
+                countryName VARCHAR(100),
+                managerID   VARCHAR(100),
+                FOREIGN KEY (countryName)
+                    REFERENCES Country (name)
+                        ON DELETE CASCADE,
+                FOREIGN KEY (managerID)
+                    REFERENCES Manager (managerID)
+                        ON DELETE CASCADE
+            )
+        `);
+        return true;
+    }).catch((err) => {
+        console.error('Error creating Team table:', err);
+        return false;
+    });
+}
+
+export async function insertTeamTable(teamID, size, countryName, managerID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO TEAM (teamID, size, countryName, managerID) VALUES (:teamID, :size, :countryName, :managerID)`,
+            {teamID, size, countryName, managerID},
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        console.error('Error in insertTeamTable:', err);
+        return false;
+    });
+}
+
 
 async function updateNameDemotable(oldName, newName) {
     return await withOracleDB(async (connection) => {

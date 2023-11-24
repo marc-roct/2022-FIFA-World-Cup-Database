@@ -6,7 +6,7 @@ const router = express.Router();
 // ----------------------------------------------------------
 // API endpoints
 // Modify or extend these routes based on your project's needs.
-router.get('/check-db-connection', async (req, res) => {
+router.get('/check-connection', async (req, res) => {
     const isConnect = await appService.testOracleConnection();
     if (isConnect) {
         res.send('connected');
@@ -32,6 +32,63 @@ router.post("/initiate-demotable", async (req, res) => {
 router.post("/insert-demotable", async (req, res) => {
     const { id, name } = req.body;
     const insertResult = await appService.insertDemotable(id, name);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-countrytable", async (req, res) => {
+    const initiateResult = await appService.initiateCountryTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-country", async (req, res) => {
+    const { name, ranking } = req.body;
+    const insertResult = await appService.insertCountryTable(name, ranking);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-managertable", async (req, res) => {
+    const initiateResult = await appService.initiateManagerTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-manager", async (req, res) => {
+    const { managerID, name, age, nationality } = req.body;
+    const insertResult = await appService.insertManagerTable(managerID, name, age, nationality);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-teamtable", async (req, res) => {
+    const initiateResult = await appService.initiateTeamTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-teamtable", async (req, res) => {
+    const { teamID, size, countryName, managerID } = req.body;
+    const insertResult = await appService.insertTeamTable(teamID, size, countryName, managerID);
     if (insertResult) {
         res.json({ success: true });
     } else {
