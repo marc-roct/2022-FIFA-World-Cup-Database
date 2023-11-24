@@ -40,11 +40,11 @@ async function checkDbConnection() {
 async function fetchAndDisplayUsers() {
     const tableElement = document.getElementById('demotable');
     const tableBody = tableElement.querySelector('tbody');
-
-    const response = await fetch('/demotable', {
+    console.log('getting table');
+    const response = await fetch('/select-table', {
         method: 'GET'
     });
-
+    console.log('waddap');
     const responseData = await response.json();
     const demotableContent = responseData.data;
 
@@ -52,7 +52,7 @@ async function fetchAndDisplayUsers() {
     if (tableBody) {
         tableBody.innerHTML = '';
     }
-
+    console.log('beans');
     demotableContent.forEach(user => {
         const row = tableBody.insertRow();
         user.forEach((field, index) => {
@@ -160,7 +160,6 @@ async function countDemotable() {
 // Add or remove event listeners based on the desired functionalities.
 window.onload = function() {
     checkDbConnection();
-    fetchTableData();
     document.getElementById("resetDemotable").addEventListener("click", resetDemotable);
     document.getElementById("insertDemotable").addEventListener("submit", insertDemotable);
     document.getElementById("updataNameDemotable").addEventListener("submit", updateNameDemotable);

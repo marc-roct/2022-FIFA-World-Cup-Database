@@ -15,8 +15,8 @@ router.get('/check-db-connection', async (req, res) => {
     }
 });
 
-router.get('/selectTable', async (req, res) => {
-    const tableContent = await appService.selectTable();
+router.get('/select-table', async (req, res) => {
+    const tableContent = await appService.selectTable("Stadium2", "st_address", 'asd');
     res.json({data: tableContent});
 });
 
