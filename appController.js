@@ -58,6 +58,25 @@ router.post("/insert-stadium", async (req, res) => {
     }
 });
 
+router.post("/initiate-matchtable", async (req, res) => {
+    const initiateResult = await appService.initiateMatchTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-match", async (req, res) => {
+    const { matchID, stadiumName, result, matchDate, time, phase } = req.body;
+    const insertResult = await appService.insertMatchTable(matchID, stadiumName, result, matchDate, time, phase);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 router.post("/initiate-countrytable", async (req, res) => {
     const initiateResult = await appService.initiateCountryTable();
     if (initiateResult) {

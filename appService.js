@@ -157,7 +157,7 @@ export async function initiateMatchTable() {
     });
 }
 
-export async function insertMatchTables(matchID, stadiumName, result, matchDate, time, phase) {
+export async function insertMatchTable(matchID, stadiumName, result, matchDate, time, phase) {
     return await withOracleDB(async (connection) => {
         try {
             // Insert into Match1 first because of the foreign key dependency in Match2
