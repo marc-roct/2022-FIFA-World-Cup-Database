@@ -55,39 +55,134 @@ async function fetchDemotableFromDb() {
     });
 }
 
-async function initiateDemotable() {
+
+//
+// BELOW HERE ARE ALL THE INITIATE AND INSERT FUNCTIONS
+//
+
+export async function initiateStadiumTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE DEMOTABLE`);
+            await connection.execute(`DROP TABLE STADIUM2`);
+            await connection.execute(`DROP TABLE STADIUM1`);
         } catch(err) {
-            console.log('Table might not exist, proceeding to create...');
+            console.log('Tables might not exist, proceeding to create...');
         }
 
-        const result = await connection.execute(`
-            CREATE TABLE DEMOTABLE (
-                id NUMBER PRIMARY KEY,
-                name VARCHAR2(20)
+        await connection.execute(`
+            CREATE TABLE Stadium1
+            (
+                address VARCHAR(255) PRIMARY KEY,
+                city    VARCHAR(255)
             )
         `);
+
+        await connection.execute(`
+            CREATE TABLE Stadium2
+            (
+                name     VARCHAR(255) PRIMARY KEY,
+                address  VARCHAR(255),
+                capacity INTEGER,
+                FOREIGN KEY (address)
+                    REFERENCES Stadium1 (address)
+            )
+        `);
+
         return true;
-    }).catch(() => {
+    }).catch((err) => {
+        console.error('Error creating Stadium tables:', err);
         return false;
     });
 }
 
-async function insertDemotable(id, name) {
+export async function insertStadiumTable(name, address, city, capacity) {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `INSERT INTO DEMOTABLE (id, name) VALUES (:id, :name)`,
-            [id, name],
+        const result1 = await connection.execute(
+            `INSERT INTO STADIUM1 (address, city) VALUES (:address, :city)`,
+            {address, city},
+            { autoCommit: false }
+        );
+
+        const result2 = await connection.execute(
+            `INSERT INTO STADIUM2 (name, address, capacity) VALUES (:name, :address, :capacity)`,
+            {name, address, capacity},
             { autoCommit: true }
         );
 
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch(() => {
+        return result1.rowsAffected && result1.rowsAffected > 0 && result2.rowsAffected && result2.rowsAffected > 0;
+    }).catch((err) => {
+        console.error('Error in insertStadiumTables:', err);
+        await connection.rollback(); // Rollback in case of error
         return false;
     });
 }
+
+export async function initiateMatchTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            // Drop Match2 first due to its dependency on Match1
+            await connection.execute(`DROP TABLE Match2`);
+            await connection.execute(`DROP TABLE Match1`);
+        } catch(err) {
+            console.log('Match tables might not exist, proceeding to create...');
+        }
+
+        await connection.execute(`
+            CREATE TABLE Match1 (
+                date VARCHAR(255) PRIMARY KEY,
+                phase VARCHAR(255)
+            )
+        `);
+
+        await connection.execute(`
+            CREATE TABLE Match2 (
+                matchID INTEGER PRIMARY KEY, 
+                stadiumName VARCHAR(255), 
+                result VARCHAR(255), 
+                date VARCHAR(255), 
+                time VARCHAR(255), 
+                FOREIGN KEY (stadiumName)
+                    REFERENCES Stadium2(name)
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE,
+                FOREIGN KEY (date)
+                    REFERENCES Match1(date)
+            )
+        `);
+
+        return true;
+    }).catch((err) => {
+        console.error('Error creating Match tables:', err);
+        return false;
+    });
+}
+
+export async function insertMatchTables(matchID, stadiumName, result, matchDate, time, phase) {
+    return await withOracleDB(async (connection) => {
+        try {
+            // Insert into Match1 first because of the foreign key dependency in Match2
+            const result1 = await connection.execute(
+                `INSERT INTO Match1 (date, phase) VALUES (:date, :phase)`,
+                [matchDate, phase],
+                { autoCommit: false }
+            );
+
+            const result2 = await connection.execute(
+                `INSERT INTO Match2 (matchID, stadiumName, result, date, time) VALUES (:matchID, :stadiumName, :result, :date, :time)`,
+                [matchID, stadiumName, result, matchDate, time],
+                { autoCommit: true }
+            );
+
+            return result1.rowsAffected && result1.rowsAffected > 0 && result2.rowsAffected && result2.rowsAffected > 0;
+        } catch (err) {
+            console.error('Error in insertMatchTables:', err);
+            await connection.rollback(); // Rollback in case of error
+            return false;
+        }
+    });
+}
+
+
 
 export async function initiateCountryTable() {
     return await withOracleDB(async (connection) => {
@@ -211,6 +306,8 @@ export async function insertTeamTable(teamID, size, countryName, managerID) {
     });
 }
 
+
+// END OF ALL INSERT FUNCTIONS
 
 async function updateNameDemotable(oldName, newName) {
     return await withOracleDB(async (connection) => {

@@ -39,6 +39,25 @@ router.post("/insert-demotable", async (req, res) => {
     }
 });
 
+router.post("/initiate-stadiumtable", async (req, res) => {
+    const initiateResult = await appService.initiateStadiumTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-stadium", async (req, res) => {
+    const { name, address, city, capacity } = req.body;
+    const insertResult = await appService.insertStadiumTable(name, address, city, capacity);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 router.post("/initiate-countrytable", async (req, res) => {
     const initiateResult = await appService.initiateCountryTable();
     if (initiateResult) {
@@ -86,7 +105,7 @@ router.post("/initiate-teamtable", async (req, res) => {
     }
 });
 
-router.post("/insert-teamtable", async (req, res) => {
+router.post("/insert-team", async (req, res) => {
     const { teamID, size, countryName, managerID } = req.body;
     const insertResult = await appService.insertTeamTable(teamID, size, countryName, managerID);
     if (insertResult) {
