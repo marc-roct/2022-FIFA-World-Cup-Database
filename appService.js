@@ -182,8 +182,6 @@ export async function insertMatchTable(matchID, stadiumName, result, matchDate, 
     });
 }
 
-
-
 export async function initiateCountryTable() {
     return await withOracleDB(async (connection) => {
         try {
