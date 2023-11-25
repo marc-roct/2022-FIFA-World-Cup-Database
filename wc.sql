@@ -276,56 +276,6 @@ VALUES(005, 'Education City Stadium', 'Croatia tied Brazil 1-1', 'Dec 9 2022', '
 
 
 INSERT
-INTO  GoalDetails(goalNumber, matchID, playerID)
-VALUES(1, 001, 001);
-
-INSERT
-INTO  GoalDetails(goalNumber, matchID, playerID)
-VALUES(2, 001, 002);
-
-INSERT
-INTO  GoalDetails(goalNumber, matchID, playerID)
-VALUES(3, 001, 003);
-
-INSERT
-INTO  GoalDetails(goalNumber, matchID, playerID)
-VALUES(1, 002, 001);
-
-INSERT
-INTO  GoalDetails(goalNumber, matchID, playerID)
-VALUES(2, 002, 004);
-
-
-INSERT
-INTO PlayIn (matchID, teamID)
-VALUES (001, 001);
-
-INSERT
-INTO PlayIn (matchID, teamID)
-VALUES (002, 002);
-
-INSERT
-INTO PlayIn (matchID, teamID)
-VALUES (003, 003);
-
-INSERT
-INTO PlayIn (matchID, teamID)
-VALUES (004, 004);
-
-INSERT
-INTO PlayIn (matchID, teamID)
-VALUES (005, 005);
-
-INSERT
-INTO PlayIn (matchID, teamID)
-VALUES (006, 006);
-
-INSERT
-INTO PlayIn (matchID, teamID)
-VALUES (007, 007);
-
-
-INSERT
 INTO Team (teamID, "SIZE", countryName, managerID)
 VALUES (015, 27, 'Germany', 001);
 
@@ -344,6 +294,27 @@ VALUES (019, 27, 'Japan', 004);
 INSERT
 INTO Team (teamID, "SIZE", countryName, managerID)
 VALUES (002, 26, 'France', 005);
+
+
+INSERT
+INTO PlayIn (matchID, teamID)
+VALUES (001, 001);
+
+INSERT
+INTO PlayIn (matchID, teamID)
+VALUES (002, 002);
+
+INSERT
+INTO PlayIn (matchID, teamID)
+VALUES (003, 015);
+
+INSERT
+INTO PlayIn (matchID, teamID)
+VALUES (004, 017);
+
+INSERT
+INTO PlayIn (matchID, teamID)
+VALUES (005, 019);
 
 
 INSERT
@@ -366,14 +337,6 @@ INSERT
 INTO Country(c_name, ranking, teamID)
 VALUES ('France', 2,  002);
 
-INSERT
-INTO Country(c_name, ranking, teamID)
-VALUES ('Brazil', 3,  003);
-
-INSERT
-INTO Country(c_name, ranking, teamID)
-VALUES ('Croatia', 6,  006);
-
 
 INSERT
 INTO Manager(managerID, mng_name, age, nationality, teamID)
@@ -385,44 +348,15 @@ VALUES(2, 'Lionel Sebastián Scaloni', 44, 'Argentina', 2);
 
 INSERT
 INTO Manager(managerID, mng_name, age, nationality, teamID)
-VALUES(3, 'Marcelo Bielsa', 67, 'Argentina', 3);
+VALUES(3, 'Marcelo Bielsa', 67, 'Argentina', 17);
 
 INSERT
 INTO Manager(managerID, mng_name, age, nationality, teamID)
-VALUES(4, 'Hajime Moriyasu', 54, 'Japan', 4);
+VALUES(4, 'Hajime Moriyasu', 54, 'Japan', 19);
 
 INSERT
 INTO Manager(managerID, mng_name, age, nationality, teamID)
-VALUES(5, 'Didier Claude Deschamps', 54, 'Japan', 5);
-
-
-INSERT
-INTO Funds(sponsorID, teamID)
-VALUES(001, 001);
-
-INSERT
-INTO Funds(sponsorID, teamID)
-VALUES(002, 015);
-
-INSERT
-INTO Funds(sponsorID, teamID)
-VALUES(003, 017);
-
-INSERT
-INTO Funds(sponsorID, teamID)
-VALUES(004, 002);
-
-INSERT
-INTO Funds(sponsorID, teamID)
-VALUES(005, 019);
-
-INSERT
-INTO Funds(sponsorID, teamID)
-VALUES(006, 003);
-
-INSERT
-INTO Funds(sponsorID, teamID)
-VALUES(007, 006);
+VALUES(5, 'Didier Claude Deschamps', 54, 'Japan',15);
 
 
 INSERT
@@ -455,24 +389,75 @@ VALUES(007, 'Hisense');
 
 
 INSERT
+INTO Funds(sponsorID, teamID)
+VALUES(001, 001);
+
+INSERT
+INTO Funds(sponsorID, teamID)
+VALUES(002, 015);
+
+INSERT
+INTO Funds(sponsorID, teamID)
+VALUES(003, 017);
+
+INSERT
+INTO Funds(sponsorID, teamID)
+VALUES(004, 002);
+
+INSERT
+INTO Funds(sponsorID, teamID)
+VALUES(005, 019);
+
+INSERT
+INTO Funds(sponsorID, teamID)
+VALUES(006, 015);
+
+INSERT
+INTO Funds(sponsorID, teamID)
+VALUES(007, 001);
+
+
+INSERT
 INTO Player(playerID, teamID, passes, assists, p_name, age)
 VALUES(001, 001, 54, 2, 'Lionel Messi', 35);
 
 INSERT
 INTO Player(playerID, teamID, passes, assists, p_name, age)
-VALUES(002, 001, 8, 0, 'Paulo Dybala', 30);
+VALUES(002, 015, 8, 0, 'Paulo Dybala', 30);
 
 INSERT
 INTO Player(playerID, teamID, passes, assists, p_name, age)
-VALUES(003, 003, 54, 5, 'Kylian Mbappe', 24);
+VALUES(003, 017, 54, 5, 'Kylian Mbappe', 24);
 
 INSERT
 INTO Player(playerID, teamID, passes, assists, p_name, age)
-VALUES(004, 001, 20, 2, 'Lisandro Martinez', 26);
+VALUES(004, 019, 20, 2, 'Lisandro Martinez', 26);
 
 INSERT
 INTO Player(playerID, teamID, passes, assists, p_name, age)
 VALUES(007, 002, 54, 2, 'Cristiano Ronaldo', 38);
+
+
+INSERT
+INTO  GoalDetails(goalNumber, matchID, playerID)
+VALUES(1, 001, 001);
+
+INSERT
+INTO  GoalDetails(goalNumber, matchID, playerID)
+VALUES(2, 001, 002);
+
+INSERT
+INTO  GoalDetails(goalNumber, matchID, playerID)
+VALUES(3, 001, 003);
+
+INSERT
+INTO  GoalDetails(goalNumber, matchID, playerID)
+VALUES(1, 002, 001);
+
+INSERT
+INTO  GoalDetails(goalNumber, matchID, playerID)
+VALUES(2, 002, 004);
+
 
 --
 -- INSERT
@@ -581,3 +566,5 @@ VALUES(007, 002, 54, 2, 'Cristiano Ronaldo', 38);
 -- INSERT
 -- INTO Defender(playerID, tackles, shots, goals, interceptions)
 -- VALUES(046, 18, 15, 2, 7)
+
+COMMIT;
