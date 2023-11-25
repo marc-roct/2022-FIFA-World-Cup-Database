@@ -28,6 +28,7 @@ const tableInsertInputFields = {
     Defender: ["playerID", "tackles", "shots", "goals", "interceptions"]
 }
 
+
 const tableDeleteInputFields = {
     Stadium: ["Name"],
     Match: ["matchID"],
@@ -113,5 +114,4 @@ async function confirmUpdate() {
 async function identifySPJ() {
 
 }
-
 
