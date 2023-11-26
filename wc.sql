@@ -1,7 +1,7 @@
+DROP TABLE Stadium1 cascade constraints ;
 DROP TABLE Stadium2 cascade constraints ;
-DROP TABLE Stadium3 cascade constraints ;
+DROP TABLE Match1 cascade constraints ;
 DROP TABLE Match2 cascade constraints ;
-DROP TABLE Match3 cascade constraints ;
 DROP TABLE Country cascade constraints ;
 DROP TABLE Manager cascade constraints ;
 DROP TABLE Team cascade constraints ;

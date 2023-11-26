@@ -152,7 +152,7 @@ export async function insertStadiumTable(name, address, city, capacity) {
         );
 
         return result1.rowsAffected && result1.rowsAffected > 0 && result2.rowsAffected && result2.rowsAffected > 0;
-    }).catch((err) => {
+    }).catch(async (err) => {
         console.error('Error in insertStadiumTables:', err);
         await connection.rollback(); // Rollback in case of error
         return false;
@@ -239,7 +239,7 @@ export async function initiateCountryTable() {
         const result = await connection.execute(`
             CREATE TABLE Country
             (
-                name    VARCHAR PRIMARY KEY,
+                name    VARCHAR(255) PRIMARY KEY,
                 ranking INTEGER
             )
         `);
@@ -278,9 +278,9 @@ export async function initiateManagerTable() {
             CREATE TABLE Manager
             (
                 managerID   integer PRIMARY KEY,
-                name        VARCHAR,
+                name        VARCHAR(255),
                 age         INTEGER,
-                nationality VARCHAR
+                nationality VARCHAR(255)
             )
 
         `);
