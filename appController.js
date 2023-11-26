@@ -237,6 +237,58 @@ router.post("/insert-midfieldplayer", async (req, res) => {
 });
 
 
+router.post("/insert-defenderplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, tackles, shots, goals, interceptions } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        playerID: playerID,
+        tackles: tackles,
+        shots: shots,
+        goals: goals,
+        interceptions: interceptions
+    };
+
+    const insertResult = await appService.insertPlayerTable("defender", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
+router.post("/insert-goalkeeperplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, saves } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        saves: saves
+    };
+
+    const insertResult = await appService.insertPlayerTable("goalkeeper", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
 
 router.post("/update-name-demotable", async (req, res) => {
     const { oldName, newName } = req.body;
