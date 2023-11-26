@@ -86,9 +86,13 @@ async function selectTable(selectedTables, projections, filter) {
         }
 
         // check if column names are valid
-        for (const colm of projections) {
-            if (!availableColumns.includes(colm)) {
-                throw new Error('Invalid Column Name: ' + colm);
+        if (projections.size() === 0) {
+            projections.push('*');
+        } else {
+            for (const colm of projections) {
+                if (!availableColumns.includes(colm)) {
+                    throw new Error('Invalid Column Name: ' + colm);
+                }
             }
         }
 
@@ -128,7 +132,7 @@ async function insertDemotable(id, name) {
     });
 }
 
-export async function initiateCountryTable() {
+async function initiateCountryTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE COUNTRY`);
@@ -150,7 +154,7 @@ export async function initiateCountryTable() {
     });
 }
 
-export async function insertCountryTable(name, ranking) {
+async function insertCountryTable(name, ranking) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO TEAM (name, ranking) VALUES (:name, :ranking)`,
@@ -165,7 +169,7 @@ export async function insertCountryTable(name, ranking) {
     });
 }
 
-export async function initiateManagerTable() {
+async function initiateManagerTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE MANAGER`);
@@ -190,7 +194,7 @@ export async function initiateManagerTable() {
     });
 }
 
-export async function insertManagerTable(managerID, name, age, nationality) {
+async function insertManagerTable(managerID, name, age, nationality) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO MANAGER (managerID, name, age, nationality) VALUES (:managerID, :name, :age, :nationality)`,
@@ -205,7 +209,7 @@ export async function insertManagerTable(managerID, name, age, nationality) {
     });
 }
 
-export async function initiateTeamTable() {
+async function initiateTeamTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE TEAM`);
@@ -235,7 +239,7 @@ export async function initiateTeamTable() {
     });
 }
 
-export async function insertTeamTable(teamID, size, countryName, managerID) {
+async function insertTeamTable(teamID, size, countryName, managerID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO TEAM (teamID, size, countryName, managerID) VALUES (:teamID, :size, :countryName, :managerID)`,
@@ -283,6 +287,7 @@ async function updateTable(selectedTable, args) {
         query += ` SET ` + toSet.join(", ");
         query += ` WHERE ` + where.join(", ");
         oracledb.autoCommit = true;
+        console.log(query);
         result = await connection.execute(query);
         // switch (selectedTable) {
         //     case 'Stadium1':
@@ -413,11 +418,28 @@ async function countDemotable() {
     });
 }
 
+async function joinTable() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            // 'SELECT Count(*) FROM DEMOTABLE'
+        );
+        return result.rows[0][0];
+    }).catch(() => {
+        return -1;
+    });
+}
+
 module.exports = {
     testOracleConnection,
     initiateTables,
     selectTable,
     insertDemotable,
     updateNameDemotable: updateTable,
-    countDemotable
+    countDemotable,
+    joinTable,
+    initiateCountryTable,
+    insertCountryTable,
+    initiateManagerTable,
+    insertManagerTable,
+    initiateTeamTable,
 };
