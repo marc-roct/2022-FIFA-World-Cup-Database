@@ -62,15 +62,15 @@ function generateFields(fields, tableFieldsContainer) {
 
 async function showInsertFields() {
     const selectedDropDown = document.getElementById("DropDown").value;
-    const tableFieldsContainer = document.getElementById("inputFields")
-    tableFieldsContainer.innerHTML = "";
+    const tableFieldsHolder = document.getElementById("inputFields")
+    tableFieldsHolder.innerHTML = "";
     const allFields = tableInsertInputFields[selectedDropDown];
-    generateFields(allFields, tableFieldsContainer);
+    generateFields(allFields, tableFieldsHolder);
     const confirmButton = document.createElement("button");
     confirmButton.type = "button";
     confirmButton.textContent = "Confirm";
     confirmButton.addEventListener("click", confirmInsert);
-    tableFieldsContainer.appendChild(confirmButton);
+    tableFieldsHolder.appendChild(confirmButton);
 }
 
 async function showDeleteFields() {
@@ -98,9 +98,39 @@ async function showUpdateFields() {
     confirmButton.addEventListener("click", confirmUpdate);
     tableFieldsContainer.appendChild(confirmButton);
 }
-
 async function confirmInsert() {
-    // stub
+        const insertedData = pullInsertData();
+
+        await performInsertAPI(insertedData);
+}
+function pullInsertData() {
+    const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
+    const insertedData = {};
+    allFields.forEach(function (field) {
+        insertedData[field] = document.querySelector("[name=${field}]");
+    });
+    return insertedData;
+}
+
+function performInsertAPI(insertedData) {
+    fetch(`/insert-${dropDown.toLowerCase()}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(insertedData),
+    })
+        .then(response => response.json())
+        .then(responseHandle => handleInsertAPIResponse(responseHandle))
+        .catch(error => console.error('Error: ', error));
+}
+
+function handleInsertAPIResponse(responseHandle) {
+    if (responseHandle.success) {
+        console.log("You have successfully added the data");
+    } else {
+        console.log("Unfortunately, insertion is unsuccessful");
+    }
 }
 
 async function confirmDelete() {
