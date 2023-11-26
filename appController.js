@@ -101,6 +101,7 @@ router.post("/insert-teamtable", async (req, res) => {
     }
 });
 
+// args is object with the attributes corresponding ot table
 router.post("/update-name-demotable", async (req, res) => {
     const { oldName, newName } = req.body;
     const updateResult = await appService.updateNameDemotable("Stadium2", {
