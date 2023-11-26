@@ -111,6 +111,7 @@ async function selectTable(selectedTables, projections, filter) {
     });
 }
 
+
 //
 // BELOW HERE ARE ALL THE INITIATE AND INSERT FUNCTIONS
 //
@@ -198,8 +199,7 @@ export async function initiateMatchTable() {
                 time        VARCHAR(255),
                 FOREIGN KEY (stadiumName)
                     REFERENCES Stadium2 (name)
-                        ON DELETE CASCADE
-                    ON UPDATE CASCADE,
+                        ON DELETE CASCADE,
                 FOREIGN KEY (date)
                     REFERENCES Match1 (date)
             )
@@ -380,12 +380,10 @@ export async function initiatePlayInTable() {
                 PRIMARY KEY (matchID, teamID),
                 FOREIGN KEY (matchID)
                     REFERENCES Match2 (matchID)
-                        ON DELETE CASCADE
-                    ON UPDATE CASCADE,
+                        ON DELETE CASCADE,
                 FOREIGN KEY (teamID)
                     REFERENCES Team (teamID)
                         ON DELETE CASCADE
-                    ON UPDATE CASCADE
             )
         `);
         return true;
