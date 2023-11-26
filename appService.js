@@ -775,6 +775,17 @@ async function updateTable(selectedTable, args) {
     });
 }
 
+async function joinTable(projections, fromTable, joinTable, onStatement) {
+    return await withOracleDB(async (connection) => {
+        let query = `SELECT ` + projections + ` FROM ` + fromTable +
+            ` INNER JOIN ` + joinTable + ` ON ` + onStatement;
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
 async function countDemotable() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
