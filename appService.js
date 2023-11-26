@@ -86,9 +86,13 @@ async function selectTable(selectedTables, projections, filter) {
         }
 
         // check if column names are valid
-        for (const colm of projections) {
-            if (!availableColumns.includes(colm)) {
-                throw new Error('Invalid Column Name: ' + colm);
+        if (projections.size() === 0) {
+            projections.push('*');
+        } else {
+            for (const colm of projections) {
+                if (!availableColumns.includes(colm)) {
+                    throw new Error('Invalid Column Name: ' + colm);
+                }
             }
         }
 
@@ -98,9 +102,7 @@ async function selectTable(selectedTables, projections, filter) {
         if (filter !== "") {
             query += ` WHERE ` + filter;
         }
-        console.log(query);
-        const query = `SELECT ` + projections.join(", ")
-            + ` FROM ` + selectedTables.join(", ");
+        // console.log(query);
         const result = await connection.execute(query);
         // console.log('after execute');
         return result.rows;
@@ -163,7 +165,7 @@ export async function insertStadiumTable(name, address, city, capacity) {
         return result1.rowsAffected && result1.rowsAffected > 0 && result2.rowsAffected && result2.rowsAffected > 0;
     }).catch(async (err) => {
         console.error('Error in insertStadiumTables:', err);
-        await connection.rollback(); // Rollback in case of error
+        // await connection.rollback(); // Rollback in case of error
         return false;
     });
 }
@@ -770,6 +772,17 @@ async function updateTable(selectedTable, args) {
         console.log(err);
         oracledb.autoCommit = false;
         return false;
+    });
+}
+
+async function joinTable(projections, fromTable, joinTable, onStatement) {
+    return await withOracleDB(async (connection) => {
+        let query = `SELECT ` + projections + ` FROM ` + fromTable +
+            ` INNER JOIN ` + joinTable + ` ON ` + onStatement;
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
     });
 }
 
