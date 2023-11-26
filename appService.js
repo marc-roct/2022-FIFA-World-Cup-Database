@@ -13,7 +13,7 @@ const dbConfig = {
 
 const dbTables = new Map();
 dbTables.set('Stadium1', ['st_address','st_city']);
-dbTables.set('Stadium2\', ['s_name','address','s_capacity']);
+dbTables.set('Stadium2', ['s_name','address','s_capacity']);
 dbTables.set('Match2', ['DATE','phase']);
 dbTables.set('Match2', ['matchID','stadiumName','m_result','DATE','m_time']);
 dbTables.set('Country', ['c_name','ranking','teamID']);
@@ -67,12 +67,13 @@ async function selectTable(selectedTables, projections, filter) {
     return await withOracleDB(async (connection) => {
         // console.log('before execute');
         // const result = await connection.execute(
-        //     `SELECT * from Stadium1`
+        //     `SELECT * from Stadium2`
         // );
+        let tables = '';
+        let columns;
         let availableColumns = [];
 
         // check if table names are valid
-        // if they are add table attributes into list for projection checking
         for (const tbl of selectedTables) {
             if (!dbTables.has(tbl)) {
                 throw new Error('Invalid Table Name: ' + tbl);
@@ -105,10 +106,10 @@ async function selectTable(selectedTables, projections, filter) {
 async function initiateTables() {
     return await withOracleDB(async (connection) => {
         // try {
-        //     await connection.execute(`DROP TABLE Stadium1 cascade constraints ;
-        //     DROP TABLE Stadium2\\ cascade constraints ;
+        //     await connection.execute(`DROP TABLE Stadium2 cascade constraints ;
+        //     DROP TABLE Stadium3 cascade constraints ;
         //     DROP TABLE Match2 cascade constraints ;
-        //     DROP TABLE Match2 cascade constraints ;
+        //     DROP TABLE Match3 cascade constraints ;
         //     DROP TABLE Country cascade constraints ;
         //     DROP TABLE Manager cascade constraints ;
         //     DROP TABLE Team cascade constraints ;
@@ -128,16 +129,16 @@ async function initiateTables() {
 
 //         try {
 //             const result = await connection.execute(`
-// CREATE TABLE Stadium1 (
+// CREATE TABLE Stadium2 (
 //                           st_address varchar(60) PRIMARY KEY,
 //                           city varchar(40));
 //
-// CREATE TABLE Stadium2\\ (
+// CREATE TABLE Stadium3 (
 //                           s_name varchar(40) PRIMARY KEY,
 //                           address varchar(60),
 //                           s_capacity INTEGER,
 //                           FOREIGN KEY (address)
-//                               REFERENCES Stadium1(st_address));
+//                               REFERENCES Stadium2(st_address));
 //
 // CREATE TABLE Match2 (
 //                         "DATE" varchar(40) PRIMARY KEY,
@@ -145,14 +146,14 @@ async function initiateTables() {
 //
 //
 //
-// CREATE TABLE Match2(
+// CREATE TABLE Match3(
 //                         matchID INTEGER PRIMARY KEY,
 //                         stadiumName  varchar(40),
 //                         m_result  varchar(40),
 //                         "DATE" varchar(40),
 //                         m_time  varchar(40),
 //                         FOREIGN KEY (stadiumNAME)
-//                             REFERENCES Stadium2\\(s_name)
+//                             REFERENCES Stadium3(s_name)
 //                                 ON DELETE CASCADE,
 //                         FOREIGN KEY ("DATE")
 //                             REFERENCES Match2("DATE"));
@@ -220,7 +221,7 @@ async function initiateTables() {
 //                              g_type varchar(40),
 //                              PRIMARY KEY (goalNumber, matchID),
 //                              FOREIGN KEY (matchID)
-//                                  REFERENCES Match2(matchID)
+//                                  REFERENCES Match3(matchID)
 //                                      ON DELETE CASCADE,
 //                              FOREIGN KEY (playerID)
 //                                  REFERENCES Player(playerID)
@@ -232,7 +233,7 @@ async function initiateTables() {
 //                         PRIMARY KEY (matchID, teamID));
 //
 // ALTER TABLE PlayIn
-//     ADD CONSTRAINT pi_mfk FOREIGN KEY (matchID) REFERENCES Match2(matchID)
+//     ADD CONSTRAINT pi_mfk FOREIGN KEY (matchID) REFERENCES Match3(matchID)
 //         ON DELETE CASCADE
 //         DEFERRABLE INITIALLY DEFERRED
 //     ADD CONSTRAINT pi_tfk FOREIGN KEY (teamID) REFERENCES Team(teamID)
@@ -282,109 +283,109 @@ async function initiateTables() {
 //                               ON DELETE CASCADE );
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 125 Street: 393 Zone: 74', 'Al Khor');
 //
 // INSERT
-// INTO Stadium2\\(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Al Bayt Stadium', 'Building Number: 125 Street: 393 Zone: 74', 68895);
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 660 Street: 235 Zone: 69', 'Lusail');
 //
 // INSERT
-// INTO Stadium2\\(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Lusail Stadium', 'Building Number: 660 Street: 235 Zone: 69', 88966);
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 306 Street: 1700 Zone: 51', 'Al Rayyan');
 //
 // INSERT
-// INTO Stadium2\\(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Ahmad bin Ali Stadium', 'Building Number: 306 Street: 1700 Zone: 51', 45032);
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 71 Street: 2741 Zone: 52', 'Al Rayyan');
 //
 // INSERT
-// INTO Stadium2\\(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Education City Stadium', 'Building Number: 71 Street: 2741 Zone: 52', 44667);
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 51 Street: 725 Zone: 54', 'Al Rayyan');
 //
 // INSERT
-// INTO Stadium2\\(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Khalifa International Stadium', 'Building Number: 51 Street: 725 Zone: 54', 45857);
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 521 Street: 260 Zone: 46', 'Doha');
 //
 // INSERT
-// INTO Stadium2\\(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Al Thumama Stadium', 'Building Number: 521 Street: 260 Zone: 46', 44400);
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 161 Street: 210 Zone: 29', 'Doha');
 //
 // INSERT
-// INTO Stadium2\\(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Stadium 974', 'Building Number: 161 Street: 210 Zone: 29', 44089);
 //
 // INSERT
-// INTO Stadium1(st_address, city)
+// INTO Stadium2(st_address, city)
 // VALUES('Building Number: 1707 Street: 281 Zone: 91', 'Al Wakrah');
 //
 // INSERT
-// INTO Stadium2(s_name, address, s_capacity)
+// INTO Stadium3(s_name, address, s_capacity)
 // VALUES('Al Janoub Stadium', 'Building Number: 1707 Street: 281 Zone: 91', 44325);
 //
 //
 // INSERT
-// INTO Match1("DATE", phase)
+// INTO Match2("DATE", phase)
 // VALUES('Dec 9 2022', 'Quarter-Finals');
 //
 // INSERT
-// INTO Match1("DATE", phase)
+// INTO Match2("DATE", phase)
 // VALUES('Nov 20 2022', 'Group Stage');
 //
 // INSERT
-// INTO Match1("DATE", phase)
+// INTO Match2("DATE", phase)
 // VALUES('Nov 21 2022', 'Group Stage');
 //
 // INSERT
-// INTO Match1("DATE", phase)
+// INTO Match2("DATE", phase)
 // VALUES('Nov 22 2022', 'Group Stage');
 //
 // INSERT
-// INTO Match1("DATE", phase)
+// INTO Match2("DATE", phase)
 // VALUES('Nov 23 2022', 'Group Stage');
 //
 //
 // INSERT
-// INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
+// INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
 // VALUES(001, 'Al Bayt Stadium', 'Qatar won against Ecuador 2-0', 'Nov 20 2022', '14:00');
 //
 // INSERT
-// INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
+// INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
 // VALUES(002, 'Khalifa International Stadium', 'England won against Iran 6-2', 'Nov 21 2022', '14:00');
 //
 // INSERT
-// INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
+// INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
 // VALUES(003, 'Ahmad bin Ali Stadium', 'USA tied Wales 1-1', 'Nov 21 2022', '14:00');
 //
 // INSERT
-// INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
+// INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
 // VALUES(004, 'Lusail Stadium', 'Saudi Arabia won against Argentina 2-1', 'Nov 22 2022', '14:00');
 //
 // INSERT
-// INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
+// INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
 // VALUES(005, 'Education City Stadium', 'Croatia tied Brazil 1-1', 'Dec 9 2022', '14:00');
 //
 //
@@ -714,6 +715,128 @@ async function insertDemotable(id, name) {
 
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch(() => {
+        return false;
+    });
+}
+
+export async function initiateCountryTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE COUNTRY`);
+        } catch(err) {
+            console.log('Table might not exist, proceeding to create...');
+        }
+
+        const result = await connection.execute(`
+            CREATE TABLE Country
+            (
+                name    VARCHAR PRIMARY KEY,
+                ranking INTEGER
+            )
+        `);
+        return true;
+    }).catch((err) => {
+        console.error('Error creating Country table:', err);
+        return false;
+    });
+}
+
+export async function insertCountryTable(name, ranking) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO TEAM (name, ranking) VALUES (:name, :ranking)`,
+            {name, ranking},
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        console.error('Error in insertCountryTable:', err);
+        return false;
+    });
+}
+
+export async function initiateManagerTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE MANAGER`);
+        } catch(err) {
+            console.log('Table might not exist, proceeding to create...');
+        }
+
+        const result = await connection.execute(`
+            CREATE TABLE Manager
+            (
+                managerID   integer PRIMARY KEY,
+                name        VARCHAR,
+                age         INTEGER,
+                nationality VARCHAR
+            )
+
+        `);
+        return true;
+    }).catch((err) => {
+        console.error('Error creating Manager table:', err);
+        return false;
+    });
+}
+
+export async function insertManagerTable(managerID, name, age, nationality) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO MANAGER (managerID, name, age, nationality) VALUES (:managerID, :name, :age, :nationality)`,
+            {managerID, name, age, nationality},
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        console.error('Error in insertManagerTable:', err);
+        return false;
+    });
+}
+
+export async function initiateTeamTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE TEAM`);
+        } catch(err) {
+            console.log('Table might not exist, proceeding to create...');
+        }
+
+        const result = await connection.execute(`
+            CREATE TABLE Team
+            (
+                teamID      INTEGER PRIMARY KEY,
+                Size        INTEGER,
+                countryName VARCHAR(100),
+                managerID   VARCHAR(100),
+                FOREIGN KEY (countryName)
+                    REFERENCES Country (name)
+                        ON DELETE CASCADE,
+                FOREIGN KEY (managerID)
+                    REFERENCES Manager (managerID)
+                        ON DELETE CASCADE
+            )
+        `);
+        return true;
+    }).catch((err) => {
+        console.error('Error creating Team table:', err);
+        return false;
+    });
+}
+
+export async function insertTeamTable(teamID, size, countryName, managerID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO TEAM (teamID, size, countryName, managerID) VALUES (:teamID, :size, :countryName, :managerID)`,
+            {teamID, size, countryName, managerID},
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        console.error('Error in insertTeamTable:', err);
         return false;
     });
 }

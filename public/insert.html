@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form>
+    <label>Choose a table to insert element:</label>
+    <label>
+        <select id="DropDown" onchange="showInsertFields()">
+            <option value="Stadium">Stadium</option>
+            <option value="Match">Match</option>
+            <option value="GoalDetails">GoalDetails</option>
+            <option value="PlayIn">PlayIn</option>
+            <option value="Team">Team</option>
+            <option value="Country">Country</option>
+            <option value="Manager">Manager</option>
+            <option value="Funds">Funds</option>
+            <option value="Sponsor">Sponsor</option>
+            <option value="Player">Player</option>
+            <option value="Forward">Forward</option>
+            <option value="Midfield">Midfield</option>
+            <option value="Goalkeeper">Goalkeeper</option>
+            <option value="Defender">Defender</option>
+        </select>
+    </label>
+</form>
+<div id="inputFields" class="hidden"></div>
+<nav>
+    <a href="./index.html">Home</a>
+    <a href="./insert.html">Insert</a>
+    <a href="./delete.html">Delete</a>
+    <a href="./update.html">Update</a>
+    <a href="./selectionProjectionJoin.html">SPJ</a>
+    <a href="./aggregation.html">Aggregation</a>
+    <a href="./division.html">Division</a>
+</nav>
+<script src="scripts.js"></script>
+</body>
+</html>
