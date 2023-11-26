@@ -5,10 +5,11 @@
     <title>Title</title>
 </head>
 <body>
+
 <form>
     <label>Choose a table to insert element:</label>
     <label>
-        <select id="DropDown" onchange="showInsertFields()">
+        <select id="DropDown" onchange="displayTable()">
             <option value="Stadium">Stadium</option>
             <option value="Match">Match</option>
             <option value="GoalDetails">GoalDetails</option>
@@ -26,16 +27,7 @@
         </select>
     </label>
 </form>
-<form>
-    <label>Choose between Selection, Projection, or Join</label>
-    <label>
-        <select id="SPJ choose" onchange="identifySPJ()">
-            <option value="Selection">Selection</option>
-            <option value="Projection">Projection</option>
-            <option value="Join">Join</option>
-        </select>
-    </label>
-</form>
+<div id="result-table"></div>
 <nav>
     <a href="./index.html">Home</a>
     <a href="./insert.html">Insert</a>
@@ -46,6 +38,6 @@
     <a href="./division.html">Division</a>
     <a href="./display.html">Display</a>
 </nav>
-<script src="scripts.js"></script>
+<script src="display.js"></script>
 </body>
 </html>

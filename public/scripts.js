@@ -100,19 +100,20 @@ async function showUpdateFields() {
 }
 async function confirmInsert() {
         const insertedData = pullInsertData();
-
+    console.log(insertedData);
         await performInsertAPI(insertedData);
 }
 function pullInsertData() {
     const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
     const insertedData = {};
     allFields.forEach(function (field) {
-        insertedData[field] = document.querySelector("[name=${field}]");
+        insertedData[field] = document.querySelector(`[name=${field}]`).value;
     });
     return insertedData;
 }
 
 function performInsertAPI(insertedData) {
+    const dropDown = document.getElementById("DropDown").value;
     fetch(`/insert-${dropDown.toLowerCase()}`, {
         method: 'POST',
         headers: {
@@ -134,7 +135,7 @@ function handleInsertAPIResponse(responseHandle) {
 }
 
 async function confirmDelete() {
-    // stub
+    //stub
 }
 
 async function confirmUpdate() {
