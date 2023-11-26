@@ -102,38 +102,6 @@ async function selectTable(selectedTables, projections, filter) {
 }
 
 
-//
-// BELOW HERE ARE ALL THE INITIATE AND INSERT FUNCTIONS
-//
-
-export async function initiateStadiumTable() {
-    return await withOracleDB(async (connection) => {
-        try {
-            await connection.execute(`DROP TABLE STADIUM2`);
-            await connection.execute(`DROP TABLE STADIUM1`);
-        } catch(err) {
-            console.log('Tables might not exist, proceeding to create...');
-        }
-
-        await connection.execute(`
-            CREATE TABLE Stadium1
-            (
-                address VARCHAR(255) PRIMARY KEY,
-                city    VARCHAR(255)
-            )
-        `);
-
-        await connection.execute(`
-            CREATE TABLE Stadium2
-            (
-                name     VARCHAR(255) PRIMARY KEY,
-                address  VARCHAR(255),
-                capacity INTEGER,
-                FOREIGN KEY (address)
-                    REFERENCES Stadium1 (address)
-            )
-        `);
-
 async function initiateTables() {
     return await withOracleDB(async (connection) => {
         // try {
@@ -737,6 +705,41 @@ async function initiateTables() {
     });
 }
 
+
+//
+// BELOW HERE ARE ALL THE INITIATE AND INSERT FUNCTIONS
+//
+
+export async function initiateStadiumTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE STADIUM2`);
+            await connection.execute(`DROP TABLE STADIUM1`);
+        } catch (err) {
+            console.log('Tables might not exist, proceeding to create...');
+        }
+
+        await connection.execute(`
+            CREATE TABLE Stadium1
+            (
+                address VARCHAR(255) PRIMARY KEY,
+                city    VARCHAR(255)
+            )
+        `);
+
+        await connection.execute(`
+            CREATE TABLE Stadium2
+            (
+                name     VARCHAR(255) PRIMARY KEY,
+                address  VARCHAR(255),
+                capacity INTEGER,
+                FOREIGN KEY (address)
+                    REFERENCES Stadium1 (address)
+            )
+        `);
+    });
+}
+
 export async function insertStadiumTable(name, address, city, capacity) {
     return await withOracleDB(async (connection) => {
 
@@ -759,7 +762,6 @@ export async function insertStadiumTable(name, address, city, capacity) {
         return false;
     });
 }
-
 export async function initiateMatchTable() {
     return await withOracleDB(async (connection) => {
         try {
