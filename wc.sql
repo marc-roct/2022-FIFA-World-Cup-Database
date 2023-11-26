@@ -1,7 +1,7 @@
+DROP TABLE Stadium1 cascade constraints ;
 DROP TABLE Stadium2 cascade constraints ;
-DROP TABLE Stadium3 cascade constraints ;
+DROP TABLE Match1 cascade constraints ;
 DROP TABLE Match2 cascade constraints ;
-DROP TABLE Match3 cascade constraints ;
 DROP TABLE Country cascade constraints ;
 DROP TABLE Manager cascade constraints ;
 DROP TABLE Team cascade constraints ;
@@ -15,34 +15,35 @@ DROP TABLE Midfield cascade constraints ;
 DROP TABLE Goalkeeper cascade constraints ;
 DROP TABLE Defender cascade constraints ;
 
-CREATE TABLE Stadium2 (
+CREATE TABLE Stadium1 (
                           st_address varchar(60) PRIMARY KEY,
-                          city varchar(40));
+                          st_city varchar(40));
 
-CREATE TABLE Stadium3 (
+CREATE TABLE Stadium2
+(
                           s_name varchar(40) PRIMARY KEY,
                           address varchar(60),
                           s_capacity INTEGER,
                           FOREIGN KEY (address)
-                              REFERENCES Stadium2(st_address));
+                              REFERENCES Stadium1 (st_address));
 
-CREATE TABLE Match2 (
+CREATE TABLE Match1 (
                         "DATE" varchar(40) PRIMARY KEY,
                         phase varchar(40));
 
 
 
-CREATE TABLE Match3(
+CREATE TABLE Match2(
                         matchID INTEGER PRIMARY KEY,
                         stadiumName  varchar(40),
                         m_result  varchar(40),
                         "DATE" varchar(40),
                         m_time  varchar(40),
                         FOREIGN KEY (stadiumNAME)
-                            REFERENCES Stadium3(s_name)
+                            REFERENCES Stadium2(s_name)
                                 ON DELETE CASCADE,
                         FOREIGN KEY ("DATE")
-                            REFERENCES Match2("DATE"));
+                            REFERENCES Match1 ("DATE"));
 
 
 CREATE TABLE Country(
@@ -107,7 +108,7 @@ CREATE TABLE GoalDetails (
                              g_type varchar(40),
                              PRIMARY KEY (goalNumber, matchID),
                              FOREIGN KEY (matchID)
-                                 REFERENCES Match3(matchID)
+                                 REFERENCES Match2(matchID)
                                      ON DELETE CASCADE,
                              FOREIGN KEY (playerID)
                                  REFERENCES Player(playerID)
@@ -119,7 +120,7 @@ CREATE TABLE PlayIn (
                         PRIMARY KEY (matchID, teamID));
 
 ALTER TABLE PlayIn
-    ADD CONSTRAINT pi_mfk FOREIGN KEY (matchID) REFERENCES Match3(matchID)
+    ADD CONSTRAINT pi_mfk FOREIGN KEY (matchID) REFERENCES Match2(matchID)
         ON DELETE CASCADE
         DEFERRABLE INITIALLY DEFERRED
     ADD CONSTRAINT pi_tfk FOREIGN KEY (teamID) REFERENCES Team(teamID)
@@ -169,109 +170,109 @@ CREATE TABLE Defender (
                               ON DELETE CASCADE );
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 125 Street: 393 Zone: 74', 'Al Khor');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Al Bayt Stadium', 'Building Number: 125 Street: 393 Zone: 74', 68895);
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 660 Street: 235 Zone: 69', 'Lusail');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Lusail Stadium', 'Building Number: 660 Street: 235 Zone: 69', 88966);
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 306 Street: 1700 Zone: 51', 'Al Rayyan');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Ahmad bin Ali Stadium', 'Building Number: 306 Street: 1700 Zone: 51', 45032);
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 71 Street: 2741 Zone: 52', 'Al Rayyan');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Education City Stadium', 'Building Number: 71 Street: 2741 Zone: 52', 44667);
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 51 Street: 725 Zone: 54', 'Al Rayyan');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Khalifa International Stadium', 'Building Number: 51 Street: 725 Zone: 54', 45857);
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 521 Street: 260 Zone: 46', 'Doha');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Al Thumama Stadium', 'Building Number: 521 Street: 260 Zone: 46', 44400);
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 161 Street: 210 Zone: 29', 'Doha');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Stadium 974', 'Building Number: 161 Street: 210 Zone: 29', 44089);
 
 INSERT
-INTO Stadium2(st_address, city)
+INTO Stadium1(st_address, st_city)
 VALUES('Building Number: 1707 Street: 281 Zone: 91', 'Al Wakrah');
 
 INSERT
-INTO Stadium3(s_name, address, s_capacity)
+INTO Stadium2(s_name, address, s_capacity)
 VALUES('Al Janoub Stadium', 'Building Number: 1707 Street: 281 Zone: 91', 44325);
 
 
 INSERT
-INTO Match2("DATE", phase)
+INTO Match1("DATE", phase)
 VALUES('Dec 9 2022', 'Quarter-Finals');
 
 INSERT
-INTO Match2("DATE", phase)
+INTO Match1("DATE", phase)
 VALUES('Nov 20 2022', 'Group Stage');
 
 INSERT
-INTO Match2("DATE", phase)
+INTO Match1("DATE", phase)
 VALUES('Nov 21 2022', 'Group Stage');
 
 INSERT
-INTO Match2("DATE", phase)
+INTO Match1("DATE", phase)
 VALUES('Nov 22 2022', 'Group Stage');
 
 INSERT
-INTO Match2("DATE", phase)
+INTO Match1("DATE", phase)
 VALUES('Nov 23 2022', 'Group Stage');
 
 
 INSERT
-INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
+INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
 VALUES(001, 'Al Bayt Stadium', 'Qatar won against Ecuador 2-0', 'Nov 20 2022', '14:00');
 
 INSERT
-INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
+INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
 VALUES(002, 'Khalifa International Stadium', 'England won against Iran 6-2', 'Nov 21 2022', '14:00');
 
 INSERT
-INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
+INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
 VALUES(003, 'Ahmad bin Ali Stadium', 'USA tied Wales 1-1', 'Nov 21 2022', '14:00');
 
 INSERT
-INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
+INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
 VALUES(004, 'Lusail Stadium', 'Saudi Arabia won against Argentina 2-1', 'Nov 22 2022', '14:00');
 
 INSERT
-INTO Match3(matchID, stadiumName, m_result, "DATE", m_time)
+INTO Match2(matchID, stadiumName, m_result, "DATE", m_time)
 VALUES(005, 'Education City Stadium', 'Croatia tied Brazil 1-1', 'Dec 9 2022', '14:00');
 
 
