@@ -154,6 +154,90 @@ router.post("/insert-sponsor", async (req, res) => {
     }
 });
 
+router.post("/initiate-fundstable", async (req, res) => {
+    const initiateResult = await appService.initiateFundsTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-funds", async (req, res) => {
+    const { sponsorID, teamID } = req.body;
+    const insertResult = await appService.insertFundsTable(sponsorID, teamID);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-playertable", async (req, res) => {
+    const initiateResult = await appService.initiatePlayerTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-forwardplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, shots, goals } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        playerID: playerID,
+        shots: shots,
+        goals: goals
+    };
+
+    const insertResult = await appService.insertPlayerTable("forward", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-midfieldplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, tackles, shots, goals, interceptions } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        playerID: playerID,
+        tackles: tackles,
+        shots: shots,
+        goals: goals,
+        interceptions: interceptions
+    };
+
+    const insertResult = await appService.insertPlayerTable("midfield", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
+
 router.post("/update-name-demotable", async (req, res) => {
     const { oldName, newName } = req.body;
     const updateResult = await appService.updateNameDemotable(oldName, newName);
