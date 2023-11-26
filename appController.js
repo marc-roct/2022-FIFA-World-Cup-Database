@@ -25,8 +25,9 @@ router.get('/select-table', async (req, res) => {
     res.json({data: tableContent});
 });
 
-router.post("/initiate-demotable", async (req, res) => {
-    const initiateResult = await appService.initiateTables();
+
+router.post("/initiate-stadiumtable", async (req, res) => {
+    const initiateResult = await appService.initiateStadiumTable();
     if (initiateResult) {
         res.json({ success: true });
     } else {
@@ -34,9 +35,28 @@ router.post("/initiate-demotable", async (req, res) => {
     }
 });
 
-router.post("/insert-demotable", async (req, res) => {
-    const { id, name } = req.body;
-    const insertResult = await appService.insertDemotable(id, name);
+router.post("/insert-stadium", async (req, res) => {
+    const { name, address, city, capacity } = req.body;
+    const insertResult = await appService.insertStadiumTable(name, address, city, capacity);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-matchtable", async (req, res) => {
+    const initiateResult = await appService.initiateMatchTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-match", async (req, res) => {
+    const { matchID, stadiumName, result, matchDate, time, phase } = req.body;
+    const insertResult = await appService.insertMatchTable(matchID, stadiumName, result, matchDate, time, phase);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -91,7 +111,7 @@ router.post("/initiate-teamtable", async (req, res) => {
     }
 });
 
-router.post("/insert-teamtable", async (req, res) => {
+router.post("/insert-team", async (req, res) => {
     const { teamID, size, countryName, managerID } = req.body;
     const insertResult = await appService.insertTeamTable(teamID, size, countryName, managerID);
     if (insertResult) {
@@ -101,7 +121,180 @@ router.post("/insert-teamtable", async (req, res) => {
     }
 });
 
-// args is object with the attributes corresponding ot table
+router.post("/initiate-playintable", async (req, res) => {
+    const initiateResult = await appService.initiatePlayInTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-playin", async (req, res) => {
+    const { matchID, teamID } = req.body;
+    const insertResult = await appService.insertPlayInTable(matchID, teamID);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-sponsortable", async (req, res) => {
+    const initiateResult = await appService.initiateSponsorTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-sponsor", async (req, res) => {
+    const { sponsorID, name } = req.body;
+    const insertResult = await appService.insertSponsorTable(sponsorID, name);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-fundstable", async (req, res) => {
+    const initiateResult = await appService.initiateFundsTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-funds", async (req, res) => {
+    const { sponsorID, teamID } = req.body;
+    const insertResult = await appService.insertFundsTable(sponsorID, teamID);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-playertable", async (req, res) => {
+    const initiateResult = await appService.initiatePlayerTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-forwardplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, shots, goals } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        playerID: playerID,
+        shots: shots,
+        goals: goals
+    };
+
+    const insertResult = await appService.insertPlayerTable("forward", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-midfieldplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, tackles, shots, goals, interceptions } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        playerID: playerID,
+        tackles: tackles,
+        shots: shots,
+        goals: goals,
+        interceptions: interceptions
+    };
+
+    const insertResult = await appService.insertPlayerTable("midfield", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
+router.post("/insert-defenderplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, tackles, shots, goals, interceptions } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        playerID: playerID,
+        tackles: tackles,
+        shots: shots,
+        goals: goals,
+        interceptions: interceptions
+    };
+
+    const insertResult = await appService.insertPlayerTable("defender", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
+router.post("/insert-goalkeeperplayer", async (req, res) => {
+    const { playerID, teamID, passes, assists, name, age, saves } = req.body;
+
+    let playerData = {
+        playerID: playerID,
+        teamID: teamID,
+        passes: passes,
+        assists: assists,
+        name: name,
+        age: age
+    };
+
+    let subclassData = {
+        saves: saves
+    };
+
+    const insertResult = await appService.insertPlayerTable("goalkeeper", playerData, subclassData);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 router.post("/update-name-demotable", async (req, res) => {
     const { oldName, newName } = req.body;
     const updateResult = await appService.updateNameDemotable("Stadium2", {
