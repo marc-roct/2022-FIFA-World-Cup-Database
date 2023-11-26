@@ -20,24 +20,6 @@ router.get('/select-table', async (req, res) => {
     res.json({data: tableContent});
 });
 
-router.post("/initiate-demotable", async (req, res) => {
-    const initiateResult = await appService.initiateTables();
-    if (initiateResult) {
-        res.json({ success: true });
-    } else {
-        res.status(500).json({ success: false });
-    }
-});
-
-router.post("/insert-demotable", async (req, res) => {
-    const { id, name } = req.body;
-    const insertResult = await appService.insertDemotable(id, name);
-    if (insertResult) {
-        res.json({ success: true });
-    } else {
-        res.status(500).json({ success: false });
-    }
-});
 
 router.post("/initiate-stadiumtable", async (req, res) => {
     const initiateResult = await appService.initiateStadiumTable();
@@ -127,6 +109,44 @@ router.post("/initiate-teamtable", async (req, res) => {
 router.post("/insert-team", async (req, res) => {
     const { teamID, size, countryName, managerID } = req.body;
     const insertResult = await appService.insertTeamTable(teamID, size, countryName, managerID);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-playintable", async (req, res) => {
+    const initiateResult = await appService.initiatePlayInTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-playin", async (req, res) => {
+    const { matchID, teamID } = req.body;
+    const insertResult = await appService.insertPlayInTable(matchID, teamID);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/initiate-sponsortable", async (req, res) => {
+    const initiateResult = await appService.initiateSponsorTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-sponsor", async (req, res) => {
+    const { sponsorID, name } = req.body;
+    const insertResult = await appService.insertSponsorTable(sponsorID, name);
     if (insertResult) {
         res.json({ success: true });
     } else {
