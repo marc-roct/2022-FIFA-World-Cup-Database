@@ -16,8 +16,9 @@ DROP TABLE Goalkeeper cascade constraints ;
 DROP TABLE Defender cascade constraints ;
 
 CREATE TABLE Stadium1 (
-                          st_address varchar(60) PRIMARY KEY,
+                          address varchar(60) PRIMARY KEY,
                           city varchar(40));
+
 
 CREATE TABLE Stadium2 (
                           s_name varchar(40) PRIMARY KEY,

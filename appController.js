@@ -15,8 +15,13 @@ router.get('/check-connection', async (req, res) => {
     }
 });
 
+// selectedTables should be a string list of tables
+// projections should be a string list of selected columns from the tables
+// filter should be a valid string of the where clause
 router.get('/select-table', async (req, res) => {
-    const tableContent = await appService.selectTable(["Stadium2"], ["st_address","city"], 'asd');
+    const {selectedTables, projections, filter} = req.body;
+    const tableContent = await appService.selectTable(["Stadium2"], ["st_address","st_city"],
+        'st_address = \'Building Number: 125 Street: 393 Zone: 74\'');
     res.json({data: tableContent});
 });
 
@@ -292,7 +297,10 @@ router.post("/insert-goalkeeperplayer", async (req, res) => {
 
 router.post("/update-name-demotable", async (req, res) => {
     const { oldName, newName } = req.body;
-    const updateResult = await appService.updateNameDemotable(oldName, newName);
+    const updateResult = await appService.updateNameDemotable("Stadium2", {
+        st_address: oldName,
+        city: newName
+    });
     if (updateResult) {
         res.json({ success: true });
     } else {
