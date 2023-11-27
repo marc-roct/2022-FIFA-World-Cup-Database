@@ -14,18 +14,18 @@
 const tableInsertInputFields = {
     Stadium: ["Name", "address", "capacity", "city"],
     Match: ["matchID", "stadiumName", "result", "date", "time", "phase"],
-    GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
-    PlayIn: ["matchID", "teamID"],
-    Team: ["teamID", "size", "countryName", "managerID"],
     Country: ["name", "ranking"],
     Manager: ["managerID", "name", "age", "nationality"],
-    Funds: ["sponsorID", "teamID"],
+    Team: ["teamID", "size", "countryName", "managerID"],
     Sponsor: ["sponsorID", "name"],
+    Funds: ["sponsorID", "teamID"],
     Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
     Forward: ["playerID", "shots", "goals"],
     Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
     Goalkeeper: ["playerID", "saves"],
-    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"]
+    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
+    PlayIn: ["matchID", "teamID"]
 }
 
 
