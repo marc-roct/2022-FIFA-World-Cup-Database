@@ -341,5 +341,10 @@ router.get('/count-demotable', async (req, res) => {
     }
 });
 
+router.get('/demotable', async (req, res) => {
+    const tableContent = await appService.fetchDemotableFromDb();
+    res.json({data: tableContent});
+});
+
 
 module.exports = router;
