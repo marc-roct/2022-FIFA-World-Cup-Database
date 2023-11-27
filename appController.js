@@ -75,7 +75,7 @@ router.post("/initiate-goaldetailstable", async (req, res) => {
 
 router.post("/insert-goaldetails", async (req, res) => {
     const { goalNumber, matchID, playerID, time, type } = req.body;
-    const insertResult = await appService.insertMatchTable(goalNumber, matchID, playerID, time, type);
+    const insertResult = await appService.insertGoalDetailsTable(goalNumber, matchID, playerID, time, type);
     if (insertResult) {
         res.json({ success: true });
     } else {

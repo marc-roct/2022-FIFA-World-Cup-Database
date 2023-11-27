@@ -119,8 +119,8 @@ async function selectTable(selectedTables, projections, filter) {
 async function initiateStadiumTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE STADIUM2`);
-            await connection.execute(`DROP TABLE STADIUM1`);
+            await connection.execute(`DROP TABLE Stadium2`);
+            await connection.execute(`DROP TABLE Stadium1`);
         } catch (err) {
             console.log('Tables might not exist, proceeding to create...');
         }
@@ -133,6 +133,8 @@ async function initiateStadiumTable() {
             )
         `);
 
+        console.log("Finished creating stadium1");
+
         await connection.execute(`
             CREATE TABLE Stadium2
             (
@@ -143,6 +145,8 @@ async function initiateStadiumTable() {
                     REFERENCES Stadium1 (address)
             )
         `);
+
+        console.log("Finished creating stadium2");
     });
 }
 
@@ -315,7 +319,7 @@ async function initiateCountryTable() {
 async function insertCountryTable(name, ranking) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO TEAM (name, ranking)
+            `INSERT INTO Country (name, ranking)
              VALUES (:name, :ranking)`,
             {name, ranking},
             {autoCommit: true}
