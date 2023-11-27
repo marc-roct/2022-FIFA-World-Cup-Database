@@ -849,6 +849,15 @@ async function countDemotable() {
     });
 }
 
+async function fetchDemotableFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM DEMOTABLE');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
 module.exports = {
     testOracleConnection,
     selectTable,
@@ -873,6 +882,7 @@ module.exports = {
     insertManagerTable,
     insertTeamTable,
     insertGoalDetailsTable,
+    fetchDemotableFromDb,
 
     updateNameDemotable: updateTable,
     countDemotable

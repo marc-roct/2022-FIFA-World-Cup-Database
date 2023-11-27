@@ -17,8 +17,8 @@ const tableInsertInputFields = {
     GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
     PlayIn: ["matchID", "teamID"],
     Team: ["teamID", "size", "countryName", "managerID"],
-    Country: ["name", "ranking", "teamID"],
-    Manager: ["managerID", "name", "age", "nationality", "teamID"],
+    Country: ["name", "ranking"],
+    Manager: ["managerID", "name", "age", "nationality"],
     Funds: ["sponsorID", "teamID"],
     Sponsor: ["sponsorID", "name"],
     Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
@@ -70,7 +70,7 @@ const tableDeleteInputFields = {
     // This function resets or initializes the demotable.
     async function resetDemotable() {
         for (const tableName in tableInsertInputFields) {
-            console.log(tableName);
+            console.log(`/initiate-${tableName.toLowerCase() + "table"}`);
             const response = await fetch(`/initiate-${tableName.toLowerCase() + "table"}`, {
                 method: 'POST'
             });
