@@ -161,7 +161,8 @@ async function performInsertAPI(insertedData) {
             },
             body: JSON.stringify(insertedData),
         })
-        handleInsertDeleteAPIResponse(response);
+        const responseData = await response.json();
+        handleInsertDeleteAPIResponse(responseData);
     } catch (error) {
         console.error("error: " + error);
     }
