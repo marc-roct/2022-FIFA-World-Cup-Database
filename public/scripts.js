@@ -75,7 +75,9 @@ const tableDeleteInputFields = {
                 method: 'POST'
             });
 
-            if (response.success) {
+            const responseData = await response.json();
+
+            if (responseData.success) {
                 const messageElement = document.getElementById('resetResultMsg');
                 messageElement.textContent = tableName + "demotable initiated successfully!";
             } else {
