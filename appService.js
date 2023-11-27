@@ -796,7 +796,6 @@ async function countDemotable() {
 
 module.exports = {
     testOracleConnection,
-    initiateTables,
     selectTable,
     insertPlayerTable,
     insertPlayInTable,
