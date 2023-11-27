@@ -19,7 +19,7 @@ async function displayTable() {
     const projections = [];
     const filters = "";
     const displayParameters = {selectedDropDown, projections, filters};
-    const response = await fetch('/select-table', {
+    const response = await fetch('/demotable', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
