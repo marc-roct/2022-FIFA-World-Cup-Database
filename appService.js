@@ -239,6 +239,57 @@ async function insertMatchTable(matchID, stadiumName, result, matchDate, time, p
     });
 }
 
+async function initiateGoalDetailsTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE GoalDetails`);
+        } catch (err) {
+            console.log('Match tables might not exist, proceeding to create...');
+        }
+
+        await connection.execute(`
+            CREATE TABLE GoalDetails
+            (
+                goalNumber INTEGER,
+                matchID    INTEGER,
+                playerID   INTEGER,
+                time       VARCHAR(255),
+                type       VARCHAR(255),
+                PRIMARY KEY (goalNumber, matchID),
+                FOREIGN KEY (matchID) REFERENCES Match2 (matchID)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    ON DELETE SET NULL
+            )
+        `);
+
+        return true;
+    }).catch((err) => {
+        console.error('Error creating GoalDetails table:', err);
+        return false;
+    });
+}
+
+async function insertGoalDetailsTable(goalNumber, matchID, playerID, time, type) {
+    return await withOracleDB(async (connection) => {
+        try {
+            // Insert into Match1 first because of the foreign key dependency in Match2
+            const result = await connection.execute(
+                `INSERT INTO GoalDetails (goalNumber, matchID, playerID, time, type)
+                 VALUES (:goalNumber, :matchID, :playerID, :time, :type)`,
+                [goalNumber, matchID, playerID, time, type],
+                {autoCommit: true}
+            );
+
+
+            return result.rowsAffected && result.rowsAffected > 0;
+        } catch (err) {
+            console.error('Error in insertGoalDetailsTable:', err);
+            return false;
+        }
+    });
+}
+
 async function initiateCountryTable() {
     return await withOracleDB(async (connection) => {
         try {
@@ -797,6 +848,17 @@ async function countDemotable() {
 module.exports = {
     testOracleConnection,
     selectTable,
+    initiateCountryTable,
+    initiatePlayerTable,
+    initiateMatchTable,
+    initiateStadiumTable,
+    initiatePlayInTable,
+    initiateFundsTable,
+    initiateSponsorTable,
+    initiateManagerTable,
+    initiateGoalDetailsTable,
+    initiateTeamTable,
+
     insertPlayerTable,
     insertPlayInTable,
     insertFundsTable,
@@ -806,6 +868,8 @@ module.exports = {
     insertCountryTable,
     insertManagerTable,
     insertTeamTable,
+    insertGoalDetailsTable,
+
     updateNameDemotable: updateTable,
     countDemotable
 };
