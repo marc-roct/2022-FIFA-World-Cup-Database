@@ -79,7 +79,7 @@ const tableDeleteInputFields = {
                 const messageElement = document.getElementById('resetResultMsg');
                 messageElement.textContent = tableName + "demotable initiated successfully!";
             } else {
-                alert("Error initiating table!");
+                alert("Error initiating the table" + tableName);
             }
         }
     }

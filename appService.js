@@ -125,28 +125,33 @@ async function initiateStadiumTable() {
             console.log('Tables might not exist, proceeding to create...');
         }
 
-        await connection.execute(`
-            CREATE TABLE Stadium1
-            (
-                address VARCHAR(255) PRIMARY KEY,
-                city    VARCHAR(255)
-            )
-        `);
 
-        console.log("Finished creating stadium1");
+            await connection.execute(`
+                CREATE TABLE Stadium1
+                (
+                    address VARCHAR(255) PRIMARY KEY,
+                    city    VARCHAR(255)
+                )
+            `);
 
-        await connection.execute(`
-            CREATE TABLE Stadium2
-            (
-                name     VARCHAR(255) PRIMARY KEY,
-                address  VARCHAR(255),
-                capacity INTEGER,
-                FOREIGN KEY (address)
-                    REFERENCES Stadium1 (address)
-            )
-        `);
+            console.log("Finished creating stadium1");
 
-        console.log("Finished creating stadium2");
+            await connection.execute(`
+                CREATE TABLE Stadium2
+                (
+                    name     VARCHAR(255) PRIMARY KEY,
+                    address  VARCHAR(255),
+                    capacity INTEGER,
+                    FOREIGN KEY (address)
+                        REFERENCES Stadium1 (address)
+                )
+            `);
+
+            console.log("Finished creating stadium2");
+
+    }).catch((err) => {
+        console.error("error creating Stadium tables", err)
+        return false;
     });
 }
 
