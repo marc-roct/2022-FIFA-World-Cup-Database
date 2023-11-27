@@ -45,7 +45,44 @@ const tableDeleteInputFields = {
     Goalkeeper: ["playerID"],
     Defender: ["playerID"]
 }
+    // async function checkDbConnection() {
+    //     const statusElem = document.getElementById('dbStatus');
+    //     const loadingGifElem = document.getElementById('loadingGif');
+    //
+    //     const response = await fetch('/check-db-connection', {
+    //         method: "GET"
+    //     });
+    //
+    //     // Hide the loading GIF once the response is received.
+    //     // loadingGifElem.style.display = 'none';
+    //     // Display the statusElem's text in the placeholder.
+    //     // statusElem.style.display = 'inline';
+    //
+    //     response.text()
+    //         .then((text) => {
+    //             statusElem.textContent = text;
+    //         })
+    //         .catch((error) => {
+    //             statusElem.textContent = 'connection timed out';  // Adjust error handling if required.
+    //         });
+    // }
 
+    // This function resets or initializes the demotable.
+    async function resetDemotable() {
+        for (const tableName in tableInsertInputFields) {
+            console.log(tableName);
+            const response = await fetch(`/initiate-${tableName.toLowerCase() + "table"}`, {
+                method: 'POST'
+            });
+
+            if (response.success) {
+                const messageElement = document.getElementById('resetResultMsg');
+                messageElement.textContent = tableName + "demotable initiated successfully!";
+            } else {
+                alert("Error initiating table!");
+            }
+        }
+    }
 function generateFields(fields, tableFieldsContainer) {
     fields.forEach(function (field) {
         const label = document.createElement("label");
@@ -122,13 +159,13 @@ async function performInsertAPI(insertedData) {
             },
             body: JSON.stringify(insertedData),
         })
-        handleInsertAPIResponse(response);
+        handleInsertDeleteAPIResponse(response);
     } catch (error) {
         console.error("error: " + error);
     }
 }
 
-function handleInsertAPIResponse(responseHandle) {
+function handleInsertDeleteAPIResponse(responseHandle) {
     if (responseHandle.success) {
         console.log("You have successfully added the data");
     } else {
@@ -136,9 +173,33 @@ function handleInsertAPIResponse(responseHandle) {
     }
 }
 
-async function confirmDelete() {
-    //stub
-}
+    function pullDeleteData() {
+        const field = tableDeleteInputFields[document.getElementById("DropDown").value];
+        const dataToDelete = {};
+        dataToDelete[field] = document.querySelector(`[name=${field}]`).value;
+        return dataToDelete;
+    }
+
+    async function confirmDelete() {
+        const dataToDelete = pullDeleteData();
+        await performDeleteAPI(dataToDelete);
+    }
+
+    async function performDeleteAPI(dataToDelete) {
+        try {
+            const dropDown = document.getElementById("DropDown").value;
+            const response = await fetch(`/delete-${dropDown.toLowerCase()}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToDelete),
+            })
+            handleInsertDeleteAPIResponse(response);
+        } catch (error) {
+            console.error("error: " + error);
+        }
+    }
 
 async function confirmUpdate() {
         // stub
@@ -147,4 +208,14 @@ async function confirmUpdate() {
 async function identifySPJ() {
 
 }
+
+    window.onload = function() {
+        // checkDbConnection();
+        const button = document.getElementById("resetDemotable");
+        console.log("got here");
+        if (button != null) {
+            console.log("got here");
+            button.addEventListener("click", resetDemotable);
+        }
+    };
 
