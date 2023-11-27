@@ -112,18 +112,20 @@ function pullInsertData() {
     return insertedData;
 }
 
-function performInsertAPI(insertedData) {
-    const dropDown = document.getElementById("DropDown").value;
-    fetch(`/insert-${dropDown.toLowerCase()}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(insertedData),
-    })
-        .then(response => response.json())
-        .then(responseHandle => handleInsertAPIResponse(responseHandle))
-        .catch(error => console.error('Error: ', error));
+async function performInsertAPI(insertedData) {
+    try {
+        const dropDown = document.getElementById("DropDown").value;
+        const response = await fetch(`/insert-${dropDown.toLowerCase()}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(insertedData),
+        })
+        handleInsertAPIResponse(response);
+    } catch (error) {
+        console.error("error: " + error);
+    }
 }
 
 function handleInsertAPIResponse(responseHandle) {
