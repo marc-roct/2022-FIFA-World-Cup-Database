@@ -64,6 +64,26 @@ router.post("/insert-match", async (req, res) => {
     }
 });
 
+router.post("/initiate-goaldetailstable", async (req, res) => {
+    const initiateResult = await appService.initiateGoalDetailsTable();
+    if (initiateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-goaldetails", async (req, res) => {
+    const { goalNumber, matchID, playerID, time, type } = req.body;
+    const insertResult = await appService.insertMatchTable(goalNumber, matchID, playerID, time, type);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
 router.post("/initiate-countrytable", async (req, res) => {
     const initiateResult = await appService.initiateCountryTable();
     if (initiateResult) {
@@ -241,7 +261,6 @@ router.post("/insert-midfieldplayer", async (req, res) => {
     }
 });
 
-
 router.post("/insert-defenderplayer", async (req, res) => {
     const { playerID, teamID, passes, assists, name, age, tackles, shots, goals, interceptions } = req.body;
 
@@ -269,7 +288,6 @@ router.post("/insert-defenderplayer", async (req, res) => {
         res.status(500).json({ success: false });
     }
 });
-
 
 router.post("/insert-goalkeeperplayer", async (req, res) => {
     const { playerID, teamID, passes, assists, name, age, saves } = req.body;
