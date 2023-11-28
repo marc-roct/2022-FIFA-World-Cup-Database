@@ -193,7 +193,7 @@ async function initiateMatchTable() {
 
         await connection.execute(`
             CREATE TABLE Match1 (
-                "date"  VARCHAR(255) PRIMARY KEY,
+                matchDate  VARCHAR(255) PRIMARY KEY,
                 phase VARCHAR(255)
                                 )
         `);
@@ -205,13 +205,13 @@ async function initiateMatchTable() {
                 matchID     INTEGER PRIMARY KEY,
                 stadiumName VARCHAR(255),
                 result      VARCHAR(255),
-                "date"        VARCHAR(255),
+                matchDate        VARCHAR(255),
                 time        VARCHAR(255),
                 FOREIGN KEY (stadiumName)
                     REFERENCES Stadium2 (name)
                         ON DELETE CASCADE,
-                FOREIGN KEY ("date")
-                    REFERENCES Match1 ("date")
+                FOREIGN KEY (matchDate)
+                    REFERENCES Match1 (matchDate)
                                 )
         `);
 
@@ -228,14 +228,14 @@ async function insertMatchTable(matchID, stadiumName, result, matchDate, time, p
         try {
             // Insert into Match1 first because of the foreign key dependency in Match2
             const result1 = await connection.execute(
-                `INSERT INTO Match1 ("date", phase)
+                `INSERT INTO Match1 (matchDate, phase)
                  VALUES (:matchDate, :phase)`,
                 [matchDate, phase],
                 {autoCommit: false}
             );
 
             const result2 = await connection.execute(
-                `INSERT INTO Match2 (matchID, stadiumName, result, "date", time)
+                `INSERT INTO Match2 (matchID, stadiumName, result, matchDate, time)
                  VALUES (:matchID, :stadiumName, :result, :matchDate, :time)`,
                 [matchID, stadiumName, result, matchDate, time],
                 {autoCommit: true}
