@@ -17,10 +17,10 @@ document.getElementById("confirm-button").addEventListener("click", displayTable
 document.getElementById("DropDown").addEventListener("change", showTableHeaders);
 
 const tableDisplayFields = {
-    StadiumOne: ["address", "city"],
-    StadiumTwo: ["name", "address", "capacity"],
-    MatchOne: ["date", "phase"],
-    MatchTwo: ["stadiumName", "result", "date", "time"],
+    Stadium1: ["address", "city"],
+    Stadium2: ["name", "address", "capacity"],
+    Match1: ["date", "phase"],
+    Match2: ["stadiumName", "result", "date", "time"],
     Country: ["name", "ranking"],
     Manager: ["managerID", "name", "age", "nationality"],
     Team: ["teamID", "size", "countryName", "managerID"],
