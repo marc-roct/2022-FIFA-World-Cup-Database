@@ -83,7 +83,6 @@ router.post("/insert-goaldetails", async (req, res) => {
     }
 });
 
-
 router.post("/initiate-countrytable", async (req, res) => {
     const initiateResult = await appService.initiateCountryTable();
     if (initiateResult) {
@@ -342,62 +341,62 @@ router.get('/count-demotable', async (req, res) => {
 });
 
 router.get('/display-stadiumone', async (req, res) => {
-    const tableContent = await appService.fetchStadium1FromDb();
+    const tableContent = await appService.fetchFromDb('Stadium1');
     res.json({data: tableContent});
 });
 
 router.get('/display-stadiumtwo', async (req, res) => {
-    const tableContent = await appService.fetchStadium2FromDb();
+    const tableContent = await appService.fetchFromDb('Stadium2');
     res.json({data: tableContent});
 });
 
 router.get('/display-matchone', async (req, res) => {
-    const tableContent = await appService.fetchMatch1FromDb();
+    const tableContent = await appService.fetchFromDb('Match1');
     res.json({data: tableContent});
 });
 
 router.get('/display-matchtwo', async (req, res) => {
-    const tableContent = await appService.fetchMatch2FromDb();
+    const tableContent = await appService.fetchFromDb('Match2');
     res.json({data: tableContent});
 });
 
 router.get('/display-country', async (req, res) => {
-    const tableContent = await appService.fetchCountryFromDb();
+    const tableContent = await appService.fetchFromDb('Country');
     res.json({data: tableContent});
 });
 
 router.get('/display-manager', async (req, res) => {
-    const tableContent = await appService.fetchManagerFromDb();
+    const tableContent = await appService.fetchFromDb('Manager');
     res.json({data: tableContent});
 });
 
 router.get('/display-team', async (req, res) => {
-    const tableContent = await appService.fetchTeamFromDb();
+    const tableContent = await appService.fetchFromDb('Team');
     res.json({data: tableContent});
 });
 
 router.get('/display-sponsor', async (req, res) => {
-    const tableContent = await appService.fetchSponsorFromDb();
+    const tableContent = await appService.fetchFromDb('Sponsor');
     res.json({data: tableContent});
 });
 
 router.get('/display-funds', async (req, res) => {
-    const tableContent = await appService.fetchFundsFromDb();
+    const tableContent = await appService.fetchFromDb('Funds');
     res.json({data: tableContent});
 });
 
 router.get('/display-player', async (req, res) => {
-    const tableContent = await appService.fetchPlayerFromDb();
+    const tableContent = await appService.fetchFromDb('Player');
     res.json({data: tableContent});
 });
 
 router.get('/display-goalDetails', async (req, res) => {
-    const tableContent = await appService.fetchGoalDetailsFromDb();
+    const tableContent = await appService.fetchFromDb('GoalDetails');
     res.json({data: tableContent});
 });
 
 router.get('/display-playIn', async (req, res) => {
-    const tableContent = await appService.fetchPlayInFromDb();
+    const tableContent = await appService.fetchFromDb('PlayIn');
     res.json({data: tableContent});
 });
 

@@ -38,6 +38,7 @@ async function displayTable() {
     const selectedDropDown = document.getElementById("DropDown").value;
     const tableElement = document.getElementById('displayTable')
     const tableBody = tableElement.querySelector('tbody');
+
     const response = await fetch(`/display-${selectedDropDown.toLowerCase()}`, {
         method: 'GET'
     });
@@ -50,11 +51,11 @@ async function displayTable() {
         tableBody.innerHTML = '';
     }
 
-    tableContent.forEach(user => {
+    tableContent.forEach(rowData => {
         const row = tableBody.insertRow();
         allFields.forEach(field => {
             const cell = row.insertCell();
-            cell.textContent = user[field];
+            cell.textContent = rowData[field];
         });
     });
 }
