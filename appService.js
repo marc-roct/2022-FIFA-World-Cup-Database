@@ -119,8 +119,10 @@ async function selectTable(selectedTables, projections, filter) {
 async function initiateStadiumTable() {
     return await withOracleDB(async (connection) => {
         try {
+            console.log('Trying to Drop Stadium 2 and then 1');
             await connection.execute(`DROP TABLE Stadium2`);
             await connection.execute(`DROP TABLE Stadium1`);
+            console.log('Trying to Drop Stadium 2 and then 1');
         } catch (err) {
             console.log('Stadium Tables might not exist, proceeding to create...');
         }
@@ -348,7 +350,7 @@ async function initiateManagerTable() {
         const result = await connection.execute(`
             CREATE TABLE Manager
             (
-                managerID   integer PRIMARY KEY,
+                managerID   INTEGER PRIMARY KEY,
                 name        VARCHAR(255),
                 age         INTEGER,
                 nationality VARCHAR(255)
@@ -392,7 +394,7 @@ async function initiateTeamTable() {
                 teamID INTEGER PRIMARY KEY,
                 "size" INTEGER,
                 countryName VARCHAR(255),
-                managerID VARCHAR(255),
+                managerID INTEGER,
                 FOREIGN KEY (countryName)
                     REFERENCES Country (name)
                         ON DELETE CASCADE,
