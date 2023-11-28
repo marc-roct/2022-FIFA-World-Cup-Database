@@ -321,7 +321,7 @@ async function initiateCountryTable() {
             CREATE TABLE Country
             (
                 name    VARCHAR(255) PRIMARY KEY,
-                ranking INTEGER
+                ranking INTEGER UNIQUE
             )
         `);
         return true;
