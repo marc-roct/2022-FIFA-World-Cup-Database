@@ -36,8 +36,8 @@ router.post("/initiate-stadiumtable", async (req, res) => {
 });
 
 router.post("/insert-stadium", async (req, res) => {
-    const { name, address, city, capacity } = req.body;
-    const insertResult = await appService.insertStadiumTable(name, address, city, capacity);
+    const { name, address, capacity, city } = req.body;
+    const insertResult = await appService.insertStadiumTable(name, address, capacity, city);
     if (insertResult) {
         res.json({ success: true });
     } else {
