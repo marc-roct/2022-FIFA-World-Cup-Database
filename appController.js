@@ -207,7 +207,7 @@ router.post("/initiate-playertable", async (req, res) => {
     }
 });
 
-router.post("/insert-forwardplayer", async (req, res) => {
+router.post("/insert-forward", async (req, res) => {
     const { playerID, teamID, passes, assists, name, age, shots, goals } = req.body;
 
     let playerData = {
@@ -233,7 +233,7 @@ router.post("/insert-forwardplayer", async (req, res) => {
     }
 });
 
-router.post("/insert-midfieldplayer", async (req, res) => {
+router.post("/insert-midfield", async (req, res) => {
     const { playerID, teamID, passes, assists, name, age, tackles, shots, goals, interceptions } = req.body;
 
     let playerData = {
@@ -261,7 +261,7 @@ router.post("/insert-midfieldplayer", async (req, res) => {
     }
 });
 
-router.post("/insert-defenderplayer", async (req, res) => {
+router.post("/insert-defender", async (req, res) => {
     const { playerID, teamID, passes, assists, name, age, tackles, shots, goals, interceptions } = req.body;
 
     let playerData = {
@@ -289,7 +289,7 @@ router.post("/insert-defenderplayer", async (req, res) => {
     }
 });
 
-router.post("/insert-goalkeeperplayer", async (req, res) => {
+router.post("/insert-goalkeeper", async (req, res) => {
     const { playerID, teamID, passes, assists, name, age, saves } = req.body;
 
     let playerData = {
