@@ -127,16 +127,11 @@ async function initiateStadiumTable() {
 
 
             await connection.execute(`
-                CREATE TABLE Stadium1
-                (
+                CREATE TABLE Stadium1 (
                     address VARCHAR(255) PRIMARY KEY,
                     city    VARCHAR(255)
-                )
-            `);
+                );
 
-            console.log("Finished creating stadium1");
-
-            await connection.execute(`
                 CREATE TABLE Stadium2
                 (
                     name     VARCHAR(255) PRIMARY KEY,
@@ -144,10 +139,11 @@ async function initiateStadiumTable() {
                     capacity INTEGER,
                     FOREIGN KEY (address)
                         REFERENCES Stadium1 (address)
-                )
+                );
             `);
 
-            console.log("Finished creating stadium2");
+            console.log("Finished creating stadium");
+            return true;
 
     }).catch((err) => {
         console.error("error creating Stadium tables", err)
@@ -193,25 +189,23 @@ async function initiateMatchTable() {
         await connection.execute(`
             CREATE TABLE Match1
             (
-                date  VARCHAR(255) PRIMARY KEY,
+                "date"  VARCHAR(255) PRIMARY KEY,
                 phase VARCHAR(255)
-            )
-        `);
+            );
 
-        await connection.execute(`
             CREATE TABLE Match2
             (
                 matchID     INTEGER PRIMARY KEY,
                 stadiumName VARCHAR(255),
                 result      VARCHAR(255),
-                date        VARCHAR(255),
+                "date"        VARCHAR(255),
                 time        VARCHAR(255),
                 FOREIGN KEY (stadiumName)
                     REFERENCES Stadium2 (name)
                         ON DELETE CASCADE,
-                FOREIGN KEY (date)
-                    REFERENCES Match1 (date)
-            )
+                FOREIGN KEY ("date")
+                    REFERENCES Match1 ("date")
+            );
         `);
 
         return true;
