@@ -410,12 +410,12 @@ async function initiateTeamTable() {
     });
 }
 
-async function insertTeamTable(teamID, size, countryName, managerID) {
+async function insertTeamTable(teamID, teamSize, countryName, managerID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO TEAM (teamID, size, countryName, managerID)
-             VALUES (:teamID, :size, :countryName, :managerID)`,
-            {teamID, size, countryName, managerID},
+            `INSERT INTO TEAM (teamID, "size", countryName, managerID)
+             VALUES (:teamID, :teamSize, :countryName, :managerID)`,
+            {teamID, teamSize, countryName, managerID},
             {autoCommit: true}
         );
 
