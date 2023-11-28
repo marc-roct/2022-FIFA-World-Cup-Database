@@ -87,6 +87,7 @@ async function showDeleteFields() {
 }
 
 async function showUpdateFields() {
+    console.log('heyooo');
     const selectedDropDown = document.getElementById("DropDown").value;
     const tableFieldsContainer = document.getElementById("inputFields")
     tableFieldsContainer.innerHTML = "";
@@ -112,6 +113,15 @@ function pullInsertData() {
     return insertedData;
 }
 
+function pullUpdateData() {
+    const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
+    let updateData = {};
+    allFields.forEach(function (field) {
+        updateData[field] = document.querySelector("[name=${field}]");
+    });
+    return updateData;
+}
+
 function performInsertAPI(insertedData) {
     fetch(`/insert-${dropDown.toLowerCase()}`, {
         method: 'POST',
@@ -122,6 +132,25 @@ function performInsertAPI(insertedData) {
     })
         .then(response => response.json())
         .then(responseHandle => handleInsertAPIResponse(responseHandle))
+        .catch(error => console.error('Error: ', error));
+}
+
+function performUpdateAPI(selectedTable, updateData) {
+    fetch(`/update-table`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: {selectedTable: selectedTable,
+            args: JSON.stringify(updateData)},
+    })
+        .then(response => {
+            if (response.json().success) {
+                console.log("You have successfully updated the data");
+            } else {
+                console.log("Unfortunately, update is unsuccessful");
+            }
+        })
         .catch(error => console.error('Error: ', error));
 }
 
@@ -138,7 +167,24 @@ async function confirmDelete() {
 }
 
 async function confirmUpdate() {
-        // stub
+    const updateData = pullUpdateData();
+    const selectedTable = document.getElementById("DropDown").value;
+
+    const response = await fetch(`/update-table`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: {selectedTable: selectedTable,
+            args: JSON.stringify(updateData)},
+    });
+
+    const responseData = await response.json();
+    if (responseData.success) {
+        console.log("You have successfully updated the data");
+    } else {
+        console.log("Update was unsuccessful");
+    }
 }
 
 async function identifySPJ() {

@@ -295,12 +295,9 @@ router.post("/insert-goalkeeperplayer", async (req, res) => {
     }
 });
 
-router.post("/update-name-demotable", async (req, res) => {
-    const { oldName, newName } = req.body;
-    const updateResult = await appService.updateNameDemotable("Stadium2", {
-        st_address: oldName,
-        city: newName
-    });
+router.post("/update-table", async (req, res) => {
+    const { selectedTable, args } = req.body;
+    const updateResult = await appService.updateTable(selectedTable, args);
     if (updateResult) {
         res.json({ success: true });
     } else {

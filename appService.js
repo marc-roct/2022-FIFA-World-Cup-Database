@@ -115,7 +115,7 @@ async function selectTable(selectedTables, projections, filter) {
 // BELOW HERE ARE ALL THE INITIATE AND INSERT FUNCTIONS
 //
 
-export async function initiateStadiumTable() {
+async function initiateStadiumTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE STADIUM2`);
@@ -145,7 +145,7 @@ export async function initiateStadiumTable() {
     });
 }
 
-export async function insertStadiumTable(name, address, city, capacity) {
+ async function insertStadiumTable(name, address, city, capacity) {
     return await withOracleDB(async (connection) => {
 
         const result1 = await connection.execute(
@@ -170,7 +170,7 @@ export async function insertStadiumTable(name, address, city, capacity) {
     });
 }
 
-export async function initiateMatchTable() {
+ async function initiateMatchTable() {
     return await withOracleDB(async (connection) => {
         try {
             // Drop Match2 first due to its dependency on Match1
@@ -212,7 +212,7 @@ export async function initiateMatchTable() {
     });
 }
 
-export async function insertMatchTable(matchID, stadiumName, result, matchDate, time, phase) {
+ async function insertMatchTable(matchID, stadiumName, result, matchDate, time, phase) {
     return await withOracleDB(async (connection) => {
         try {
             // Insert into Match1 first because of the foreign key dependency in Match2
@@ -239,7 +239,7 @@ export async function insertMatchTable(matchID, stadiumName, result, matchDate, 
     });
 }
 
-export async function initiateCountryTable() {
+ async function initiateCountryTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE COUNTRY`);
@@ -261,7 +261,7 @@ export async function initiateCountryTable() {
     });
 }
 
-export async function insertCountryTable(name, ranking) {
+ async function insertCountryTable(name, ranking) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO TEAM (name, ranking)
@@ -277,7 +277,7 @@ export async function insertCountryTable(name, ranking) {
     });
 }
 
-export async function initiateManagerTable() {
+ async function initiateManagerTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE MANAGER`);
@@ -302,7 +302,7 @@ export async function initiateManagerTable() {
     });
 }
 
-export async function insertManagerTable(managerID, name, age, nationality) {
+ async function insertManagerTable(managerID, name, age, nationality) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO MANAGER (managerID, name, age, nationality)
@@ -318,7 +318,7 @@ export async function insertManagerTable(managerID, name, age, nationality) {
     });
 }
 
-export async function initiateTeamTable() {
+ async function initiateTeamTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE TEAM`);
@@ -348,7 +348,7 @@ export async function initiateTeamTable() {
     });
 }
 
-export async function insertTeamTable(teamID, size, countryName, managerID) {
+ async function insertTeamTable(teamID, size, countryName, managerID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO TEAM (teamID, size, countryName, managerID)
@@ -364,7 +364,7 @@ export async function insertTeamTable(teamID, size, countryName, managerID) {
     });
 }
 
-export async function initiatePlayInTable() {
+ async function initiatePlayInTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE PlayIn`);
@@ -395,7 +395,7 @@ export async function initiatePlayInTable() {
     });
 }
 
-export async function insertPlayInTable(matchID, teamID) {
+ async function insertPlayInTable(matchID, teamID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO PlayIn (matchID, teamID)
@@ -411,7 +411,7 @@ export async function insertPlayInTable(matchID, teamID) {
     });
 }
 
-export async function initiateSponsorTable() {
+ async function initiateSponsorTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE Sponsor`);
@@ -433,7 +433,7 @@ export async function initiateSponsorTable() {
     });
 }
 
-export async function insertSponsorTable(sponsorID, name) {
+ async function insertSponsorTable(sponsorID, name) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO Sponsor (sponsorID, name)
@@ -449,7 +449,7 @@ export async function insertSponsorTable(sponsorID, name) {
     });
 }
 
-export async function initiateFundsTable() {
+ async function initiateFundsTable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE Funds`);
@@ -474,7 +474,7 @@ export async function initiateFundsTable() {
     });
 }
 
-export async function insertFundsTable(sponsorID, teamID) {
+ async function insertFundsTable(sponsorID, teamID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO Sponsor (sponsorID, teamID)
@@ -490,7 +490,7 @@ export async function insertFundsTable(sponsorID, teamID) {
     });
 }
 
-export async function initiatePlayerTable() {
+ async function initiatePlayerTable() {
     return await withOracleDB(async (connection) => {
         try {
             // Drop subclass tables first due to foreign key dependencies
@@ -572,7 +572,7 @@ export async function initiatePlayerTable() {
     });
 }
 
-export async function insertPlayerTable(playerType, playerData, subclassData) {
+ async function insertPlayerTable(playerType, playerData, subclassData) {
     return await withOracleDB(async (connection) => {
         try {
             // Insert into Player table
@@ -799,9 +799,25 @@ async function countDemotable() {
 
 module.exports = {
     testOracleConnection,
-    initiateTables,
     selectTable,
-    insertDemotable,
-    updateNameDemotable: updateTable,
-    countDemotable
+    updateTable,
+    countDemotable,
+    initiateStadiumTable,
+    insertStadiumTable,
+    initiateMatchTable,
+    insertMatchTable,
+    initiateCountryTable,
+    insertCountryTable,
+    initiateManagerTable,
+    insertManagerTable,
+    initiateTeamTable,
+    insertTeamTable,
+    initiatePlayInTable,
+    insertPlayInTable,
+    initiateSponsorTable,
+    insertSponsorTable,
+    initiateFundsTable,
+    insertFundsTable,
+    initiatePlayerTable,
+    insertPlayerTable
 };
