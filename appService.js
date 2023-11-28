@@ -537,7 +537,7 @@ async function initiateFundsTable() {
 async function insertFundsTable(sponsorID, teamID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO Sponsor (sponsorID, teamID)
+            `INSERT INTO Funds (sponsorID, teamID)
              VALUES (:sponsorID, :teamID)`,
             {sponsorID, teamID},
             {autoCommit: true}
