@@ -14,7 +14,7 @@ const dbConfig = {
 const dbTables = new Map();
 dbTables.set('Stadium1', {p:['address'], a:['city']});
 dbTables.set('Stadium2', {p:['s_name'],a:['address','s_capacity']});
-dbTables.set('Match2', {p:['DATE'],a:['phase']});
+dbTables.set('Match1', {p:['DATE'],a:['phase']});
 dbTables.set('Match2', {p:['matchID'],a:['stadiumName','m_result','DATE','m_time']});
 dbTables.set('Country', {p:['c_name'],a:['ranking','teamID']});
 dbTables.set('Manager', {p:['managerID'],a:['mng_name','age','nationality','teamID']});
@@ -852,14 +852,115 @@ async function countDemotable() {
     });
 }
 
-async function fetchDemotableFromDb() {
+async function fetchStadium1FromDb() {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM DEMOTABLE');
+        const result = await connection.execute('SELECT * FROM Stadium1');
         return result.rows;
     }).catch(() => {
         return [];
     });
 }
+
+async function fetchStadium2FromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Stadium2');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchMatch1FromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Match1');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchMatch2FromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Match2');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchCountryFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Country');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchManagerFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Manager');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchTeamFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Team');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchPlayerFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Player');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchGoalDetailsFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM GoalDetails');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchPlayInFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM PlayIn');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchFundsFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Funds');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchSponsorFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Sponsor');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+
 
 module.exports = {
     testOracleConnection,
@@ -885,7 +986,18 @@ module.exports = {
     insertManagerTable,
     insertTeamTable,
     insertGoalDetailsTable,
-    fetchDemotableFromDb,
+    fetchStadium1FromDb,
+    fetchStadium2FromDb,
+    fetchMatch1FromDb,
+    fetchMatch2FromDb,
+    fetchCountryFromDb,
+    fetchManagerFromDb,
+    fetchTeamFromDb,
+    fetchPlayerFromDb,
+    fetchGoalDetailsFromDb,
+    fetchPlayInFromDb,
+    fetchFundsFromDb,
+    fetchSponsorFromDb,
 
     updateNameDemotable: updateTable,
     countDemotable

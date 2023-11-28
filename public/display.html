@@ -10,8 +10,10 @@
     <label>Choose a table to insert element:</label>
     <label>
         <select id="DropDown" onchange="displayTable()">
-            <option value="Stadium">Stadium</option>
-            <option value="Match">Match</option>
+            <option value="StadiumOne">Stadium</option>
+            <option value="StadiumTwo">Stadium</option>
+            <option value="MatchOne">Match</option>
+            <option value="MatchTwo">Match</option>
             <option value="GoalDetails">GoalDetails</option>
             <option value="PlayIn">PlayIn</option>
             <option value="Team">Team</option>
@@ -32,10 +34,12 @@
 <!-- Show 'Demotable'.
     Data will be fetched and inserted here dynamically using JavaScript. -->
 <h2>Show Demotable</h2>
-<table id="demotable" border="1">
+<table id="displayTable" border="1">
     <thead>
     <tr>
-        <div id="result-table"></div>
+        <!--Table head, need to be adjusted accordingly to align with your own.-->
+        <th>ID</th>
+        <th>Name</th>
     </tr>
     </thead>
     <tbody>

@@ -341,8 +341,63 @@ router.get('/count-demotable', async (req, res) => {
     }
 });
 
-router.get('/demotable', async (req, res) => {
-    const tableContent = await appService.fetchDemotableFromDb();
+router.get('/display-stadiumone', async (req, res) => {
+    const tableContent = await appService.fetchStadium1FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-stadiumtwo', async (req, res) => {
+    const tableContent = await appService.fetchStadium2FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-matchone', async (req, res) => {
+    const tableContent = await appService.fetchMatch1FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-matchtwo', async (req, res) => {
+    const tableContent = await appService.fetchMatch2FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-country', async (req, res) => {
+    const tableContent = await appService.fetchCountryFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-manager', async (req, res) => {
+    const tableContent = await appService.fetchManagerFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-team', async (req, res) => {
+    const tableContent = await appService.fetchTeamFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-sponsor', async (req, res) => {
+    const tableContent = await appService.fetchSponsorFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-funds', async (req, res) => {
+    const tableContent = await appService.fetchFundsFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-player', async (req, res) => {
+    const tableContent = await appService.fetchPlayerFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-goalDetails', async (req, res) => {
+    const tableContent = await appService.fetchGoalDetailsFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-playIn', async (req, res) => {
+    const tableContent = await appService.fetchPlayInFromDb();
     res.json({data: tableContent});
 });
 
