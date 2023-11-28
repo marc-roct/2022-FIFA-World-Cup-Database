@@ -13,6 +13,26 @@
 //     }
 //
 // }
+document.getElementById("confirm-button").addEventListener("click", displayTable);
+
+const tableDisplayFields = {
+    StadiumOne: ["address", "city"],
+    StadiumTwo: ["name", "address", "capacity"],
+    MatchOne: ["date", "phase"],
+    MatchTwo: ["stadiumName", "result", "date", "time"],
+    Country: ["name", "ranking"],
+    Manager: ["managerID", "name", "age", "nationality"],
+    Team: ["teamID", "size", "countryName", "managerID"],
+    Sponsor: ["sponsorID", "name"],
+    Funds: ["sponsorID", "teamID"],
+    Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
+    GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
+    PlayIn: ["matchID", "teamID"],
+    Forward: ["playerID", "shots", "goals"],
+    Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    Goalkeeper: ["playerID", "saves"],
+    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
+}
 
 async function displayTable() {
     const selectedDropDown = document.getElementById("DropDown").value;
@@ -35,5 +55,26 @@ async function displayTable() {
             const cell = row.insertCell(index);
             cell.textContent = field;
         });
+    });
+}
+
+async function showTableHeaders() {
+    const selectedDropDown = document.getElementById("DropDown").value;
+    const tableFieldsHolder = document.getElementById("tableHeadFields");
+    tableFieldsHolder.innerHTML = "";
+    const allFields = tableDisplayFields[selectedDropDown];
+    generateHeaders(allFields, tableFieldsHolder);
+    // const confirmButton = document.createElement("button");
+    // confirmButton.type = "button";
+    // confirmButton.textContent = "Confirm";
+    // confirmButton.addEventListener("click", displayTable);
+    // tableFieldsHolder.appendChild(confirmButton);
+}
+
+function generateHeaders(fields, tableFieldsHolder) {
+    fields.forEach(function (field) {
+        const header = document.createElement("th");
+        header.textContent = field;
+        tableFieldsHolder.appendChild(header);
     });
 }
