@@ -44,6 +44,7 @@ async function displayTable() {
 
     const responseData = await response.json();
     const tableContent = responseData.data;
+    const allFields = tableDisplayFields[selectedDropDown];
 
     if (tableBody) {
         tableBody.innerHTML = '';
@@ -51,9 +52,9 @@ async function displayTable() {
 
     tableContent.forEach(user => {
         const row = tableBody.insertRow();
-        user.forEach((field, index) => {
-            const cell = row.insertCell(index);
-            cell.textContent = field;
+        allFields.forEach(field => {
+            const cell = row.insertCell();
+            cell.textContent = user[field];
         });
     });
 }
@@ -64,6 +65,7 @@ async function showTableHeaders() {
     tableFieldsHolder.innerHTML = "";
     const allFields = tableDisplayFields[selectedDropDown];
     generateHeaders(allFields, tableFieldsHolder);
+
     // const confirmButton = document.createElement("button");
     // confirmButton.type = "button";
     // confirmButton.textContent = "Confirm";
@@ -72,9 +74,11 @@ async function showTableHeaders() {
 }
 
 function generateHeaders(fields, tableFieldsHolder) {
+    const tableRow = document.createElement("tr");
     fields.forEach(function (field) {
         const header = document.createElement("th");
         header.textContent = field;
         tableFieldsHolder.appendChild(header);
     });
+    tableFieldsHolder.appendChild(tableRow);
 }
