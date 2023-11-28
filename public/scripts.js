@@ -211,7 +211,8 @@ function handleInsertDeleteAPIResponse(responseHandle) {
                 },
                 body: JSON.stringify(dataToDelete),
             })
-            handleInsertDeleteAPIResponse(response);
+            const responseJson = response.json();
+            handleInsertDeleteAPIResponse(responseJson);
         } catch (error) {
             console.error("error: " + error);
         }
