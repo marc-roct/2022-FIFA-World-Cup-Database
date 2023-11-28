@@ -14,6 +14,7 @@
 //
 // }
 document.getElementById("confirm-button").addEventListener("click", displayTable);
+document.getElementById("DropDown").addEventListener("change", showTableHeaders);
 
 const tableDisplayFields = {
     StadiumOne: ["address", "city"],
@@ -47,9 +48,8 @@ async function displayTable() {
     const tableContent = responseData.data;
     const allFields = tableDisplayFields[selectedDropDown];
 
-    if (tableBody) {
-        tableBody.innerHTML = '';
-    }
+    tableBody.innerHTML = '';
+
 
     tableContent.forEach(rowData => {
         const row = tableBody.insertRow();
@@ -62,24 +62,21 @@ async function displayTable() {
 
 async function showTableHeaders() {
     const selectedDropDown = document.getElementById("DropDown").value;
-    const tableFieldsHolder = document.getElementById("tableHeadFields");
-    tableFieldsHolder.innerHTML = "";
+    const tableHead = document.getElementById("tableHeadFields");
+    tableHead.innerHTML = "";
     const allFields = tableDisplayFields[selectedDropDown];
-    generateHeaders(allFields, tableFieldsHolder);
+    generateHeaders(allFields, tableHead);
 
-    // const confirmButton = document.createElement("button");
-    // confirmButton.type = "button";
-    // confirmButton.textContent = "Confirm";
-    // confirmButton.addEventListener("click", displayTable);
-    // tableFieldsHolder.appendChild(confirmButton);
 }
 
-function generateHeaders(fields, tableFieldsHolder) {
+function generateHeaders(fields, tableHead) {
     const tableRow = document.createElement("tr");
     fields.forEach(function (field) {
         const header = document.createElement("th");
         header.textContent = field;
-        tableFieldsHolder.appendChild(header);
+        tableRow.appendChild(header);
     });
-    tableFieldsHolder.appendChild(tableRow);
+    tableHead.appendChild(tableRow);
 }
+
+window.onload = showTableHeaders;
