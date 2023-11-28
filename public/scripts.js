@@ -12,7 +12,7 @@
  * 
  */
 const tableInsertInputFields = {
-    Stadium: ["Name", "address", "capacity", "city"],
+    Stadium: ["name", "address", "capacity", "city"],
     Match: ["matchID", "stadiumName", "result", "date", "time", "phase"],
     Country: ["name", "ranking"],
     Manager: ["managerID", "name", "age", "nationality"],
@@ -29,7 +29,7 @@ const tableInsertInputFields = {
 }
 
     const tableResetFields = {
-        Stadium: ["Name", "address", "capacity", "city"],
+        Stadium: ["name", "address", "capacity", "city"],
         Match: ["matchID", "stadiumName", "result", "date", "time", "phase"],
         Country: ["name", "ranking"],
         Manager: ["managerID", "name", "age", "nationality"],
