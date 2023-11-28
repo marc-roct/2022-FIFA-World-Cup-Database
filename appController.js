@@ -340,65 +340,15 @@ router.get('/count-demotable', async (req, res) => {
     }
 });
 
-router.get('/display-stadiumone', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Stadium1');
-    res.json({data: tableContent});
+router.get('/display/:tableName', async (req, res) => {
+    const tableName = req.params.tableName;
+    try {
+        const tableContent = await appService.fetchFromDb(tableName);
+        res.json({ data: tableContent });
+    } catch (error) {
+        console.error(`Error fetching data from ${tableName}:`, error);
+        res.status(500).json({ message: `Error fetching data from ${tableName}` });
+    }
 });
-
-router.get('/display-stadiumtwo', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Stadium2');
-    res.json({data: tableContent});
-});
-
-router.get('/display-matchone', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Match1');
-    res.json({data: tableContent});
-});
-
-router.get('/display-matchtwo', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Match2');
-    res.json({data: tableContent});
-});
-
-router.get('/display-country', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Country');
-    res.json({data: tableContent});
-});
-
-router.get('/display-manager', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Manager');
-    res.json({data: tableContent});
-});
-
-router.get('/display-team', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Team');
-    res.json({data: tableContent});
-});
-
-router.get('/display-sponsor', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Sponsor');
-    res.json({data: tableContent});
-});
-
-router.get('/display-funds', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Funds');
-    res.json({data: tableContent});
-});
-
-router.get('/display-player', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('Player');
-    res.json({data: tableContent});
-});
-
-router.get('/display-goalDetails', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('GoalDetails');
-    res.json({data: tableContent});
-});
-
-router.get('/display-playIn', async (req, res) => {
-    const tableContent = await appService.fetchFromDb('PlayIn');
-    res.json({data: tableContent});
-});
-
 
 module.exports = router;

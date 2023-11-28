@@ -40,22 +40,25 @@ async function displayTable() {
     const tableElement = document.getElementById('displayTable')
     const tableBody = tableElement.querySelector('tbody');
 
-    const response = await fetch(`/display-${selectedDropDown.toLowerCase()}`, {
+    const response = await fetch(`/display/${selectedDropDown.toLowerCase()}`, {
         method: 'GET'
     });
 
     const responseData = await response.json();
+    console.log("Response Data:", responseData); // Debug log
+
     const tableContent = responseData.data;
     const allFields = tableDisplayFields[selectedDropDown];
 
     tableBody.innerHTML = '';
 
 
-    tableContent.forEach(rowData => {
+    tableContent.forEach(rowArray => {
         const row = tableBody.insertRow();
-        allFields.forEach(field => {
+        rowArray.forEach((cellData, index) => {
             const cell = row.insertCell();
-            cell.textContent = rowData[field];
+            cell.textContent = cellData;
+            console.log(`Column: ${allFields[index]}, Value: ${cellData}`); // Debug log
         });
     });
 }
