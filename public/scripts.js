@@ -28,6 +28,19 @@ const tableInsertInputFields = {
     PlayIn: ["matchID", "teamID"]
 }
 
+    const tableResetFields = {
+        Stadium: ["Name", "address", "capacity", "city"],
+        Match: ["matchID", "stadiumName", "result", "date", "time", "phase"],
+        Country: ["name", "ranking"],
+        Manager: ["managerID", "name", "age", "nationality"],
+        Team: ["teamID", "size", "countryName", "managerID"],
+        Sponsor: ["sponsorID", "name"],
+        Funds: ["sponsorID", "teamID"],
+        Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
+        GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
+        PlayIn: ["matchID", "teamID"]
+    }
+
 
 const tableDeleteInputFields = {
     Stadium: ["Name"],
@@ -69,7 +82,7 @@ const tableDeleteInputFields = {
 
     // This function resets or initializes the demotable.
     async function resetDemotable() {
-        for (const tableName in tableInsertInputFields) {
+        for (const tableName in tableResetFields) {
             console.log(`/initiate-${tableName.toLowerCase() + "table"}`);
             const response = await fetch(`/initiate-${tableName.toLowerCase() + "table"}`, {
                 method: 'POST'
@@ -161,7 +174,8 @@ async function performInsertAPI(insertedData) {
             },
             body: JSON.stringify(insertedData),
         })
-        handleInsertDeleteAPIResponse(response);
+        const responseData = await response.json();
+        handleInsertDeleteAPIResponse(responseData);
     } catch (error) {
         console.error("error: " + error);
     }
