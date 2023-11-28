@@ -159,12 +159,20 @@ async function initiateStadiumTable() {
 async function insertStadiumTable(name, address, capacity, city) {
     return await withOracleDB(async (connection) => {
 
-        const result1 = await connection.execute(
-            `INSERT INTO STADIUM1 (address, city)
-             VALUES (:address, :city)`,
-            {address, city},
-            {autoCommit: false}
+        const checkResult = await connection.execute(
+            `SELECT * FROM Stadium1 WHERE address = :address`,
+            {address}
         );
+
+        if (checkResult.rows.length === 0) {
+
+            await connection.execute(
+                `INSERT INTO STADIUM1 (address, city)
+                 VALUES (:address, :city)`,
+                {address, city},
+                {autoCommit: false}
+            );
+        }
 
         const result2 = await connection.execute(
             `INSERT INTO STADIUM2 (name, address, capacity)
@@ -173,7 +181,7 @@ async function insertStadiumTable(name, address, capacity, city) {
             {autoCommit: true}
         );
 
-        return result1.rowsAffected && result1.rowsAffected > 0 && result2.rowsAffected && result2.rowsAffected > 0;
+        return result2.rowsAffected && result2.rowsAffected > 0;
     }).catch(async (err) => {
         console.error('Error in insertStadiumTables:', err);
         // await connection.rollback(); // Rollback in case of error
