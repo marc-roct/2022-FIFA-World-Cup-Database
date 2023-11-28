@@ -383,25 +383,26 @@ async function initiateTeamTable() {
         try {
             await connection.execute(`DROP TABLE TEAM`);
         } catch (err) {
-            console.log('Table might not exist, proceeding to create...');
+            console.log('Team table might not exist, proceeding to create...');
         }
 
-        const result = await connection.execute(`
-            CREATE TABLE Team
-            (
-                teamID      INTEGER PRIMARY KEY,
-                Size        INTEGER,
-                countryName VARCHAR(100),
-                managerID   VARCHAR(100),
+        console.log('trying to create Team table');
+        await connection.execute(`
+            CREATE TABLE Team (
+                teamID INTEGER PRIMARY KEY,
+                "size" INTEGER,
+                countryName VARCHAR(255),
+                managerID VARCHAR(255),
                 FOREIGN KEY (countryName)
                     REFERENCES Country (name)
                         ON DELETE CASCADE,
                 FOREIGN KEY (managerID)
                     REFERENCES Manager (managerID)
                         ON DELETE CASCADE
-            )
+                              )
         `);
         return true;
+
     }).catch((err) => {
         console.error('Error creating Team table:', err);
         return false;
@@ -433,8 +434,7 @@ async function initiatePlayInTable() {
         }
 
         await connection.execute(`
-            CREATE TABLE PlayIn
-            (
+            CREATE TABLE PlayIn (
                 matchID INTEGER,
                 teamID  INTEGER,
                 PRIMARY KEY (matchID, teamID),
@@ -444,7 +444,7 @@ async function initiatePlayInTable() {
                 FOREIGN KEY (teamID)
                     REFERENCES Team (teamID)
                         ON DELETE CASCADE
-            )
+                                )
         `);
         return true;
     }).catch((err) => {
