@@ -122,15 +122,14 @@ async function initiateStadiumTable() {
             await connection.execute(`DROP TABLE Stadium2`);
             await connection.execute(`DROP TABLE Stadium1`);
         } catch (err) {
-            console.log('Tables might not exist, proceeding to create...');
+            console.log('Stadium Tables might not exist, proceeding to create...');
         }
-
 
             await connection.execute(`
                 CREATE TABLE Stadium1 (
                     address VARCHAR(255) PRIMARY KEY,
                     city    VARCHAR(255)
-                )
+                                      )
             `);
 
             console.log("Finished creating stadium1");
@@ -155,7 +154,7 @@ async function initiateStadiumTable() {
     });
 }
 
-async function insertStadiumTable(name, address, city, capacity) {
+async function insertStadiumTable(name, address, capacity, city) {
     return await withOracleDB(async (connection) => {
 
         const result1 = await connection.execute(
@@ -191,29 +190,30 @@ async function initiateMatchTable() {
         }
 
         await connection.execute(`
-            CREATE TABLE Match1
-            (
-                date  VARCHAR(255) PRIMARY KEY,
+            CREATE TABLE Match1 (
+                "date"  VARCHAR(255) PRIMARY KEY,
                 phase VARCHAR(255)
-            )
+                                )
         `);
 
+        console.log("Finished creating match1");
+
         await connection.execute(`
-            CREATE TABLE MATCH2
-            (
+            CREATE TABLE Match2 (
                 matchID     INTEGER PRIMARY KEY,
                 stadiumName VARCHAR(255),
                 result      VARCHAR(255),
-                date        VARCHAR(255),
+                "date"        VARCHAR(255),
                 time        VARCHAR(255),
                 FOREIGN KEY (stadiumName)
                     REFERENCES Stadium2 (name)
                         ON DELETE CASCADE,
-                FOREIGN KEY (date)
-                    REFERENCES Match1 (date)
-            )
+                FOREIGN KEY ("date")
+                    REFERENCES Match1 ("date")
+                                )
         `);
 
+        console.log("Finished creating match2");
         return true;
     }).catch((err) => {
         console.error('Error creating Match tables:', err);
@@ -226,15 +226,15 @@ async function insertMatchTable(matchID, stadiumName, result, matchDate, time, p
         try {
             // Insert into Match1 first because of the foreign key dependency in Match2
             const result1 = await connection.execute(
-                `INSERT INTO Match1 (date, phase)
-                 VALUES (:date, :phase)`,
+                `INSERT INTO Match1 ("date", phase)
+                 VALUES (:matchDate, :phase)`,
                 [matchDate, phase],
                 {autoCommit: false}
             );
 
             const result2 = await connection.execute(
-                `INSERT INTO Match2 (matchID, stadiumName, result, date, time)
-                 VALUES (:matchID, :stadiumName, :result, :date, :time)`,
+                `INSERT INTO Match2 (matchID, stadiumName, result, "date", time)
+                 VALUES (:matchID, :stadiumName, :result, :matchDate, :time)`,
                 [matchID, stadiumName, result, matchDate, time],
                 {autoCommit: true}
             );
