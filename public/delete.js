@@ -58,15 +58,15 @@ function handleDeleteAPIResponse(responseData) {
 
 function generateDeleteFields(fields, inputFieldElement) {
     fields.forEach(function (field) {
-       const label = document.createElement("label");
-       label.textContent = field;
-       const inputField = document.createElement("input");
-       inputField.type = "text";
-       inputField.name = field;
-       inputFieldElement.appendChild(label);
-       inputFieldElement.appendChild(inputField);
-       const br = document.createElement("br");
-       inputFieldElement.appendChild(br);
+        const label = document.createElement("label");
+        label.textContent = field;
+        const inputField = document.createElement("input");
+        inputField.type = "text";
+        inputField.name = field;
+        inputFieldElement.appendChild(label);
+        inputFieldElement.appendChild(inputField);
+        const br = document.createElement("br");
+        inputFieldElement.appendChild(br);
     });
 }
 
