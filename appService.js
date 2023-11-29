@@ -13,21 +13,22 @@ const dbConfig = {
 
 const dbTables = new Map();
 dbTables.set('Stadium1', {p:['address'], a:['city']});
-dbTables.set('Stadium2', {p:['s_name'],a:['address','s_capacity']});
-dbTables.set('Match1', {p:['DATE'],a:['phase']});
-dbTables.set('Match2', {p:['matchID'],a:['stadiumName','m_result','DATE','m_time']});
-dbTables.set('Country', {p:['c_name'],a:['ranking','teamID']});
-dbTables.set('Manager', {p:['managerID'],a:['mng_name','age','nationality','teamID']});
-dbTables.set('Team', {p:['teamID'],a:['SIZE','countryName','managerID']});
-dbTables.set('Player', {p:['playerID'],a:['teamID','Passes','assists','p_name','age']});
-dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','goal_time','g_type']});
+dbTables.set('Stadium2', {p:['name'],a:['address','capacity']});
+dbTables.set('Match1', {p:['matchDate'],a:['phase']});
+dbTables.set('Match2', {p:['matchID'],a:['stadiumName','result','matchDate','time']});
+dbTables.set('Country', {p:['name'],a:['ranking','teamID']});
+dbTables.set('Manager', {p:['managerID'],a:['name','age','nationality','teamID']});
+dbTables.set('Team', {p:['teamID'],a:['teamSize','countryName','managerID']});
+dbTables.set('Player', {p:['playerID'],a:['teamID','passes','assists','name','age']});
+dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','time','type']});
 dbTables.set('PlayIn', {p:['matchID','teamID'],a:[]});
 dbTables.set('Funds', {p:['sponsorID','teamID'],a:[]});
-dbTables.set('Sponsor', {p:['sponsorID'],a:['sp_name']});
+dbTables.set('Sponsor', {p:['sponsorID'],a:['name']});
 dbTables.set('Forward', {p:['playerID'],a:['shots','goals']});
-dbTables.set('Midfield', {p:['playerID','tackles'],a:['shots','goals','interceptions']});
-dbTables.set('Goalkeeper', {p:['playerID'],a:['saves']});
+dbTables.set('Midfield', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
 dbTables.set('Defender', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
+dbTables.set('Goalkeeper', {p:['playerID'],a:['saves']});
+
 
 const sKeys = ['address','city','s_name','DATE','phase','stadiumName','m_result','DATE','m_time',
                 'c_name','mng_name','nationality','countryName','p_name','goal_time','g_type','sp_name'];
@@ -590,7 +591,7 @@ async function initiatePlayerTable() {
                     playerID INTEGER PRIMARY KEY,
                     shots    INTEGER,
                     goals    INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE 
                                      )
             `);
 
@@ -602,7 +603,7 @@ async function initiatePlayerTable() {
                     shots         INTEGER,
                     goals         INTEGER,
                     interceptions INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE
                 )
             `);
 
@@ -614,7 +615,7 @@ async function initiatePlayerTable() {
                     shots         INTEGER,
                     goals         INTEGER,
                     interceptions INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE
                 )
 
             `);
@@ -624,7 +625,7 @@ async function initiatePlayerTable() {
                 (
                     playerID INTEGER PRIMARY KEY,
                     saves    INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE
                 )
 
             `);
@@ -872,6 +873,35 @@ async function fetchFromDb(tablename) {
     });
 }
 
+async function deleteFromDb(tableName, primaryKeyValues) {
+
+    const pkOfTable = dbTables.get(tableName).p;
+
+    if (pkOfTable.length === 0 || pkOfTable.length > 2) {
+        throw new Error(`Table ${tableName} has an unsupported number of primary keys.`);
+    }
+
+    let query = `DELETE FROM ${tableName} WHERE `;
+    const queryParams = {};
+
+    if (pkOfTable.length === 1) {
+        query += `${pkOfTable[0]} = :primaryKeyValue1`;
+        queryParams.primaryKeyValue1 = primaryKeyValues[0];
+    } else if (pkOfTable.length === 2) {
+        query += `${pkOfTable[0]} = :primaryKeyValue1 AND ${pkOfTable[1]} = :primaryKeyValue2`;
+        queryParams.primaryKeyValue1 = primaryKeyValues[0];
+        queryParams.primaryKeyValue2 = primaryKeyValues[1];
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(query, queryParams);
+        return result.rowsAffected;
+    }).catch((err) => {
+        console.error(err);
+        return false;
+    });
+}
+
 
 
 
@@ -900,6 +930,7 @@ module.exports = {
     insertTeamTable,
     insertGoalDetailsTable,
     fetchFromDb,
+    deleteFromDb,
 
     updateNameDemotable: updateTable,
     countDemotable
