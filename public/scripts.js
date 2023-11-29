@@ -19,11 +19,10 @@ const tableInsertInputFields = {
     Team: ["teamID", "size", "countryName", "managerID"],
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
-    Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
     Forward: ["playerID", "shots", "goals"],
     Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
-    Goalkeeper: ["playerID", "saves"],
     Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    Goalkeeper: ["playerID", "saves"],
     GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
     PlayIn: ["matchID", "teamID"]
 }
@@ -52,11 +51,7 @@ const tableDeleteInputFields = {
     Manager: ["managerID"],
     Funds: ["sponsorID", "teamID"],
     Sponsor: ["sponsorID"],
-    Player: ["playerID"],
-    Forward: ["playerID"],
-    Midfield: ["playerID"],
-    Goalkeeper: ["playerID"],
-    Defender: ["playerID"]
+    Player: ["playerID"]
 }
     // async function checkDbConnection() {
     //     const statusElem = document.getElementById('dbStatus');

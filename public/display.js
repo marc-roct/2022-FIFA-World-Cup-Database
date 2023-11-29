@@ -32,7 +32,7 @@ const tableDisplayFields = {
     Goalkeeper: ["playerID", "saves"],
     Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
     GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
-    PlayIn: ["matchID", "teamID"],
+    PlayIn: ["matchID", "teamID"]
 
 }
 
