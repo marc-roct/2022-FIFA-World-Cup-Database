@@ -27,12 +27,13 @@ const tableDisplayFields = {
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
     Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
-    GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
-    PlayIn: ["matchID", "teamID"],
     Forward: ["playerID", "shots", "goals"],
     Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
     Goalkeeper: ["playerID", "saves"],
     Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
+    PlayIn: ["matchID", "teamID"],
+
 }
 
 async function displayTable() {
