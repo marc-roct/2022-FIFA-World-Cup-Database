@@ -41,7 +41,7 @@ async function displayTable() {
     const tableElement = document.getElementById('displayTable')
     const tableBody = tableElement.querySelector('tbody');
 
-    const response = await fetch(`/display/${selectedDropDown.toLowerCase()}`, {
+    const response = await fetch(`/display/${selectedDropDown}`, {
         method: 'GET'
     });
 

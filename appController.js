@@ -327,11 +327,11 @@ router.get('/display/:tableName', async (req, res) => {
 // primaryKeyValuesArray should be an array of PK values
 // eg. Team might be [001]
 // eg. Funds might be [001, 003], since it has composite PK
-router.get('/delete/:tableName', async (req, res) => {
-    const tableName = req.params.tableName;
-    const { primaryKeyValuesArray } = req.body;
-
+router.delete('/delete/:tableName', async (req, res) => {
     try {
+        const tableName = req.params.tableName;
+        const primaryKeyValues = req.body;
+        const primaryKeyValuesArray = primaryKeyValues.toDelete;
         const deleteResult = await appService.deleteFromDb(tableName, primaryKeyValuesArray);
         if (deleteResult > 0) {
             res.json({ success: true, message: 'Record deleted successfully.' });
@@ -369,66 +369,5 @@ router.get('/count-demotable', async (req, res) => {
         });
     }
 });
-
-router.get('/display-stadiumone', async (req, res) => {
-    const tableContent = await appService.fetchStadium1FromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-stadiumtwo', async (req, res) => {
-    const tableContent = await appService.fetchStadium2FromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-matchone', async (req, res) => {
-    const tableContent = await appService.fetchMatch1FromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-matchtwo', async (req, res) => {
-    const tableContent = await appService.fetchMatch2FromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-country', async (req, res) => {
-    const tableContent = await appService.fetchCountryFromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-manager', async (req, res) => {
-    const tableContent = await appService.fetchManagerFromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-team', async (req, res) => {
-    const tableContent = await appService.fetchTeamFromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-sponsor', async (req, res) => {
-    const tableContent = await appService.fetchSponsorFromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-funds', async (req, res) => {
-    const tableContent = await appService.fetchFundsFromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-player', async (req, res) => {
-    const tableContent = await appService.fetchPlayerFromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-goalDetails', async (req, res) => {
-    const tableContent = await appService.fetchGoalDetailsFromDb();
-    res.json({data: tableContent});
-});
-
-router.get('/display-playIn', async (req, res) => {
-    const tableContent = await appService.fetchPlayInFromDb();
-    res.json({data: tableContent});
-});
-
 
 module.exports = router;
