@@ -402,8 +402,8 @@ async function initiateTeamTable() {
             CREATE TABLE Team (
                 teamID INTEGER PRIMARY KEY,
                 "size" INTEGER,
-                countryName VARCHAR(255),
-                managerID INTEGER,
+                countryName VARCHAR(255) UNIQUE,
+                managerID INTEGER UNIQUE,
                 FOREIGN KEY (countryName)
                     REFERENCES Country (name)
                         ON DELETE CASCADE,
@@ -422,8 +422,21 @@ async function initiateTeamTable() {
 
 async function insertTeamTable(teamID, teamSize, countryName, managerID) {
     return await withOracleDB(async (connection) => {
+
+        const checkQuery = `
+            SELECT * FROM Team
+            WHERE countryName = :countryName
+            OR managerID = :managerID`;
+
+        const checkResult = await connection.execute(checkQuery, {countryName, managerID});
+
+        if (checkResult.rows.length > 0) {
+            console.error('Error: Country or Manager already associated with another team.');
+            return false;
+        }
+
         const result = await connection.execute(
-            `INSERT INTO TEAM (teamID, "size", countryName, managerID)
+            `INSERT INTO Team (teamID, "size", countryName, managerID)
              VALUES (:teamID, :teamSize, :countryName, :managerID)`,
             {teamID, teamSize, countryName, managerID},
             {autoCommit: true}
