@@ -147,11 +147,11 @@ async function showUpdateFields() {
 }
 async function confirmInsert() {
         const insertedData = pullInsertData();
-
         await performInsertAPI(insertedData);
 }
 function pullInsertData() {
     const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
+    console.log(allFields);
     const insertedData = {};
     allFields.forEach(function (field) {
         insertedData[field] = document.querySelector(`[name=${field}]`).value;

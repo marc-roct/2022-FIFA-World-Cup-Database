@@ -20,8 +20,9 @@ router.get('/check-connection', async (req, res) => {
 // filter should be a valid string of the where clause
 router.get('/select-table', async (req, res) => {
     const {selectedTables, projections, filter} = req.body;
-    const tableContent = await appService.selectTable(["Stadium2"], ["st_address","st_city"],
-        'st_address = \'Building Number: 125 Street: 393 Zone: 74\'');
+    // const tableContent = await appService.selectTable(["Stadium2"], ["st_address","st_city"],
+    //     'st_address = \'Building Number: 125 Street: 393 Zone: 74\'');
+    const tableContent = await appService.selectTable(selectedTables, projections, filter);
     res.json({data: tableContent});
 });
 
