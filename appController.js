@@ -313,9 +313,40 @@ router.post("/insert-goalkeeper", async (req, res) => {
     }
 });
 
+router.get('/display/:tableName', async (req, res) => {
+    const tableName = req.params.tableName;
+    try {
+        const tableContent = await appService.fetchFromDb(tableName);
+        res.json({ data: tableContent });
+    } catch (error) {
+        console.error(`Error fetching data from ${tableName}:`, error);
+        res.status(500).json({ message: `Error fetching data from ${tableName}` });
+    }
+});
+
+// primaryKeyValuesArray should be an array of PK values
+// eg. Team might be [001]
+// eg. Funds might be [001, 003], since it has composite PK
+router.get('/delete/:tableName', async (req, res) => {
+    const tableName = req.params.tableName;
+    const { primaryKeyValuesArray } = req.body;
+
+    try {
+        const deleteResult = await appService.deleteFromDb(tableName, primaryKeyValuesArray);
+        if (deleteResult > 0) {
+            res.json({ success: true, message: 'Record deleted successfully.' });
+        } else {
+            res.status(404).json({ success: false, message: 'No record found to delete.' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 router.post("/update-table", async (req, res) => {
     console.log('helllo app controller');
     const { selectedTable, args } = req.body;
+    console.log(args);
     const updateResult = await appService.updateTable(selectedTable, args);
     if (updateResult) {
         res.json({ success: true });

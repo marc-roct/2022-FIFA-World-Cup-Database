@@ -13,24 +13,25 @@ const dbConfig = {
 
 const dbTables = new Map();
 dbTables.set('Stadium1', {p:['address'], a:['city']});
-dbTables.set('Stadium2', {p:['s_name'],a:['address','s_capacity']});
-dbTables.set('Match1', {p:['DATE'],a:['phase']});
-dbTables.set('Match2', {p:['matchID'],a:['stadiumName','m_result','DATE','m_time']});
-dbTables.set('Country', {p:['c_name'],a:['ranking','teamID']});
-dbTables.set('Manager', {p:['managerID'],a:['mng_name','age','nationality','teamID']});
-dbTables.set('Team', {p:['teamID'],a:['SIZE','countryName','managerID']});
-dbTables.set('Player', {p:['playerID'],a:['teamID','Passes','assists','p_name','age']});
-dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','goal_time','g_type']});
+dbTables.set('Stadium2', {p:['name'],a:['address','capacity']});
+dbTables.set('Match1', {p:['matchDate'],a:['phase']});
+dbTables.set('Match2', {p:['matchID'],a:['stadiumName','result','matchDate','time']});
+dbTables.set('Country', {p:['name'],a:['ranking']});
+dbTables.set('Manager', {p:['managerID'],a:['name','age','nationality']});
+dbTables.set('Team', {p:['teamID'],a:['size','countryName','managerID']});
+dbTables.set('Player', {p:['playerID'],a:['teamID','passes','assists','name','age']});
+dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','time','type']});
 dbTables.set('PlayIn', {p:['matchID','teamID'],a:[]});
 dbTables.set('Funds', {p:['sponsorID','teamID'],a:[]});
-dbTables.set('Sponsor', {p:['sponsorID'],a:['sp_name']});
+dbTables.set('Sponsor', {p:['sponsorID'],a:['name']});
 dbTables.set('Forward', {p:['playerID'],a:['shots','goals']});
-dbTables.set('Midfield', {p:['playerID','tackles'],a:['shots','goals','interceptions']});
-dbTables.set('Goalkeeper', {p:['playerID'],a:['saves']});
+dbTables.set('Midfield', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
 dbTables.set('Defender', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
+dbTables.set('Goalkeeper', {p:['playerID'],a:['saves']});
+
 
 const sKeys = ['address','city','s_name','DATE','phase','stadiumName','m_result','DATE','m_time',
-                'c_name','mng_name','nationality','countryName','p_name','goal_time','g_type','sp_name'];
+                'c_name','mng_name','nationality','countryName','p_name','goal_time','g_type','sp_name','name'];
 const nKeys = ['s_capacity','matchID','ranking','teamID','managerID','age','SIZE','playerID','passes',
                 'assists','goalNumber','sponsorID','shots','goals','tackles','interceptions','saves'];
 
@@ -159,12 +160,20 @@ async function initiateStadiumTable() {
 async function insertStadiumTable(name, address, capacity, city) {
     return await withOracleDB(async (connection) => {
 
-        const result1 = await connection.execute(
-            `INSERT INTO STADIUM1 (address, city)
-             VALUES (:address, :city)`,
-            {address, city},
-            {autoCommit: false}
+        const checkResult = await connection.execute(
+            `SELECT * FROM Stadium1 WHERE address = :address`,
+            {address}
         );
+
+        if (checkResult.rows.length === 0) {
+
+            await connection.execute(
+                `INSERT INTO STADIUM1 (address, city)
+                 VALUES (:address, :city)`,
+                {address, city},
+                {autoCommit: false}
+            );
+        }
 
         const result2 = await connection.execute(
             `INSERT INTO STADIUM2 (name, address, capacity)
@@ -173,7 +182,7 @@ async function insertStadiumTable(name, address, capacity, city) {
             {autoCommit: true}
         );
 
-        return result1.rowsAffected && result1.rowsAffected > 0 && result2.rowsAffected && result2.rowsAffected > 0;
+        return result2.rowsAffected && result2.rowsAffected > 0;
     }).catch(async (err) => {
         console.error('Error in insertStadiumTables:', err);
         // await connection.rollback(); // Rollback in case of error
@@ -313,7 +322,7 @@ async function initiateCountryTable() {
             CREATE TABLE Country
             (
                 name    VARCHAR(255) PRIMARY KEY,
-                ranking INTEGER
+                ranking INTEGER UNIQUE
             )
         `);
         return true;
@@ -582,7 +591,7 @@ async function initiatePlayerTable() {
                     playerID INTEGER PRIMARY KEY,
                     shots    INTEGER,
                     goals    INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE 
                                      )
             `);
 
@@ -594,7 +603,7 @@ async function initiatePlayerTable() {
                     shots         INTEGER,
                     goals         INTEGER,
                     interceptions INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE
                 )
             `);
 
@@ -606,7 +615,7 @@ async function initiatePlayerTable() {
                     shots         INTEGER,
                     goals         INTEGER,
                     interceptions INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE
                 )
 
             `);
@@ -616,7 +625,7 @@ async function initiatePlayerTable() {
                 (
                     playerID INTEGER PRIMARY KEY,
                     saves    INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE
                 )
 
             `);
@@ -712,6 +721,8 @@ async function updateTable(selectedTable, args) {
         query += ` SET ` + toSet.join(", ");
         query += ` WHERE ` + where.join(", ");
         oracledb.autoCommit = true;
+        console.log(query);
+        console.log(toSet);
         result = await connection.execute(query);
         // switch (selectedTable) {
         //     case 'Stadium1':
@@ -853,113 +864,46 @@ async function countDemotable() {
     });
 }
 
-async function fetchStadium1FromDb() {
+
+async function fetchFromDb(tablename) {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Stadium1');
+        const query = `SELECT * FROM ${tablename}`;
+        const result = await connection.execute(query);
         return result.rows;
     }).catch(() => {
         return [];
     });
 }
 
-async function fetchStadium2FromDb() {
+async function deleteFromDb(tableName, primaryKeyValues) {
+
+    const pkOfTable = dbTables.get(tableName).p;
+
+    if (pkOfTable.length === 0 || pkOfTable.length > 2) {
+        throw new Error(`Table ${tableName} has an unsupported number of primary keys.`);
+    }
+
+    let query = `DELETE FROM ${tableName} WHERE `;
+    const queryParams = {};
+
+    if (pkOfTable.length === 1) {
+        query += `${pkOfTable[0]} = :primaryKeyValue1`;
+        queryParams.primaryKeyValue1 = primaryKeyValues[0];
+    } else if (pkOfTable.length === 2) {
+        query += `${pkOfTable[0]} = :primaryKeyValue1 AND ${pkOfTable[1]} = :primaryKeyValue2`;
+        queryParams.primaryKeyValue1 = primaryKeyValues[0];
+        queryParams.primaryKeyValue2 = primaryKeyValues[1];
+    }
+
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Stadium2');
-        return result.rows;
-    }).catch(() => {
-        return [];
+        const result = await connection.execute(query, queryParams);
+        return result.rowsAffected;
+    }).catch((err) => {
+        console.error(err);
+        return false;
     });
 }
 
-async function fetchMatch1FromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Match1');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchMatch2FromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Match2');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchCountryFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Country');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchManagerFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Manager');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchTeamFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Team');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchPlayerFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Player');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchGoalDetailsFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM GoalDetails');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchPlayInFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM PlayIn');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchFundsFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Funds');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
-
-async function fetchSponsorFromDb() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Sponsor');
-        return result.rows;
-    }).catch(() => {
-        return [];
-    });
-}
 
 
 
@@ -987,18 +931,8 @@ module.exports = {
     insertManagerTable,
     insertTeamTable,
     insertGoalDetailsTable,
-    fetchStadium1FromDb,
-    fetchStadium2FromDb,
-    fetchMatch1FromDb,
-    fetchMatch2FromDb,
-    fetchCountryFromDb,
-    fetchManagerFromDb,
-    fetchTeamFromDb,
-    fetchPlayerFromDb,
-    fetchGoalDetailsFromDb,
-    fetchPlayInFromDb,
-    fetchFundsFromDb,
-    fetchSponsorFromDb,
+    fetchFromDb,
+    deleteFromDb,
 
     updateTable,
     countDemotable

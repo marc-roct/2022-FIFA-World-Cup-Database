@@ -189,15 +189,15 @@ async function performInsertAPI(insertedData) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: {selectedTable: 'Sponsor',
-                    args: JSON.stringify(updateData)},
+                body: JSON.stringify({selectedTable: dropDown,
+                    args: updateData}),
             });
             // const responseData = await response.json();
-            if (responseData.success) {
-                console.log("You have successfully updated the data");
-            } else {
-                console.log("Unfortunately, update is unsuccessful");
-            }
+            // if (responseData.success) {
+            //     console.log("You have successfully updated the data");
+            // } else {
+            //     console.log("Unfortunately, update is unsuccessful");
+            // }
         } catch (error) {
             console.error("error: " + error);
         }
@@ -233,7 +233,8 @@ function handleInsertDeleteAPIResponse(responseHandle) {
                 },
                 body: JSON.stringify(dataToDelete),
             })
-            handleInsertDeleteAPIResponse(response);
+            const responseJson = response.json();
+            handleInsertDeleteAPIResponse(responseJson);
         } catch (error) {
             console.error("error: " + error);
         }
