@@ -13,11 +13,7 @@ const tableDeletePKFields = {
     Manager: ["managerID"],
     Funds: ["sponsorID", "teamID"],
     Sponsor: ["sponsorID"],
-    Player: ["playerID"],
-    Forward: ["playerID"],
-    Midfield: ["playerID"],
-    Defender: ["playerID"],
-    Goalkeeper: ["playerID"]
+    Player: ["playerID"]
 }
 async function showPrimaryKeyInputField() {
     const selectedDropDown = document.getElementById("DropDown").value;
