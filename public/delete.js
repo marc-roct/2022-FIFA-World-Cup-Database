@@ -35,15 +35,15 @@ async function doDelete() {
 async function performDeleteFromAPI(deletePrimaryKey) {
     try {
         const dropDown = document.getElementById("DropDown").value;
-        const response = await fetch(`/delete/${dropDown}`, {
+        const response = await fetch(`/delete/${dropDown.toLowerCase()}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(deletePrimaryKey),
+            body: JSON.stringify({deletePrimaryKey}),
         });
         const responseData = await response.json();
-        handleDeleteAPIResponse({responseData});
+        handleDeleteAPIResponse(responseData);
     } catch (error) {
         console.error('Error: ', error)
     }
@@ -74,10 +74,8 @@ function generateDeleteFields(fields, inputFieldElement) {
 function getDeleteData() {
     const fields = tableDeletePKFields[document.getElementById("DropDown").value];
     const deleteBody = [];
-    let keeper = 0;
     fields.forEach(function (field) {
-        deleteBody[keeper] = document.querySelector(`[name=${field}]`).value;
-        keeper += 1;
+        deleteBody.push(document.querySelector(`[name=${field}]`).value);
     });
     return deleteBody;
 }
