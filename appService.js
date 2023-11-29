@@ -791,36 +791,39 @@ async function fetchFromDb(tablename) {
 }
 
 async function deleteFromDb(tableName, primaryKeyValues) {
+    console.log("tableName is: ", tableName);
+    console.log("primary key(s) is: ", primaryKeyValues);
+    console.log("primary key type is:", typeof primaryKeyValues[0]);
 
     const pkOfTable = dbTables.get(tableName).p;
-
-    if (pkOfTable.length === 0 || pkOfTable.length > 2) {
-        throw new Error(`Table ${tableName} has an unsupported number of primary keys.`);
-    }
+    console.log("the primary key of this table is: ", pkOfTable);
 
     let query = `DELETE FROM ${tableName} WHERE `;
     const queryParams = {};
 
-    if (pkOfTable.length === 1) {
-        query += `${pkOfTable[0]} = :primaryKeyValue1`;
-        queryParams.primaryKeyValue1 = primaryKeyValues[0];
-    } else if (pkOfTable.length === 2) {
-        query += `${pkOfTable[0]} = :primaryKeyValue1 AND ${pkOfTable[1]} = :primaryKeyValue2`;
-        queryParams.primaryKeyValue1 = primaryKeyValues[0];
-        queryParams.primaryKeyValue2 = primaryKeyValues[1];
-    }
+    primaryKeyValues.forEach((pkValue, index) => {
+        const pkIndex = `primaryKeyValue${index + 1}`;
+        if (!isNaN(pkValue)) {
+            queryParams[pkIndex] = parseInt(pkValue);
+        } else {
+            queryParams[pkIndex] = pkValue;
+        }
+        query += `${pkOfTable[index]} = :${pkIndex}`;
+        if (index < pkOfTable.length - 1) {
+            query += ' AND ';
+        }
+    });
 
     return await withOracleDB(async (connection) => {
-        connection.autoCommit = true;
-        const result = await connection.execute(query, queryParams);
-        connection.autoCommit = false;
+
+        const result = await connection.execute(query, queryParams, {autoCommit: true});
+        console.log("Query executed:", query, "and queryParams: ", queryParams);
         return result.rowsAffected;
     }).catch((err) => {
-        console.error(err);
+        console.error("Error occured in appService delete: ", err);
         return false;
     });
 }
-
 
 
 
