@@ -41,18 +41,18 @@ const tableInsertInputFields = {
     }
 
 
-const tableDeleteInputFields = {
-    Stadium: ["Name"],
-    Match: ["matchID"],
-    GoalDetails: ["goalNumber"],
-    PlayIn: ["matchID"],
-    Team: ["teamID"],
-    Country: ["name"],
-    Manager: ["managerID"],
-    Funds: ["sponsorID", "teamID"],
-    Sponsor: ["sponsorID"],
-    Player: ["playerID"]
-}
+// const tableDeleteInputFields = {
+//     Stadium: ["Name"],
+//     Match: ["matchID"],
+//     GoalDetails: ["goalNumber"],
+//     PlayIn: ["matchID"],
+//     Team: ["teamID"],
+//     Country: ["name"],
+//     Manager: ["managerID"],
+//     Funds: ["sponsorID", "teamID"],
+//     Sponsor: ["sponsorID"],
+//     Player: ["playerID"]
+// }
     // async function checkDbConnection() {
     //     const statusElem = document.getElementById('dbStatus');
     //     const loadingGifElem = document.getElementById('loadingGif');
@@ -120,18 +120,18 @@ async function showInsertFields() {
     tableFieldsHolder.appendChild(confirmButton);
 }
 
-async function showDeleteFields() {
-    const selectedDropDown = document.getElementById("DropDown").value;
-    const tableFieldsHolder = document.getElementById("inputFields")
-    tableFieldsHolder.innerHTML = "";
-    const allFields = tableDeleteInputFields[selectedDropDown];
-    generateFields(allFields, tableFieldsHolder);
-    const confirmButton = document.createElement("button");
-    confirmButton.type = "button";
-    confirmButton.textContent = "Confirm";
-    confirmButton.addEventListener("click", confirmDelete);
-    tableFieldsHolder.appendChild(confirmButton);
-}
+// async function showDeleteFields() {
+//     const selectedDropDown = document.getElementById("DropDown").value;
+//     const tableFieldsHolder = document.getElementById("inputFields")
+//     tableFieldsHolder.innerHTML = "";
+//     const allFields = tableDeleteInputFields[selectedDropDown];
+//     generateFields(allFields, tableFieldsHolder);
+//     const confirmButton = document.createElement("button");
+//     confirmButton.type = "button";
+//     confirmButton.textContent = "Confirm";
+//     confirmButton.addEventListener("click", confirmDelete);
+//     tableFieldsHolder.appendChild(confirmButton);
+// }
 
 async function showUpdateFields() {
     const selectedDropDown = document.getElementById("DropDown").value;
@@ -147,7 +147,7 @@ async function showUpdateFields() {
 }
 async function confirmInsert() {
         const insertedData = pullInsertData();
-    console.log(insertedData);
+
         await performInsertAPI(insertedData);
 }
 function pullInsertData() {
@@ -176,6 +176,28 @@ async function performInsertAPI(insertedData) {
     }
 }
 
+    async function performUpdateAPI(updateData) {
+        try {
+            const dropDown = document.getElementById("DropDown").value;
+            const response = await fetch(`/update-table`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({selectedTable: dropDown,
+                    args: updateData}),
+            });
+            // const responseData = await response.json();
+            // if (responseData.success) {
+            //     console.log("You have successfully updated the data");
+            // } else {
+            //     console.log("Unfortunately, update is unsuccessful");
+            // }
+        } catch (error) {
+            console.error("error: " + error);
+        }
+    }
+
 function handleInsertDeleteAPIResponse(responseHandle) {
     if (responseHandle.success) {
         console.log("You have successfully added the data");
@@ -184,37 +206,42 @@ function handleInsertDeleteAPIResponse(responseHandle) {
     }
 }
 
-    function pullDeleteData() {
-        const field = tableDeleteInputFields[document.getElementById("DropDown").value];
-        const dataToDelete = {};
-        dataToDelete[field] = document.querySelector(`[name=${field}]`).value;
-        return dataToDelete;
-    }
+    // function pullDeleteData() {
+    //     const field = tableDeleteInputFields[document.getElementById("DropDown").value];
+    //     const dataToDelete = {};
+    //     dataToDelete[field] = document.querySelector(`[name=${field}]`).value;
+    //     return dataToDelete;
+    // }
 
-    async function confirmDelete() {
-        const dataToDelete = pullDeleteData();
-        await performDeleteAPI(dataToDelete);
-    }
+    // async function confirmDelete() {
+    //     const dataToDelete = pullDeleteData();
+    //     await performDeleteAPI(dataToDelete);
+    // }
 
-    async function performDeleteAPI(dataToDelete) {
-        try {
-            const dropDown = document.getElementById("DropDown").value;
-            const response = await fetch(`/delete-${dropDown.toLowerCase()}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataToDelete),
-            })
-            const responseJson = response.json();
-            handleInsertDeleteAPIResponse(responseJson);
-        } catch (error) {
-            console.error("error: " + error);
-        }
-    }
+    // async function performDeleteAPI(dataToDelete) {
+    //     try {
+    //         const dropDown = document.getElementById("DropDown").value;
+    //         const response = await fetch(`/delete-${dropDown.toLowerCase()}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(dataToDelete),
+    //         })
+    //         const responseJson = response.json();
+    //         handleInsertDeleteAPIResponse(responseJson);
+    //     } catch (error) {
+    //         console.error("error: " + error);
+    //     }
+    // }
 
 async function confirmUpdate() {
-        // stub
+    console.log('beforePullData');
+    const updateData = pullInsertData();
+    console.log(updateData);
+
+    await performUpdateAPI(updateData);
+    console.log('afterPerformUpdatePai');
 }
 
 async function identifySPJ() {

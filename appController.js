@@ -83,6 +83,7 @@ router.post("/insert-goaldetails", async (req, res) => {
     }
 });
 
+
 router.post("/initiate-countrytable", async (req, res) => {
     const initiateResult = await appService.initiateCountryTable();
     if (initiateResult) {
@@ -326,7 +327,7 @@ router.get('/display/:tableName', async (req, res) => {
 // primaryKeyValuesArray should be an array of PK values
 // eg. Team might be [001]
 // eg. Funds might be [001, 003], since it has composite PK
-router.get('/delete/:tableName', async (req, res) => {
+router.delete('/delete/:tableName', async (req, res) => {
     const tableName = req.params.tableName;
     const { primaryKeyValuesArray } = req.body;
 
@@ -342,12 +343,11 @@ router.get('/delete/:tableName', async (req, res) => {
     }
 });
 
-router.post("/update-name-demotable", async (req, res) => {
-    const { oldName, newName } = req.body;
-    const updateResult = await appService.updateNameDemotable("Stadium2", {
-        st_address: oldName,
-        city: newName
-    });
+router.post("/update-table", async (req, res) => {
+    console.log('helllo app controller');
+    const { selectedTable, args } = req.body;
+    console.log(args);
+    const updateResult = await appService.updateTable(selectedTable, args);
     if (updateResult) {
         res.json({ success: true });
     } else {
@@ -369,7 +369,5 @@ router.get('/count-demotable', async (req, res) => {
         });
     }
 });
-
-
 
 module.exports = router;
