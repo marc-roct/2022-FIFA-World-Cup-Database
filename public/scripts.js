@@ -12,21 +12,34 @@
  * 
  */
 const tableInsertInputFields = {
-    Stadium: ["Name", "address", "capacity", "city"],
-    Match: ["matchID", "stadiumName", "result", "date", "time", "phase"],
-    GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
-    PlayIn: ["matchID", "teamID"],
+    Stadium: ["name", "address", "capacity", "city"],
+    Match: ["matchID", "stadiumName", "result", "matchDate", "time", "phase"],
+    Country: ["name", "ranking"],
+    Manager: ["managerID", "name", "age", "nationality"],
     Team: ["teamID", "size", "countryName", "managerID"],
-    Country: ["name", "ranking", "teamID"],
-    Manager: ["managerID", "name", "age", "nationality", "teamID"],
-    Funds: ["sponsorID", "teamID"],
     Sponsor: ["sponsorID", "name"],
+    Funds: ["sponsorID", "teamID"],
     Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
     Forward: ["playerID", "shots", "goals"],
     Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
     Goalkeeper: ["playerID", "saves"],
-    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"]
+    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
+    PlayIn: ["matchID", "teamID"]
 }
+
+    const tableResetFields = {
+        Stadium: ["name", "address", "capacity", "city"],
+        Match: ["matchID", "stadiumName", "result", "matchDate", "time", "phase"],
+        Country: ["name", "ranking"],
+        Manager: ["managerID", "name", "age", "nationality"],
+        Team: ["teamID", "size", "countryName", "managerID"],
+        Sponsor: ["sponsorID", "name"],
+        Funds: ["sponsorID", "teamID"],
+        Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
+        GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
+        PlayIn: ["matchID", "teamID"]
+    }
 
 
 const tableDeleteInputFields = {
@@ -45,7 +58,46 @@ const tableDeleteInputFields = {
     Goalkeeper: ["playerID"],
     Defender: ["playerID"]
 }
+    // async function checkDbConnection() {
+    //     const statusElem = document.getElementById('dbStatus');
+    //     const loadingGifElem = document.getElementById('loadingGif');
+    //
+    //     const response = await fetch('/check-db-connection', {
+    //         method: "GET"
+    //     });
+    //
+    //     // Hide the loading GIF once the response is received.
+    //     // loadingGifElem.style.display = 'none';
+    //     // Display the statusElem's text in the placeholder.
+    //     // statusElem.style.display = 'inline';
+    //
+    //     response.text()
+    //         .then((text) => {
+    //             statusElem.textContent = text;
+    //         })
+    //         .catch((error) => {
+    //             statusElem.textContent = 'connection timed out';  // Adjust error handling if required.
+    //         });
+    // }
 
+    // This function resets or initializes the demotable.
+    async function resetDemotable() {
+        for (const tableName in tableResetFields) {
+            console.log(`/initiate-${tableName.toLowerCase() + "table"}`);
+            const response = await fetch(`/initiate-${tableName.toLowerCase() + "table"}`, {
+                method: 'POST'
+            });
+
+            const responseData = await response.json();
+
+            if (responseData.success) {
+                const messageElement = document.getElementById('resetResultMsg');
+                messageElement.textContent = tableName + "demotable initiated successfully!";
+            } else {
+                alert("Error initiating the table" + tableName);
+            }
+        }
+    }
 function generateFields(fields, tableFieldsContainer) {
     fields.forEach(function (field) {
         const label = document.createElement("label");
@@ -87,7 +139,6 @@ async function showDeleteFields() {
 }
 
 async function showUpdateFields() {
-    console.log('heyooo');
     const selectedDropDown = document.getElementById("DropDown").value;
     const tableFieldsContainer = document.getElementById("inputFields")
     tableFieldsContainer.innerHTML = "";
@@ -108,53 +159,51 @@ function pullInsertData() {
     const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
     const insertedData = {};
     allFields.forEach(function (field) {
-        insertedData[field] = document.querySelector("[name=${field}]");
+        insertedData[field] = document.querySelector(`[name=${field}]`).value;
     });
     return insertedData;
 }
 
-function pullUpdateData() {
-    const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
-    let updateData = {};
-    allFields.forEach(function (field) {
-        updateData[field] = document.querySelector("[name=${field}]");
-    });
-    return updateData;
+async function performInsertAPI(insertedData) {
+    try {
+        const dropDown = document.getElementById("DropDown").value;
+        const response = await fetch(`/insert-${dropDown.toLowerCase()}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(insertedData),
+        })
+        const responseData = await response.json();
+        handleInsertDeleteAPIResponse(responseData);
+    } catch (error) {
+        console.error("error: " + error);
+    }
 }
 
-function performInsertAPI(insertedData) {
-    fetch(`/insert-${dropDown.toLowerCase()}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(insertedData),
-    })
-        .then(response => response.json())
-        .then(responseHandle => handleInsertAPIResponse(responseHandle))
-        .catch(error => console.error('Error: ', error));
-}
-
-function performUpdateAPI(selectedTable, updateData) {
-    fetch(`/update-table`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: {selectedTable: selectedTable,
-            args: JSON.stringify(updateData)},
-    })
-        .then(response => {
-            if (response.json().success) {
+    async function performUpdateAPI(updateData) {
+        try {
+            const dropDown = document.getElementById("DropDown").value;
+            const response = await fetch(`/update-table`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: {selectedTable: 'Sponsor',
+                    args: JSON.stringify(updateData)},
+            });
+            // const responseData = await response.json();
+            if (responseData.success) {
                 console.log("You have successfully updated the data");
             } else {
                 console.log("Unfortunately, update is unsuccessful");
             }
-        })
-        .catch(error => console.error('Error: ', error));
-}
+        } catch (error) {
+            console.error("error: " + error);
+        }
+    }
 
-function handleInsertAPIResponse(responseHandle) {
+function handleInsertDeleteAPIResponse(responseHandle) {
     if (responseHandle.success) {
         console.log("You have successfully added the data");
     } else {
@@ -162,32 +211,54 @@ function handleInsertAPIResponse(responseHandle) {
     }
 }
 
-async function confirmDelete() {
-    // stub
-}
+    function pullDeleteData() {
+        const field = tableDeleteInputFields[document.getElementById("DropDown").value];
+        const dataToDelete = {};
+        dataToDelete[field] = document.querySelector(`[name=${field}]`).value;
+        return dataToDelete;
+    }
+
+    async function confirmDelete() {
+        const dataToDelete = pullDeleteData();
+        await performDeleteAPI(dataToDelete);
+    }
+
+    async function performDeleteAPI(dataToDelete) {
+        try {
+            const dropDown = document.getElementById("DropDown").value;
+            const response = await fetch(`/delete-${dropDown.toLowerCase()}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToDelete),
+            })
+            handleInsertDeleteAPIResponse(response);
+        } catch (error) {
+            console.error("error: " + error);
+        }
+    }
 
 async function confirmUpdate() {
-    const updateData = pullUpdateData();
-    const selectedTable = document.getElementById("DropDown").value;
+    console.log('beforePullData');
+    const updateData = pullInsertData();
+    console.log(updateData);
 
-    const response = await fetch(`/update-table`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: {selectedTable: selectedTable,
-            args: JSON.stringify(updateData)},
-    });
-
-    const responseData = await response.json();
-    if (responseData.success) {
-        console.log("You have successfully updated the data");
-    } else {
-        console.log("Update was unsuccessful");
-    }
+    await performUpdateAPI(updateData);
+    console.log('afterPerformUpdatePai');
 }
 
 async function identifySPJ() {
 
 }
+
+    window.onload = function() {
+        // checkDbConnection();
+        const button = document.getElementById("resetDemotable");
+        console.log("got here");
+        if (button != null) {
+            console.log("got here");
+            button.addEventListener("click", resetDemotable);
+        }
+    };
 

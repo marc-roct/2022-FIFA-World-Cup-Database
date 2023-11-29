@@ -14,7 +14,7 @@ const dbConfig = {
 const dbTables = new Map();
 dbTables.set('Stadium1', {p:['address'], a:['city']});
 dbTables.set('Stadium2', {p:['s_name'],a:['address','s_capacity']});
-dbTables.set('Match2', {p:['DATE'],a:['phase']});
+dbTables.set('Match1', {p:['DATE'],a:['phase']});
 dbTables.set('Match2', {p:['matchID'],a:['stadiumName','m_result','DATE','m_time']});
 dbTables.set('Country', {p:['c_name'],a:['ranking','teamID']});
 dbTables.set('Manager', {p:['managerID'],a:['mng_name','age','nationality','teamID']});
@@ -111,6 +111,7 @@ async function selectTable(selectedTables, projections, filter) {
     });
 }
 
+
 //
 // BELOW HERE ARE ALL THE INITIATE AND INSERT FUNCTIONS
 //
@@ -118,34 +119,44 @@ async function selectTable(selectedTables, projections, filter) {
 async function initiateStadiumTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE STADIUM2`);
-            await connection.execute(`DROP TABLE STADIUM1`);
+            console.log('Trying to Drop Stadium 2 and then 1');
+            await connection.execute(`DROP TABLE Stadium2 CASCADE CONSTRAINTS`);
+            await connection.execute(`DROP TABLE Stadium1 CASCADE CONSTRAINTS`);
+            console.log('Successfully dropped Both stadium tables!');
         } catch (err) {
-            console.log('Tables might not exist, proceeding to create...');
+            console.log('Stadium Tables might not exist, proceeding to create...');
         }
 
-        await connection.execute(`
-            CREATE TABLE Stadium1
-            (
-                address VARCHAR(255) PRIMARY KEY,
-                city    VARCHAR(255)
-            )
-        `);
+            await connection.execute(`
+                CREATE TABLE Stadium1 (
+                    address VARCHAR(255) PRIMARY KEY,
+                    city    VARCHAR(255)
+                                      )
+            `);
 
-        await connection.execute(`
-            CREATE TABLE Stadium2
-            (
-                name     VARCHAR(255) PRIMARY KEY,
-                address  VARCHAR(255),
-                capacity INTEGER,
-                FOREIGN KEY (address)
-                    REFERENCES Stadium1 (address)
-            )
-        `);
+            console.log("Finished creating stadium1");
+
+            await connection.execute(`
+                CREATE TABLE Stadium2
+                (
+                    name     VARCHAR(255) PRIMARY KEY,
+                    address  VARCHAR(255),
+                    capacity INTEGER,
+                    FOREIGN KEY (address)
+                        REFERENCES Stadium1 (address)
+                )
+            `);
+
+            console.log("Finished creating stadium2");
+            return true;
+
+    }).catch((err) => {
+        console.error("error creating Stadium tables", err)
+        return false;
     });
 }
 
- async function insertStadiumTable(name, address, city, capacity) {
+async function insertStadiumTable(name, address, capacity, city) {
     return await withOracleDB(async (connection) => {
 
         const result1 = await connection.execute(
@@ -163,48 +174,48 @@ async function initiateStadiumTable() {
         );
 
         return result1.rowsAffected && result1.rowsAffected > 0 && result2.rowsAffected && result2.rowsAffected > 0;
-    }).catch((err) => {
+    }).catch(async (err) => {
         console.error('Error in insertStadiumTables:', err);
         // await connection.rollback(); // Rollback in case of error
         return false;
     });
 }
 
- async function initiateMatchTable() {
+async function initiateMatchTable() {
     return await withOracleDB(async (connection) => {
         try {
             // Drop Match2 first due to its dependency on Match1
-            await connection.execute(`DROP TABLE Match2`);
-            await connection.execute(`DROP TABLE Match1`);
+            await connection.execute(`DROP TABLE Match2 CASCADE CONSTRAINTS`);
+            await connection.execute(`DROP TABLE Match1 CASCADE CONSTRAINTS`);
         } catch (err) {
             console.log('Match tables might not exist, proceeding to create...');
         }
 
         await connection.execute(`
-            CREATE TABLE Match1
-            (
-                date  VARCHAR(255) PRIMARY KEY,
+            CREATE TABLE Match1 (
+                matchDate  VARCHAR(255) PRIMARY KEY,
                 phase VARCHAR(255)
-            )
+                                )
         `);
 
+        console.log("Finished creating match1");
+
         await connection.execute(`
-            CREATE TABLE Match2
-            (
+            CREATE TABLE Match2 (
                 matchID     INTEGER PRIMARY KEY,
                 stadiumName VARCHAR(255),
                 result      VARCHAR(255),
-                date        VARCHAR(255),
+                matchDate        VARCHAR(255),
                 time        VARCHAR(255),
                 FOREIGN KEY (stadiumName)
                     REFERENCES Stadium2 (name)
-                        ON DELETE CASCADE
-                    ON UPDATE CASCADE,
-                FOREIGN KEY (date)
-                    REFERENCES Match1 (date)
-            )
+                        ON DELETE CASCADE,
+                FOREIGN KEY (matchDate)
+                    REFERENCES Match1 (matchDate)
+                                )
         `);
 
+        console.log("Finished creating match2");
         return true;
     }).catch((err) => {
         console.error('Error creating Match tables:', err);
@@ -212,21 +223,22 @@ async function initiateStadiumTable() {
     });
 }
 
- async function insertMatchTable(matchID, stadiumName, result, matchDate, time, phase) {
+async function insertMatchTable(matchID, stadiumName, result, matchDate, time, phase) {
     return await withOracleDB(async (connection) => {
         try {
             // Insert into Match1 first because of the foreign key dependency in Match2
+            console.log(matchDate);
             const result1 = await connection.execute(
-                `INSERT INTO Match1 (date, phase)
-                 VALUES (:date, :phase)`,
-                [matchDate, phase],
+                `INSERT INTO Match1 (matchDate, phase)
+                 VALUES (:matchDate, :phase)`,
+                {matchDate, phase},
                 {autoCommit: false}
             );
 
             const result2 = await connection.execute(
-                `INSERT INTO Match2 (matchID, stadiumName, result, date, time)
-                 VALUES (:matchID, :stadiumName, :result, :date, :time)`,
-                [matchID, stadiumName, result, matchDate, time],
+                `INSERT INTO Match2 (matchID, stadiumName, result, matchDate, time)
+                 VALUES (:matchID, :stadiumName, :result, :matchDate, :time)`,
+                {matchID, stadiumName, result, matchDate, time},
                 {autoCommit: true}
             );
 
@@ -239,10 +251,60 @@ async function initiateStadiumTable() {
     });
 }
 
- async function initiateCountryTable() {
+async function initiateGoalDetailsTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE COUNTRY`);
+            await connection.execute(`DROP TABLE GoalDetails CASCADE CONSTRAINTS`);
+        } catch (err) {
+            console.log('Match tables might not exist, proceeding to create...');
+        }
+
+        await connection.execute(`
+            CREATE TABLE GoalDetails (
+                goalNumber INTEGER,
+                matchID INTEGER,
+                playerID INTEGER,
+                time VARCHAR(255),
+                type VARCHAR(255),
+                PRIMARY KEY (goalNumber, matchID),
+                FOREIGN KEY (matchID) REFERENCES Match2 (matchID)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (playerID) REFERENCES Player (playerID)
+                    ON DELETE SET NULL
+                                     )
+        `);
+
+        return true;
+    }).catch((err) => {
+        console.error('Error creating GoalDetails table:', err);
+        return false;
+    });
+}
+
+async function insertGoalDetailsTable(goalNumber, matchID, playerID, time, type) {
+    return await withOracleDB(async (connection) => {
+        try {
+            // Insert into Match1 first because of the foreign key dependency in Match2
+            const result = await connection.execute(
+                `INSERT INTO GoalDetails (goalNumber, matchID, playerID, time, type)
+                 VALUES (:goalNumber, :matchID, :playerID, :time, :type)`,
+                {goalNumber, matchID, playerID, time, type},
+                {autoCommit: true}
+            );
+
+
+            return result.rowsAffected && result.rowsAffected > 0;
+        } catch (err) {
+            console.error('Error in insertGoalDetailsTable:', err);
+            return false;
+        }
+    });
+}
+
+async function initiateCountryTable() {
+    return await withOracleDB(async (connection) => {
+        try {
+            await connection.execute(`DROP TABLE Country CASCADE CONSTRAINTS`);
         } catch (err) {
             console.log('Table might not exist, proceeding to create...');
         }
@@ -250,7 +312,7 @@ async function initiateStadiumTable() {
         const result = await connection.execute(`
             CREATE TABLE Country
             (
-                name    VARCHAR PRIMARY KEY,
+                name    VARCHAR(255) PRIMARY KEY,
                 ranking INTEGER
             )
         `);
@@ -261,10 +323,10 @@ async function initiateStadiumTable() {
     });
 }
 
- async function insertCountryTable(name, ranking) {
+async function insertCountryTable(name, ranking) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO TEAM (name, ranking)
+            `INSERT INTO Country (name, ranking)
              VALUES (:name, :ranking)`,
             {name, ranking},
             {autoCommit: true}
@@ -277,10 +339,10 @@ async function initiateStadiumTable() {
     });
 }
 
- async function initiateManagerTable() {
+async function initiateManagerTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE MANAGER`);
+            await connection.execute(`DROP TABLE Manager CASCADE CONSTRAINTS`);
         } catch (err) {
             console.log('Table might not exist, proceeding to create...');
         }
@@ -288,10 +350,10 @@ async function initiateStadiumTable() {
         const result = await connection.execute(`
             CREATE TABLE Manager
             (
-                managerID   integer PRIMARY KEY,
-                name        VARCHAR,
+                managerID   INTEGER PRIMARY KEY,
+                name        VARCHAR(255),
                 age         INTEGER,
-                nationality VARCHAR
+                nationality VARCHAR(255)
             )
 
         `);
@@ -302,7 +364,7 @@ async function initiateStadiumTable() {
     });
 }
 
- async function insertManagerTable(managerID, name, age, nationality) {
+async function insertManagerTable(managerID, name, age, nationality) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO MANAGER (managerID, name, age, nationality)
@@ -318,42 +380,43 @@ async function initiateStadiumTable() {
     });
 }
 
- async function initiateTeamTable() {
+async function initiateTeamTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE TEAM`);
+            await connection.execute(`DROP TABLE Team CASCADE CONSTRAINTS`);
         } catch (err) {
-            console.log('Table might not exist, proceeding to create...');
+            console.log('Team table might not exist, proceeding to create...');
         }
 
-        const result = await connection.execute(`
-            CREATE TABLE Team
-            (
-                teamID      INTEGER PRIMARY KEY,
-                Size        INTEGER,
-                countryName VARCHAR(100),
-                managerID   VARCHAR(100),
+        console.log('trying to create Team table');
+        await connection.execute(`
+            CREATE TABLE Team (
+                teamID INTEGER PRIMARY KEY,
+                "size" INTEGER,
+                countryName VARCHAR(255),
+                managerID INTEGER,
                 FOREIGN KEY (countryName)
                     REFERENCES Country (name)
                         ON DELETE CASCADE,
                 FOREIGN KEY (managerID)
                     REFERENCES Manager (managerID)
                         ON DELETE CASCADE
-            )
+                              )
         `);
         return true;
+
     }).catch((err) => {
         console.error('Error creating Team table:', err);
         return false;
     });
 }
 
- async function insertTeamTable(teamID, size, countryName, managerID) {
+async function insertTeamTable(teamID, teamSize, countryName, managerID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO TEAM (teamID, size, countryName, managerID)
-             VALUES (:teamID, :size, :countryName, :managerID)`,
-            {teamID, size, countryName, managerID},
+            `INSERT INTO TEAM (teamID, "size", countryName, managerID)
+             VALUES (:teamID, :teamSize, :countryName, :managerID)`,
+            {teamID, teamSize, countryName, managerID},
             {autoCommit: true}
         );
 
@@ -364,29 +427,26 @@ async function initiateStadiumTable() {
     });
 }
 
- async function initiatePlayInTable() {
+async function initiatePlayInTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE PlayIn`);
+            await connection.execute(`DROP TABLE PlayIn CASCADE CONSTRAINTS`);
         } catch (err) {
             console.log('Table might not exist, proceeding to create...');
         }
 
         await connection.execute(`
-            CREATE TABLE PlayIn
-            (
+            CREATE TABLE PlayIn (
                 matchID INTEGER,
                 teamID  INTEGER,
                 PRIMARY KEY (matchID, teamID),
                 FOREIGN KEY (matchID)
                     REFERENCES Match2 (matchID)
-                        ON DELETE CASCADE
-                    ON UPDATE CASCADE,
+                        ON DELETE CASCADE,
                 FOREIGN KEY (teamID)
                     REFERENCES Team (teamID)
                         ON DELETE CASCADE
-                    ON UPDATE CASCADE
-            )
+                                )
         `);
         return true;
     }).catch((err) => {
@@ -395,7 +455,7 @@ async function initiateStadiumTable() {
     });
 }
 
- async function insertPlayInTable(matchID, teamID) {
+async function insertPlayInTable(matchID, teamID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO PlayIn (matchID, teamID)
@@ -411,10 +471,10 @@ async function initiateStadiumTable() {
     });
 }
 
- async function initiateSponsorTable() {
+async function initiateSponsorTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE Sponsor`);
+            await connection.execute(`DROP TABLE Sponsor CASCADE CONSTRAINTS`);
         } catch (err) {
             console.log('Table might not exist, proceeding to create...');
         }
@@ -433,7 +493,7 @@ async function initiateStadiumTable() {
     });
 }
 
- async function insertSponsorTable(sponsorID, name) {
+async function insertSponsorTable(sponsorID, name) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO Sponsor (sponsorID, name)
@@ -449,10 +509,10 @@ async function initiateStadiumTable() {
     });
 }
 
- async function initiateFundsTable() {
+async function initiateFundsTable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE Funds`);
+            await connection.execute(`DROP TABLE Funds CASCADE CONSTRAINTS`);
         } catch (err) {
             console.log('Table might not exist, proceeding to create...');
         }
@@ -474,10 +534,10 @@ async function initiateStadiumTable() {
     });
 }
 
- async function insertFundsTable(sponsorID, teamID) {
+async function insertFundsTable(sponsorID, teamID) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO Sponsor (sponsorID, teamID)
+            `INSERT INTO Funds (sponsorID, teamID)
              VALUES (:sponsorID, :teamID)`,
             {sponsorID, teamID},
             {autoCommit: true}
@@ -490,7 +550,7 @@ async function initiateStadiumTable() {
     });
 }
 
- async function initiatePlayerTable() {
+async function initiatePlayerTable() {
     return await withOracleDB(async (connection) => {
         try {
             // Drop subclass tables first due to foreign key dependencies
@@ -498,36 +558,35 @@ async function initiateStadiumTable() {
             await connection.execute(`DROP TABLE Midfield CASCADE CONSTRAINTS`);
             await connection.execute(`DROP TABLE Goalkeeper CASCADE CONSTRAINTS`);
             await connection.execute(`DROP TABLE Defender CASCADE CONSTRAINTS`);
-            await connection.execute(`DROP TABLE Player`);
+            await connection.execute(`DROP TABLE Player CASCADE CONSTRAINTS`);
 
+        } catch (err) {
+            console.error('Player tables might not exist, proceeding to create');
+        }
 
-            await connection.execute(`
-                CREATE TABLE Player
-                (
-                    playerID integer PRIMARY KEY,
-                    teamID   INTEGER,
-                    Passes   INTEGER,
-                    assists  INTEGER,
-                    name     VARCHAR(255),
-                    age      INTEGER,
-                    FOREIGN KEY (teamID)
-                        REFERENCES Team (teamID)
-                )
+        await connection.execute(`
+            CREATE TABLE Player (
+                playerID integer PRIMARY KEY,
+                teamID   INTEGER,
+                Passes   INTEGER,
+                assists  INTEGER,
+                name     VARCHAR(255),
+                age      INTEGER,
+                FOREIGN KEY (teamID)
+                    REFERENCES Team (teamID)
+                                )
+        `);
 
-            `);
-
-            // Create subclass tables
-            await connection.execute(`
-                CREATE TABLE Forward
-                (
+        await connection.execute(`
+                CREATE TABLE Forward (
                     playerID INTEGER PRIMARY KEY,
                     shots    INTEGER,
                     goals    INTEGER,
                     FOREIGN KEY (playerID) REFERENCES Player (playerID)
-                )
+                                     )
             `);
 
-            await connection.execute(`
+        await connection.execute(`
                 CREATE TABLE Midfield
                 (
                     playerID      INTEGER PRIMARY KEY,
@@ -539,7 +598,7 @@ async function initiateStadiumTable() {
                 )
             `);
 
-            await connection.execute(`
+        await connection.execute(`
                 CREATE TABLE Defender
                 (
                     playerID      INTEGER PRIMARY KEY,
@@ -552,8 +611,7 @@ async function initiateStadiumTable() {
 
             `);
 
-
-            await connection.execute(`
+        await connection.execute(`
                 CREATE TABLE Goalkeeper
                 (
                     playerID INTEGER PRIMARY KEY,
@@ -563,16 +621,15 @@ async function initiateStadiumTable() {
 
             `);
 
-
             return true;
-        } catch (err) {
-            console.error('Error creating Player table:', err);
-            return false;
-        }
+
+    }).catch((err) => {
+        console.error('Error creating Player tables:', err);
+        return false;
     });
 }
 
- async function insertPlayerTable(playerType, playerData, subclassData) {
+async function insertPlayerTable(playerType, playerData, subclassData) {
     return await withOracleDB(async (connection) => {
         try {
             // Insert into Player table
@@ -615,7 +672,6 @@ async function initiateStadiumTable() {
 
 
 // END OF ALL INSERT FUNCTIONS
-
 
 
 
@@ -797,27 +853,153 @@ async function countDemotable() {
     });
 }
 
+async function fetchStadium1FromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Stadium1');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchStadium2FromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Stadium2');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchMatch1FromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Match1');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchMatch2FromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Match2');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchCountryFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Country');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchManagerFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Manager');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchTeamFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Team');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchPlayerFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Player');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchGoalDetailsFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM GoalDetails');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchPlayInFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM PlayIn');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchFundsFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Funds');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchSponsorFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Sponsor');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+
+
 module.exports = {
     testOracleConnection,
     selectTable,
-    updateTable,
-    countDemotable,
-    initiateStadiumTable,
-    insertStadiumTable,
-    initiateMatchTable,
-    insertMatchTable,
     initiateCountryTable,
-    insertCountryTable,
-    initiateManagerTable,
-    insertManagerTable,
-    initiateTeamTable,
-    insertTeamTable,
-    initiatePlayInTable,
-    insertPlayInTable,
-    initiateSponsorTable,
-    insertSponsorTable,
-    initiateFundsTable,
-    insertFundsTable,
     initiatePlayerTable,
-    insertPlayerTable
+    initiateMatchTable,
+    initiateStadiumTable,
+    initiatePlayInTable,
+    initiateFundsTable,
+    initiateSponsorTable,
+    initiateManagerTable,
+    initiateGoalDetailsTable,
+    initiateTeamTable,
+
+    insertPlayerTable,
+    insertPlayInTable,
+    insertFundsTable,
+    insertMatchTable,
+    insertSponsorTable,
+    insertStadiumTable,
+    insertCountryTable,
+    insertManagerTable,
+    insertTeamTable,
+    insertGoalDetailsTable,
+    fetchStadium1FromDb,
+    fetchStadium2FromDb,
+    fetchMatch1FromDb,
+    fetchMatch2FromDb,
+    fetchCountryFromDb,
+    fetchManagerFromDb,
+    fetchTeamFromDb,
+    fetchPlayerFromDb,
+    fetchGoalDetailsFromDb,
+    fetchPlayInFromDb,
+    fetchFundsFromDb,
+    fetchSponsorFromDb,
+
+    updateTable,
+    countDemotable
 };
