@@ -18,7 +18,7 @@ dbTables.set('Match1', {p:['matchDate'],a:['phase']});
 dbTables.set('Match2', {p:['matchID'],a:['stadiumName','result','matchDate','time']});
 dbTables.set('Country', {p:['name'],a:['ranking']});
 dbTables.set('Manager', {p:['managerID'],a:['name','age','nationality']});
-dbTables.set('Team', {p:['teamID'],a:['size','countryName','managerID']});
+dbTables.set('Team', {p:['teamID'],a:['teamSize','countryName','managerID']});
 dbTables.set('Player', {p:['playerID'],a:['teamID','passes','assists','name','age']});
 dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','time','type']});
 dbTables.set('PlayIn', {p:['matchID','teamID'],a:[]});
