@@ -401,7 +401,7 @@ async function initiateTeamTable() {
         await connection.execute(`
             CREATE TABLE Team (
                 teamID INTEGER PRIMARY KEY,
-                "size" INTEGER,
+                teamSize INTEGER,
                 countryName VARCHAR(255) UNIQUE,
                 managerID INTEGER UNIQUE,
                 FOREIGN KEY (countryName)
@@ -436,7 +436,7 @@ async function insertTeamTable(teamID, teamSize, countryName, managerID) {
         }
 
         const result = await connection.execute(
-            `INSERT INTO Team (teamID, "size", countryName, managerID)
+            `INSERT INTO Team (teamID, teamSize, countryName, managerID)
              VALUES (:teamID, :teamSize, :countryName, :managerID)`,
             {teamID, teamSize, countryName, managerID},
             {autoCommit: true}
