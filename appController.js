@@ -328,11 +328,10 @@ router.get('/display/:tableName', async (req, res) => {
 // eg. Team might be [001]
 // eg. Funds might be [001, 003], since it has composite PK
 router.delete('/delete/:tableName', async (req, res) => {
+    try {
         const tableName = req.params.tableName;
         const primaryKeyValues = req.body;
-        const primaryKeyValuesParsed = JSON.parse(primaryKeyValues);
-        const primaryKeyValuesArray = primaryKeyValuesParsed.toDelete;
-    try {
+        const primaryKeyValuesArray = primaryKeyValues.toDelete;
         const deleteResult = await appService.deleteFromDb(tableName, primaryKeyValuesArray);
         if (deleteResult > 0) {
             res.json({ success: true, message: 'Record deleted successfully.' });
