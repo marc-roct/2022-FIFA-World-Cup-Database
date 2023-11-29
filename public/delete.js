@@ -32,9 +32,9 @@ async function doDelete() {
 async function performDeleteFromAPI(deletePrimaryKey) {
     try {
         const dropDown = document.getElementById("DropDown").value;
-        console.log(`/delete/${dropDown.toLowerCase()}`);
+        console.log(`/delete/${dropDown}`);
         console.log(JSON.stringify(deletePrimaryKey));
-        const response = await fetch(`/delete/${dropDown.toLowerCase()}`, {
+        const response = await fetch(`/delete/${dropDown}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
