@@ -147,7 +147,7 @@ async function showUpdateFields() {
 }
 async function confirmInsert() {
         const insertedData = pullInsertData();
-    console.log(insertedData);
+
         await performInsertAPI(insertedData);
 }
 function pullInsertData() {
@@ -175,6 +175,28 @@ async function performInsertAPI(insertedData) {
         console.error("error: " + error);
     }
 }
+
+    async function performUpdateAPI(updateData) {
+        try {
+            const dropDown = document.getElementById("DropDown").value;
+            const response = await fetch(`/update-table`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({selectedTable: dropDown,
+                    args: updateData}),
+            });
+            // const responseData = await response.json();
+            // if (responseData.success) {
+            //     console.log("You have successfully updated the data");
+            // } else {
+            //     console.log("Unfortunately, update is unsuccessful");
+            // }
+        } catch (error) {
+            console.error("error: " + error);
+        }
+    }
 
 function handleInsertDeleteAPIResponse(responseHandle) {
     if (responseHandle.success) {
@@ -214,7 +236,12 @@ function handleInsertDeleteAPIResponse(responseHandle) {
     }
 
 async function confirmUpdate() {
-        // stub
+    console.log('beforePullData');
+    const updateData = pullInsertData();
+    console.log(updateData);
+
+    await performUpdateAPI(updateData);
+    console.log('afterPerformUpdatePai');
 }
 
 async function identifySPJ() {

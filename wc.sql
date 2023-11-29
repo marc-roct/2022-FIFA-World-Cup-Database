@@ -25,7 +25,7 @@ CREATE TABLE Stadium2 (
                           address varchar(60),
                           s_capacity INTEGER,
                           FOREIGN KEY (address)
-                              REFERENCES Stadium1(st_address));
+                              REFERENCES Stadium1(address));
 
 CREATE TABLE Match1 (
                         "DATE" varchar(40) PRIMARY KEY,
@@ -170,7 +170,7 @@ CREATE TABLE Defender (
                               ON DELETE CASCADE );
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 125 Street: 393 Zone: 74', 'Al Khor');
 
 INSERT
@@ -178,7 +178,7 @@ INTO Stadium2(s_name, address, s_capacity)
 VALUES('Al Bayt Stadium', 'Building Number: 125 Street: 393 Zone: 74', 68895);
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 660 Street: 235 Zone: 69', 'Lusail');
 
 INSERT
@@ -186,7 +186,7 @@ INTO Stadium2(s_name, address, s_capacity)
 VALUES('Lusail Stadium', 'Building Number: 660 Street: 235 Zone: 69', 88966);
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 306 Street: 1700 Zone: 51', 'Al Rayyan');
 
 INSERT
@@ -194,7 +194,7 @@ INTO Stadium2(s_name, address, s_capacity)
 VALUES('Ahmad bin Ali Stadium', 'Building Number: 306 Street: 1700 Zone: 51', 45032);
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 71 Street: 2741 Zone: 52', 'Al Rayyan');
 
 INSERT
@@ -202,7 +202,7 @@ INTO Stadium2(s_name, address, s_capacity)
 VALUES('Education City Stadium', 'Building Number: 71 Street: 2741 Zone: 52', 44667);
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 51 Street: 725 Zone: 54', 'Al Rayyan');
 
 INSERT
@@ -210,7 +210,7 @@ INTO Stadium2(s_name, address, s_capacity)
 VALUES('Khalifa International Stadium', 'Building Number: 51 Street: 725 Zone: 54', 45857);
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 521 Street: 260 Zone: 46', 'Doha');
 
 INSERT
@@ -218,7 +218,7 @@ INTO Stadium2(s_name, address, s_capacity)
 VALUES('Al Thumama Stadium', 'Building Number: 521 Street: 260 Zone: 46', 44400);
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 161 Street: 210 Zone: 29', 'Doha');
 
 INSERT
@@ -226,7 +226,7 @@ INTO Stadium2(s_name, address, s_capacity)
 VALUES('Stadium 974', 'Building Number: 161 Street: 210 Zone: 29', 44089);
 
 INSERT
-INTO Stadium1(st_address, city)
+INTO Stadium1(address, city)
 VALUES('Building Number: 1707 Street: 281 Zone: 91', 'Al Wakrah');
 
 INSERT

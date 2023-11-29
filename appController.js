@@ -83,6 +83,7 @@ router.post("/insert-goaldetails", async (req, res) => {
     }
 });
 
+
 router.post("/initiate-countrytable", async (req, res) => {
     const initiateResult = await appService.initiateCountryTable();
     if (initiateResult) {
@@ -342,12 +343,11 @@ router.get('/delete/:tableName', async (req, res) => {
     }
 });
 
-router.post("/update-name-demotable", async (req, res) => {
-    const { oldName, newName } = req.body;
-    const updateResult = await appService.updateNameDemotable("Stadium2", {
-        st_address: oldName,
-        city: newName
-    });
+router.post("/update-table", async (req, res) => {
+    console.log('helllo app controller');
+    const { selectedTable, args } = req.body;
+    console.log(args);
+    const updateResult = await appService.updateTable(selectedTable, args);
     if (updateResult) {
         res.json({ success: true });
     } else {
@@ -370,6 +370,65 @@ router.get('/count-demotable', async (req, res) => {
     }
 });
 
+router.get('/display-stadiumone', async (req, res) => {
+    const tableContent = await appService.fetchStadium1FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-stadiumtwo', async (req, res) => {
+    const tableContent = await appService.fetchStadium2FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-matchone', async (req, res) => {
+    const tableContent = await appService.fetchMatch1FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-matchtwo', async (req, res) => {
+    const tableContent = await appService.fetchMatch2FromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-country', async (req, res) => {
+    const tableContent = await appService.fetchCountryFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-manager', async (req, res) => {
+    const tableContent = await appService.fetchManagerFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-team', async (req, res) => {
+    const tableContent = await appService.fetchTeamFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-sponsor', async (req, res) => {
+    const tableContent = await appService.fetchSponsorFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-funds', async (req, res) => {
+    const tableContent = await appService.fetchFundsFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-player', async (req, res) => {
+    const tableContent = await appService.fetchPlayerFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-goalDetails', async (req, res) => {
+    const tableContent = await appService.fetchGoalDetailsFromDb();
+    res.json({data: tableContent});
+});
+
+router.get('/display-playIn', async (req, res) => {
+    const tableContent = await appService.fetchPlayInFromDb();
+    res.json({data: tableContent});
+});
 
 
 module.exports = router;

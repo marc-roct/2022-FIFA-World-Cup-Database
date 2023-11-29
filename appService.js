@@ -16,9 +16,9 @@ dbTables.set('Stadium1', {p:['address'], a:['city']});
 dbTables.set('Stadium2', {p:['name'],a:['address','capacity']});
 dbTables.set('Match1', {p:['matchDate'],a:['phase']});
 dbTables.set('Match2', {p:['matchID'],a:['stadiumName','result','matchDate','time']});
-dbTables.set('Country', {p:['name'],a:['ranking','teamID']});
-dbTables.set('Manager', {p:['managerID'],a:['name','age','nationality','teamID']});
-dbTables.set('Team', {p:['teamID'],a:['teamSize','countryName','managerID']});
+dbTables.set('Country', {p:['name'],a:['ranking']});
+dbTables.set('Manager', {p:['managerID'],a:['name','age','nationality']});
+dbTables.set('Team', {p:['teamID'],a:['size','countryName','managerID']});
 dbTables.set('Player', {p:['playerID'],a:['teamID','passes','assists','name','age']});
 dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','time','type']});
 dbTables.set('PlayIn', {p:['matchID','teamID'],a:[]});
@@ -31,7 +31,7 @@ dbTables.set('Goalkeeper', {p:['playerID'],a:['saves']});
 
 
 const sKeys = ['address','city','s_name','DATE','phase','stadiumName','m_result','DATE','m_time',
-                'c_name','mng_name','nationality','countryName','p_name','goal_time','g_type','sp_name'];
+                'c_name','mng_name','nationality','countryName','p_name','goal_time','g_type','sp_name','name'];
 const nKeys = ['s_capacity','matchID','ranking','teamID','managerID','age','SIZE','playerID','passes',
                 'assists','goalNumber','sponsorID','shots','goals','tackles','interceptions','saves'];
 
@@ -721,6 +721,8 @@ async function updateTable(selectedTable, args) {
         query += ` SET ` + toSet.join(", ");
         query += ` WHERE ` + where.join(", ");
         oracledb.autoCommit = true;
+        console.log(query);
+        console.log(toSet);
         result = await connection.execute(query);
         // switch (selectedTable) {
         //     case 'Stadium1':
@@ -932,6 +934,6 @@ module.exports = {
     fetchFromDb,
     deleteFromDb,
 
-    updateNameDemotable: updateTable,
+    updateTable,
     countDemotable
 };
