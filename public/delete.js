@@ -29,18 +29,21 @@ async function showPrimaryKeyInputField() {
 
 async function doDelete() {
     const deletePrimaryKey = getDeleteData();
+    console.log(deletePrimaryKey);
     await performDeleteFromAPI(deletePrimaryKey);
 }
 
 async function performDeleteFromAPI(deletePrimaryKey) {
     try {
         const dropDown = document.getElementById("DropDown").value;
-        const response = await fetch(`/delete/${dropDown}`, {
+        console.log(`/delete/${dropDown.toLowerCase()}`);
+        console.log(JSON.stringify(deletePrimaryKey));
+        const response = await fetch(`/delete/${dropDown.toLowerCase()}`, {
             method: 'DELETE',
-            header: {
+            headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({deletePrimaryKey}),
+            body: JSON.stringify(deletePrimaryKey),
         });
         const responseData = await response.json();
         handleDeleteAPIResponse(responseData);
@@ -73,11 +76,14 @@ function generateDeleteFields(fields, inputFieldElement) {
 
 function getDeleteData() {
     const fields = tableDeletePKFields[document.getElementById("DropDown").value];
+    console.log(fields);
     const deleteBody = [];
-    let keeper = 0;
     fields.forEach(function (field) {
-        deleteBody[keeper] = document.querySelector(`[name=${field}]`).value;
-        keeper += 1;
+        deleteBody.push(document.querySelector(`[name=${field}]`).value);
+        console.log(document.querySelector(`[name=${field}]`).value);
     });
-    return deleteBody;
+    console.log(deleteBody);
+    return {
+        toDelete: deleteBody,
+    };
 }

@@ -909,7 +909,9 @@ async function deleteFromDb(tableName, primaryKeyValues) {
     }
 
     return await withOracleDB(async (connection) => {
+        connection.autoCommit = true;
         const result = await connection.execute(query, queryParams);
+        connection.autoCommit = false;
         return result.rowsAffected;
     }).catch((err) => {
         console.error(err);
