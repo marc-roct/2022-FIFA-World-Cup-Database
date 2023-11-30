@@ -12,10 +12,10 @@ const tableSJFields = {
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
     Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
-    Forward: ["playerID", "teamID", "passes", "assists", "name", "age", "shots", "goals"],
-    Midfield: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
-    Defender: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
-    Goalkeeper: ["playerID", "teamID", "passes", "assists", "name", "age", "saves"],
+    Forward: ["playerID", "shots", "goals"],
+    Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    Goalkeeper: ["playerID", "saves"],
     GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
     PlayIn: ["matchID", "teamID"]
 }
