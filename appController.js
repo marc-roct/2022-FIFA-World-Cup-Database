@@ -150,8 +150,8 @@ router.post("/initiate-teamtable", async (req, res) => {
 });
 
 router.post("/insert-team", async (req, res) => {
-    const { teamID, size, countryName, managerID } = req.body;
-    const insertResult = await appService.insertTeamTable(teamID, size, countryName, managerID);
+    const { teamID, teamSize, countryName, managerID } = req.body;
+    const insertResult = await appService.insertTeamTable(teamID, teamSize, countryName, managerID);
     if (insertResult) {
         res.json({ success: true });
     } else {
