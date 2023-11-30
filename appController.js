@@ -17,28 +17,30 @@ router.get('/check-connection', async (req, res) => {
 
 // selectedTables should be a string list of tables
 // projections should be a string list of selected columns from the tables
-// filter should be a valid string of the where clause
+// filter should be a 2d array
+// eg. [[age, 30], [passes, 30]]
 router.post('/select-table', async (req, res) => {
     console.log("reqbody is", req.body);
-    // const {selectedTables, projections, filter} = req.body;
     const selectedTables = req.body.selectedTables;
     const projections = req.body.selectedAttributes;
     const filter = req.body.filter;
     console.log("selectedTables is", selectedTables);
     console.log("projections is", projections);
     console.log('filter is', filter);
-
     console.log("projection is", projections);
-    // const tableContent = await appService.selectTable(["Stadium2"], ["st_address","st_city"],
-    //     'st_address = \'Building Number: 125 Street: 393 Zone: 74\'');
     const tableContent = await appService.selectTable(selectedTables, projections, filter);
     console.log(tableContent);
     res.json({data: tableContent});
 });
 
-router.get('/projection', async (req, res) => {
-    const {selectedTables, projections, filter} = req.body;
-    const tableContent = await appService.selectTable(selectedTables, projections, filter);
+router.post('/projection', async (req, res) => {
+    console.log("reqbody is", req.body);
+    const selectedTables = req.body.selectedTables;
+    const projections = req.body.selectedAttributes;
+
+    console.log("projection is", projections);
+    const tableContent = await appService.selectTable(selectedTables, projections, []);
+    console.log(tableContent);
     res.json({data: tableContent});
 });
 
