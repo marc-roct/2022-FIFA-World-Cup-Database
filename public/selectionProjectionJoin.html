@@ -9,7 +9,7 @@
 <form>
     <label>Choose a table to insert element:</label>
     <label>
-        <select id="DropDown" onchange="showInsertFields()">
+        <select id="DropDown" multiple>
             <option value="Stadium">Stadium</option>
             <option value="Match">Match</option>
             <option value="GoalDetails">GoalDetails</option>
@@ -19,24 +19,35 @@
             <option value="Manager">Manager</option>
             <option value="Funds">Funds</option>
             <option value="Sponsor">Sponsor</option>
-            <option value="Player">Player</option>
             <option value="Forward">Forward</option>
             <option value="Midfield">Midfield</option>
-            <option value="Goalkeeper">Goalkeeper</option>
             <option value="Defender">Defender</option>
+            <option value="Goalkeeper">Goalkeeper</option>
         </select>
     </label>
 </form>
 <form>
-    <label>Choose between Selection, Projection, or Join</label>
+    <label>Choose between Selection + Projection, or Join</label>
     <label>
-        <select id="SPJ choose" onchange="identifySPJ()">
-            <option value="Selection">Selection</option>
-            <option value="Projection">Projection</option>
+        <select id="SPJ choose" onchange="showSPJFields()">
+            <option value="SelectionProjection">Selection + Projection</option>
             <option value="Join">Join</option>
         </select>
     </label>
 </form>
+<div id="selectionInputFields" class="hidden">
+    <h2>Selection Input Fields</h2>
+</div>
+<div id="projectionInputFields" class="hidden">
+    <h2>Projection Input Fields</h2>
+</div>
+<div id="filterInputFields" class="hidden">
+    <h2>Filter Input Fields</h2>
+</div>
+<div id="joinInputFields" class="hidden">
+    <h2>Join Input Fields</h2>
+</div>
+<button id="confirm-button" class="button">Perform Chosen SPJ</button>
 <nav>
     <a href="./index.html">Home</a>
     <a href="./insert.html">Insert</a>
@@ -47,6 +58,6 @@
     <a href="./division.html">Division</a>
     <a href="./display.html">Display</a>
 </nav>
-<script src="scripts.js"></script>
+<script src="selectionProjectionJoin.js"></script>
 </body>
 </html>

@@ -50,8 +50,11 @@ async function performDeleteFromAPI(deletePrimaryKey) {
 
 function handleDeleteAPIResponse(responseData) {
     if (responseData.success) {
+        const messageElement = document.getElementById("deleteResultMsg");
+        messageElement.textContent = "You have successfully deleted the data!";
         console.log("You have successfully deleted the data");
     } else {
+        alert("Error deleting the data");
         console.log("Unfortunately, deletion is unsuccessful");
     }
 }

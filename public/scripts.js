@@ -19,10 +19,10 @@ const tableInsertInputFields = {
     Team: ["teamID", "size", "countryName", "managerID"],
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
-    Forward: ["playerID", "shots", "goals"],
-    Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
-    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
-    Goalkeeper: ["playerID", "saves"],
+    Forward: ["playerID", "teamID", "passes", "assists", "name", "age", "shots", "goals"],
+    Midfield: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
+    Defender: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
+    Goalkeeper: ["playerID", "teamID", "passes", "assists", "name", "age", "saves"],
     GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
     PlayIn: ["matchID", "teamID"]
 }
@@ -147,11 +147,11 @@ async function showUpdateFields() {
 }
 async function confirmInsert() {
         const insertedData = pullInsertData();
-
         await performInsertAPI(insertedData);
 }
 function pullInsertData() {
     const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
+    console.log(allFields);
     const insertedData = {};
     allFields.forEach(function (field) {
         insertedData[field] = document.querySelector(`[name=${field}]`).value;
@@ -162,6 +162,7 @@ function pullInsertData() {
 async function performInsertAPI(insertedData) {
     try {
         const dropDown = document.getElementById("DropDown").value;
+        console.log(insertedData);
         const response = await fetch(`/insert-${dropDown.toLowerCase()}`, {
             method: 'POST',
             headers: {
@@ -193,6 +194,13 @@ async function performInsertAPI(insertedData) {
             // } else {
             //     console.log("Unfortunately, update is unsuccessful");
             // }
+            const responseJson = response.json();
+            if (responseJson.success) {
+                const messageElement = document.getElementById("updateResultMsg");
+                messageElement.textContent = "Congratulations, it is successfully updated!!"
+            } else {
+                alert("The updated is not successful!");
+            }
         } catch (error) {
             console.error("error: " + error);
         }
@@ -200,8 +208,11 @@ async function performInsertAPI(insertedData) {
 
 function handleInsertDeleteAPIResponse(responseHandle) {
     if (responseHandle.success) {
+        const messageElement = document.getElementById("insertResultMsg");
+        messageElement.textContent = "You successfully inserted the data!";
         console.log("You have successfully added the data");
     } else {
+        alert("Unfortunately, insertion is unsuccessful");
         console.log("Unfortunately, insertion is unsuccessful");
     }
 }
