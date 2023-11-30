@@ -1,4 +1,5 @@
 document.getElementById("confirm-table").addEventListener("click", developInputSection);
+document.getElementById("confirm-button").addEventListener("click", confirmSJ);
 
 const tableSJFields = {
     Stadium1: ["address", "city"],
@@ -29,20 +30,26 @@ function developInputSection() {
             const div = document.createElement("div");
             const inputField = document.createElement("input");
             inputField.type = "text";
-            const operator = document.createElement("select");
-            const and = document.createElement("option");
-            and.value = "AND";
-            and.textContent = "AND";
-            const or = document.createElement("option");
-            or.value = "OR";
-            or.textContent = "OR";
+            inputField.name = att;
+            const operatorInputField = document.createElement("input");
+            inputField.type = "text";
+            inputField.name = att + "operator";
+            inputField.placeholder = "AND or OR";
+            // const operator = document.createElement("select");
+            // operator.name = att + "operator";
+            // const and = document.createElement("option");
+            // and.value = "AND";
+            // and.textContent = "AND";
+            // const or = document.createElement("option");
+            // or.value = "OR";
+            // or.textContent = "OR";
             const attLabel = document.createElement("label");
             attLabel.textContent = att;
-            operator.appendChild(and);
-            operator.appendChild(or);
+            // operator.appendChild(and);
+            // operator.appendChild(or);
             div.appendChild(attLabel);
+            div.appendChild(operatorInputField);
             div.appendChild(inputField);
-            div.appendChild(operator);
             filterEnteringSection.appendChild(div);
         });
     });
@@ -51,4 +58,73 @@ function developInputSection() {
 function createSelectionJoinData() {
     const multiselectDropDown = document.getElementById("DropDown");
     const selectedTables = Array.from(multiselectDropDown.selectedOptions).map(option => option.value);
+    const filter = [];
+    selectedTables.forEach(table => {
+        const attributes = tableSJFields[table];
+        attributes.forEach(att => {
+            if (document.getElementById(att).value !== "") {
+                const arrayToInsert = [];
+                arrayToInsert.push(att);
+                arrayToInsert.push(document.getElementById(att).value);
+                arrayToInsert.push(document.getElementById(att + "operator").value);
+                filter.push(arrayToInsert);
+            }
+        });
+    });
+
+    return {
+        selectedTables: selectedTables,
+        filter: filter,
+    }
 }
+
+async function confirmSJ() {
+    const sjData = createSelectionJoinData();
+    await performSJAPI(sjData);
+}
+
+async function performSJAPI(data) {
+    const multiselectDropDown = document.getElementById("DropDown");
+    const selectedTables = Array.from(multiselectDropDown.selectedOptions).map(option => option.value);
+    const tableElement = document.getElementById("SJTable");
+    const SJTableBody = document.querySelector("tbody");
+    const attributeArray = [];
+    selectedTables.forEach(table => {
+        attributeArray.push(tableSJFields[table]);
+    });
+    const response = fetch('/select-table', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    });
+    const responseJson = await response.json();
+    const tableHead = document.getElementById("SJFields");
+    tableHead.innerHTML = "";
+    const content = responseJson.data;
+    generateSJHeaders(attributeArray, tableHead);
+
+    SJTableBody.innerHTML = '';
+    content.forEach(rowArray => {
+        const row = SJTableBody.insertRow();
+        rowArray.forEach((cellData, index) => {
+            const cell = row.insertCell();
+            cell.textContent = cellData;
+            console.log(`Column: ${rowArray[index]}, Value: ${cellData}`); // Debug log
+        });
+    });
+}
+
+function generateSJHeaders(attributeArray, tableHead) {
+    const tableRow = document.createElement("tr");
+    attributeArray.forEach(function (field) {
+        const header = document.createElement("th");
+        header.textContent = field;
+        tableRow.appendChild(header);
+    });
+    tableHead.appendChild(tableRow);
+}
+
+
+
