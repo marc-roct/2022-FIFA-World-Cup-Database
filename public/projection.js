@@ -48,7 +48,7 @@ async function performProjectionAPI(body) {
         },
         body: JSON.stringify(body)
     });
-    const responseJson = response.json();
+    const responseJson = await response.json();
     console.log("Response Data:", responseJson); // Debug log
 
     const tableHead = document.getElementById("projectedFields");
