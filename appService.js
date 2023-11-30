@@ -11,6 +11,8 @@ const dbConfig = {
 };
 
 
+
+
 const dbTables = new Map();
 dbTables.set('Stadium1', {p:['address'], a:['city']});
 dbTables.set('Stadium2', {p:['name'],a:['address','capacity']});
@@ -28,6 +30,83 @@ dbTables.set('Forward', {p:['playerID'],a:['shots','goals']});
 dbTables.set('Midfield', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
 dbTables.set('Defender', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
 dbTables.set('Goalkeeper', {p:['playerID'],a:['saves']});
+
+let tableRelations;
+function initializeTableRelations() {
+    const tableRelations = new Map();
+    tableRelations.set('Stadium1', {
+        primaryKey: ['address'],
+        foreignKey: {}
+    });
+    tableRelations.set('Stadium2', {
+        primaryKey: ['name'],
+        foreignKey: { 'address': 'Stadium1' }
+    });
+
+// Match tables
+    tableRelations.set('Match1', {
+        primaryKey: ['matchDate'],
+        foreignKey: {}
+    });
+    tableRelations.set('Match2', {
+        primaryKey: ['matchID'],
+        foreignKey: { 'stadiumName': 'Stadium2', 'matchDate': 'Match1' }
+    });
+
+// Other tables
+    tableRelations.set('Country', {
+        primaryKey: ['name'],
+        foreignKey: {}
+    });
+    tableRelations.set('Manager', {
+        primaryKey: ['managerID'],
+        foreignKey: {}
+    });
+    tableRelations.set('Team', {
+        primaryKey: ['teamID'],
+        foreignKey: { 'countryName': 'Country', 'managerID': 'Manager' }
+    });
+    tableRelations.set('Player', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'teamID': 'Team' }
+    });
+    tableRelations.set('GoalDetails', {
+        primaryKey: ['goalNumber', 'matchID'],
+        foreignKey: { 'matchID': 'Match2', 'playerID': 'Player' }
+    });
+    tableRelations.set('PlayIn', {
+        primaryKey: ['matchID', 'teamID'],
+        foreignKey: { 'matchID': 'Match2', 'teamID': 'Team' }
+    });
+    tableRelations.set('Funds', {
+        primaryKey: ['sponsorID', 'teamID'],
+        foreignKey: { 'sponsorID': 'Sponsor', 'teamID': 'Team' }
+    });
+    tableRelations.set('Sponsor', {
+        primaryKey: ['sponsorID'],
+        foreignKey: {}
+    });
+    tableRelations.set('Forward', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+    tableRelations.set('Midfield', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+    tableRelations.set('Defender', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+    tableRelations.set('Goalkeeper', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+
+    return tableRelations;
+}
+
+tableRelations = initializeTableRelations();
 
 
 const sKeys = ['address','city','s_name','DATE','phase','stadiumName','m_result','DATE','m_time',
@@ -98,7 +177,7 @@ async function selectTable(selectedTables, projections, filter) {
         let query = `SELECT ` + projections.join(", ")
                         + ` FROM ` + selectedTables.join(", ");
         if (filter.length !== 0) {
-            query += ` WHERE ` + getFilter(filter);
+            query += ` WHERE ` + getFilter(selectedTables, filter);
         }
         // console.log(query);
         const result = await connection.execute(query);
@@ -109,25 +188,48 @@ async function selectTable(selectedTables, projections, filter) {
     });
 }
 
-function getFilter(filterArray) {
+function getFilter(selectedTables, filterArray) {
+    let joinConditions = [];
+    let userFilters = '';
 
-    let filterString = '';
+    // Create join conditions based on FK-PK relationships
+    selectedTables.forEach(table => {
+        const tableInfo = tableRelations.get(table);
+        if (tableInfo && tableInfo.foreignKey) {
+            Object.keys(tableInfo.foreignKey).forEach(fk => {
+                const refTable = tableInfo.foreignKey[fk];
+                if (selectedTables.includes(refTable)) {
+                    joinConditions.push(`${table}.${fk} = ${refTable}.${fk}`);
+                }
+            });
+        }
+    });
 
+    // Process user specified filters
     filterArray.forEach((filter, index) => {
         const attribute = filter[0];
         const value = filter[1];
         const logicalOperator = filter[2]; // Can be 'AND' or 'OR', undefined for the last filter
 
-        // Append the condition to the filter string
-        filterString += `${attribute} = '${value}'`;
+        // Append the condition to the userFilters string
+        userFilters += `${attribute} = '${value}'`;
 
         // Add AND/OR if it's not the last filter
         if (index < filterArray.length - 1 && logicalOperator) {
-            filterString += ` ${logicalOperator} `;
+            userFilters += ` ${logicalOperator} `;
         }
     });
 
-    return filterString;
+    // Combine join conditions and user filters
+    let finalFilter = joinConditions.join(' AND ');
+    if (finalFilter.length > 0 && userFilters.length > 0) {
+        finalFilter += ' AND ';
+    }
+    finalFilter += userFilters;
+
+    console.log("the final filter in the WHERE clause is: ", finalFilter);
+
+    return finalFilter;
 }
 
 
