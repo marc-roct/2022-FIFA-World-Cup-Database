@@ -87,7 +87,7 @@ async function selectTable(selectedTables, projections, filter) {
         }
 
         // check if column names are valid
-        if (projections.size() === 0) {
+        if (projections.length() === 0) {
             projections.push('*');
         } else {
             for (const colm of projections) {
@@ -107,8 +107,8 @@ async function selectTable(selectedTables, projections, filter) {
         const result = await connection.execute(query);
         // console.log('after execute');
         return result.rows;
-    }).catch(() => {
-        return [];
+    }).catch((err) => {
+        console.error("There was an error in SPJ: ", err);
     });
 }
 
