@@ -70,10 +70,6 @@ async function testOracleConnection() {
 
 async function selectTable(selectedTables, projections, filter) {
     return await withOracleDB(async (connection) => {
-        // console.log('before execute');
-        // const result = await connection.execute(
-        //     `SELECT * from Stadium2`
-        // );
         let availableColumns = [];
         console.log("appservice's projection is", projections);
 
