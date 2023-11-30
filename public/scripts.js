@@ -41,40 +41,6 @@ const tableInsertInputFields = {
     }
 
 
-// const tableDeleteInputFields = {
-//     Stadium: ["Name"],
-//     Match: ["matchID"],
-//     GoalDetails: ["goalNumber"],
-//     PlayIn: ["matchID"],
-//     Team: ["teamID"],
-//     Country: ["name"],
-//     Manager: ["managerID"],
-//     Funds: ["sponsorID", "teamID"],
-//     Sponsor: ["sponsorID"],
-//     Player: ["playerID"]
-// }
-    // async function checkDbConnection() {
-    //     const statusElem = document.getElementById('dbStatus');
-    //     const loadingGifElem = document.getElementById('loadingGif');
-    //
-    //     const response = await fetch('/check-db-connection', {
-    //         method: "GET"
-    //     });
-    //
-    //     // Hide the loading GIF once the response is received.
-    //     // loadingGifElem.style.display = 'none';
-    //     // Display the statusElem's text in the placeholder.
-    //     // statusElem.style.display = 'inline';
-    //
-    //     response.text()
-    //         .then((text) => {
-    //             statusElem.textContent = text;
-    //         })
-    //         .catch((error) => {
-    //             statusElem.textContent = 'connection timed out';  // Adjust error handling if required.
-    //         });
-    // }
-
     // This function resets or initializes the demotable.
     async function resetDemotable() {
         for (const tableName in tableResetFields) {
@@ -119,19 +85,6 @@ async function showInsertFields() {
     confirmButton.addEventListener("click", confirmInsert);
     tableFieldsHolder.appendChild(confirmButton);
 }
-
-// async function showDeleteFields() {
-//     const selectedDropDown = document.getElementById("DropDown").value;
-//     const tableFieldsHolder = document.getElementById("inputFields")
-//     tableFieldsHolder.innerHTML = "";
-//     const allFields = tableDeleteInputFields[selectedDropDown];
-//     generateFields(allFields, tableFieldsHolder);
-//     const confirmButton = document.createElement("button");
-//     confirmButton.type = "button";
-//     confirmButton.textContent = "Confirm";
-//     confirmButton.addEventListener("click", confirmDelete);
-//     tableFieldsHolder.appendChild(confirmButton);
-// }
 
 async function showUpdateFields() {
     const selectedDropDown = document.getElementById("DropDown").value;

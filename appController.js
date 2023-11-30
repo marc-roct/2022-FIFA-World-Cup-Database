@@ -226,7 +226,7 @@ router.post("/insert-forward", async (req, res) => {
         goals: goals
     };
 
-    const insertResult = await appService.insertPlayerTable("forward", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Forward", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -254,7 +254,7 @@ router.post("/insert-midfield", async (req, res) => {
         interceptions: interceptions
     };
 
-    const insertResult = await appService.insertPlayerTable("midfield", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Midfield", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -282,7 +282,7 @@ router.post("/insert-defender", async (req, res) => {
         interceptions: interceptions
     };
 
-    const insertResult = await appService.insertPlayerTable("defender", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Defender", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -306,7 +306,7 @@ router.post("/insert-goalkeeper", async (req, res) => {
         saves: saves
     };
 
-    const insertResult = await appService.insertPlayerTable("goalkeeper", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Goalkeeper", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
