@@ -356,6 +356,11 @@ router.post("/update-table", async (req, res) => {
     }
 });
 
+router.get('/divide-demotable', async (req, res) => {
+    const tableContent = await appService.divideTable();
+    res.json({data: tableContent});
+});
+
 router.get('/count-demotable', async (req, res) => {
     const tableCount = await appService.countDemotable();
     if (tableCount >= 0) {
