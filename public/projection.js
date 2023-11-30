@@ -33,7 +33,6 @@ function createProjectionData(selectedAttributes) {
     return {
         selectedTables: selectedTables,
         selectedAttributes: selectedAttributes,
-        filter: ""
     };
 }
 
@@ -41,7 +40,7 @@ async function performProjectionAPI(body) {
     const selectedDropDown = document.getElementById("DropDown").value;
     const tableElement = document.getElementById("projectionTable");
     const projectionTableBody = document.querySelector("tbody");
-    const response = await fetch(`/select-table`, {
+    const response = await fetch(`/projection`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
