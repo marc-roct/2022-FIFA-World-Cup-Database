@@ -12,10 +12,10 @@ const tableSJFields = {
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
     Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
-    Forward: ["playerID", "teamID", "passes", "assists", "name", "age", "shots", "goals"],
-    Midfield: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
-    Defender: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
-    Goalkeeper: ["playerID", "teamID", "passes", "assists", "name", "age", "saves"],
+    Forward: ["playerID", "shots", "goals"],
+    Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
+    Goalkeeper: ["playerID", "saves"],
     GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
     PlayIn: ["matchID", "teamID"]
 }
@@ -67,14 +67,14 @@ function createSelectionJoinData() {
                 const arrayToInsert = [];
                 arrayToInsert.push(att);
                 arrayToInsert.push(document.querySelector(`[name=${att}]`).value);
-                if (document.querySelector(`[name=${att}operator]`) !== null) {
-                    arrayToInsert.push(document.querySelector(`[name=${att}operator]`).value);
-                }
+                arrayToInsert.push(document.querySelector(`[name=${att}operator]`).value);
                 filter.push(arrayToInsert);
             }
         });
     });
-    filter[filter.length - 1].pop();
+    if (filter.length > 0) {
+        filter[filter.length - 1].pop();
+    }
     return {
         selectedTables: selectedTables,
         filter: filter,
@@ -83,6 +83,7 @@ function createSelectionJoinData() {
 
 async function confirmSJ() {
     const sjData = createSelectionJoinData();
+    console.log(sjData);
     await performSJAPI(sjData);
 }
 
