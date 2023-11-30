@@ -27,6 +27,16 @@ router.get('/select-table', async (req, res) => {
 });
 
 
+// Maybe turn object into array
+router.get('/projection', async (req, res) => {
+    const {selectedTable, projections} = req.body;
+    // const tableContent = await appService.selectTable(["Stadium2"], ["st_address","st_city"],
+    //     'st_address = \'Building Number: 125 Street: 393 Zone: 74\'');
+    const tableContent = await appService.selectTable(selectedTable, projections, '');
+    res.json({data: tableContent});
+});
+
+
 router.post("/initiate-stadiumtable", async (req, res) => {
     const initiateResult = await appService.initiateStadiumTable();
     if (initiateResult) {
