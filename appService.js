@@ -789,11 +789,14 @@ async function joinTable(projections, fromTable, joinTable, onStatement) {
 
 async function divideTable() {
     return await withOracleDB(async (connection) => {
-        let query = `SELECT * FROM Team as tx
-                    WHERE NOT EXISTS (
-                    (SELECT s.sponsorID FROM Sponsor as s )
-                    EXCEPT
-                    (SELECT f.sponsorID FROM Funds as f WHERE f.teamID = tx.teamID) );`;
+        let query = `
+            SELECT * FROM Team tx
+            WHERE NOT EXISTS (
+                SELECT s.sponsorID FROM Sponsor s
+                MINUS
+                SELECT f.sponsorID FROM Funds f WHERE f.teamID = tx.teamID )
+        `;
+
         const result = await connection.execute(query);
         return result.rows;
     }).catch(() => {
