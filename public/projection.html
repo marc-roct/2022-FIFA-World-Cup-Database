@@ -7,9 +7,9 @@
 </head>
 <body>
 <form>
-    <label>Choose a table to delete element, using primary identification:</label>
+    <label>Choose a table to display with projected element:</label>
     <label>
-        <select id="DropDown" onchange="showPrimaryKeyInputField()">
+        <select id="DropDown" onchange="displayAttributes()">
             <option value="Stadium1">StadiumOne</option>
             <option value="Stadium2">StadiumTwo</option>
             <option value="Match1">MatchOne</option>
@@ -25,9 +25,23 @@
         </select>
     </label>
 </form>
-<div id="inputFields" class="hidden"></div>
-<button id="confirm-button" class="button">delete</button>
-<div id="deleteResultMsg"></div>
+<form>
+    <label for="projectionAttributes">Select the attributes</label>
+        <select id="projectionAttributes" multiple>
+        </select>
+</form>
+<button id="confirm-button" class="button">confirm</button>
+<br><hr><br> <!-- ========================================================================= -->
+
+<!-- Show 'Demotable'.
+    Data will be fetched and inserted here dynamically using JavaScript. -->
+<h2>Projection</h2>
+<table id="projectionTable" border="1">
+    <thead id="projectedFields"></thead>
+    <tbody id="projectionTableBody"></tbody>
+</table>
+
+<br><hr><br> <!-- ========================================================================= -->
 <nav>
     <a href="./index.html">Home</a>
     <a href="./insert.html">Insert</a>
@@ -39,6 +53,6 @@
     <a href="./division.html">Division</a>
     <a href="./display.html">Display</a>
 </nav>
-<script src="delete.js"></script>
+<script src="projection.js"></script>
 </body>
 </html>
