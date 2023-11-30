@@ -13,11 +13,7 @@ const tableDeletePKFields = {
     Manager: ["managerID"],
     Funds: ["sponsorID", "teamID"],
     Sponsor: ["sponsorID"],
-    Player: ["playerID"],
-    Forward: ["playerID"],
-    Midfield: ["playerID"],
-    Defender: ["playerID"],
-    Goalkeeper: ["playerID"]
+    Player: ["playerID"]
 }
 async function showPrimaryKeyInputField() {
     const selectedDropDown = document.getElementById("DropDown").value;
@@ -36,9 +32,9 @@ async function doDelete() {
 async function performDeleteFromAPI(deletePrimaryKey) {
     try {
         const dropDown = document.getElementById("DropDown").value;
-        console.log(`/delete/${dropDown.toLowerCase()}`);
+        console.log(`/delete/${dropDown}`);
         console.log(JSON.stringify(deletePrimaryKey));
-        const response = await fetch(`/delete/${dropDown.toLowerCase()}`, {
+        const response = await fetch(`/delete/${dropDown}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,23 +50,26 @@ async function performDeleteFromAPI(deletePrimaryKey) {
 
 function handleDeleteAPIResponse(responseData) {
     if (responseData.success) {
+        const messageElement = document.getElementById("deleteResultMsg");
+        messageElement.textContent = "You have successfully deleted the data!";
         console.log("You have successfully deleted the data");
     } else {
+        alert("Error deleting the data");
         console.log("Unfortunately, deletion is unsuccessful");
     }
 }
 
 function generateDeleteFields(fields, inputFieldElement) {
     fields.forEach(function (field) {
-       const label = document.createElement("label");
-       label.textContent = field;
-       const inputField = document.createElement("input");
-       inputField.type = "text";
-       inputField.name = field;
-       inputFieldElement.appendChild(label);
-       inputFieldElement.appendChild(inputField);
-       const br = document.createElement("br");
-       inputFieldElement.appendChild(br);
+        const label = document.createElement("label");
+        label.textContent = field;
+        const inputField = document.createElement("input");
+        inputField.type = "text";
+        inputField.name = field;
+        inputFieldElement.appendChild(label);
+        inputFieldElement.appendChild(inputField);
+        const br = document.createElement("br");
+        inputFieldElement.appendChild(br);
     });
 }
 

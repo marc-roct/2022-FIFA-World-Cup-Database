@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <form>
-    <label>Choose a table to insert element:</label>
+    <label>Choose a few tables that you want to join:</label>
     <label>
-        <select id="DropDown" onchange="showInsertFields()">
-            <option value="Stadium">Stadium</option>
-            <option value="Match">Match</option>
+        <select id="DropDown" multiple>
+            <option value="Stadium1">StadiumOne</option>
+            <option value="Stadium2">StadiumTwo</option>
+            <option value="Match1">MatchOne</option>
+            <option value="Match2">MatchTwo</option>
             <option value="GoalDetails">GoalDetails</option>
             <option value="PlayIn">PlayIn</option>
             <option value="Team">Team</option>
@@ -26,26 +29,31 @@
         </select>
     </label>
 </form>
-<form>
-    <label>Choose between Selection, Projection, or Join</label>
-    <label>
-        <select id="SPJ choose" onchange="identifySPJ()">
-            <option value="Selection">Selection</option>
-            <option value="Projection">Projection</option>
-            <option value="Join">Join</option>
-        </select>
-    </label>
-</form>
+<button id="confirm-table" class="button">ChooseTable</button>
+<div id="filterEnteringSection"></div>
+<button id="confirm-button" class="button">ConfirmSJ</button>
+<br><hr><br> <!-- ========================================================================= -->
+
+<!-- Show 'Demotable'.
+    Data will be fetched and inserted here dynamically using JavaScript. -->
+<h2>selectionJoin</h2>
+<table id="SJTable" border="1">
+    <thead id="SJFields"></thead>
+    <tbody id="SJTableBody"></tbody>
+</table>
+
+<br><hr><br> <!-- ========================================================================= -->
 <nav>
     <a href="./index.html">Home</a>
     <a href="./insert.html">Insert</a>
     <a href="./delete.html">Delete</a>
     <a href="./update.html">Update</a>
-    <a href="./selectionProjectionJoin.html">SPJ</a>
+    <a href="./selectionJoin.html">SJ</a>
+    <a href="./projection.html">Projection</a>
     <a href="./aggregation.html">Aggregation</a>
     <a href="./division.html">Division</a>
     <a href="./display.html">Display</a>
 </nav>
-<script src="scripts.js"></script>
+<script src="selectionJoin.js"></script>
 </body>
 </html>

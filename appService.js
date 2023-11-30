@@ -70,11 +70,8 @@ async function testOracleConnection() {
 
 async function selectTable(selectedTables, projections, filter) {
     return await withOracleDB(async (connection) => {
-        // console.log('before execute');
-        // const result = await connection.execute(
-        //     `SELECT * from Stadium2`
-        // );
         let availableColumns = [];
+        console.log("appservice's projection is", projections);
 
         // check if table names are valid
         for (const tbl of selectedTables) {
@@ -87,7 +84,7 @@ async function selectTable(selectedTables, projections, filter) {
         }
 
         // check if column names are valid
-        if (projections.size() === 0) {
+        if (projections.length === 0) {
             projections.push('*');
         } else {
             for (const colm of projections) {
@@ -100,16 +97,37 @@ async function selectTable(selectedTables, projections, filter) {
 
         let query = `SELECT ` + projections.join(", ")
                         + ` FROM ` + selectedTables.join(", ");
-        if (filter !== "") {
-            query += ` WHERE ` + filter;
+        if (filter.length !== 0) {
+            query += ` WHERE ` + getFilter(filter);
         }
         // console.log(query);
         const result = await connection.execute(query);
         // console.log('after execute');
         return result.rows;
-    }).catch(() => {
-        return [];
+    }).catch((err) => {
+        console.error("There was an error in SPJ: ", err);
     });
+}
+
+function getFilter(filterArray) {
+
+    let filterString = '';
+
+    filterArray.forEach((filter, index) => {
+        const attribute = filter[0];
+        const value = filter[1];
+        const logicalOperator = filter[2]; // Can be 'AND' or 'OR', undefined for the last filter
+
+        // Append the condition to the filter string
+        filterString += `${attribute} = '${value}'`;
+
+        // Add AND/OR if it's not the last filter
+        if (index < filterArray.length - 1 && logicalOperator) {
+            filterString += ` ${logicalOperator} `;
+        }
+    });
+
+    return filterString;
 }
 
 
@@ -590,7 +608,7 @@ async function initiatePlayerTable() {
             CREATE TABLE Player (
                 playerID integer PRIMARY KEY,
                 teamID   INTEGER,
-                Passes   INTEGER,
+                passes   INTEGER,
                 assists  INTEGER,
                 name     VARCHAR(255),
                 age      INTEGER,
@@ -656,8 +674,8 @@ async function insertPlayerTable(playerType, playerData, subclassData) {
         try {
             // Insert into Player table
             await connection.execute(
-                `INSERT INTO Player (playerID, teamID, Passes, assists, name, age) VALUES (:playerID, :teamID, :Passes, :assists, :name, :age)`,
-                { playerID: playerData.playerID, teamID: playerData.teamID, Passes: playerData.Passes, assists: playerData.assists, name: playerData.name, age: playerData.age },
+                `INSERT INTO Player (playerID, teamID, passes, assists, name, age) VALUES (:playerID, :teamID, :passes, :assists, :name, :age)`,
+                { playerID: playerData.playerID, teamID: playerData.teamID, passes: playerData.passes, assists: playerData.assists, name: playerData.name, age: playerData.age },
                 { autoCommit: false }
             );
 
@@ -749,6 +767,7 @@ async function updateTable(selectedTable, args) {
         result = await connection.execute(query);
 
         oracledb.autoCommit = false;
+        console.log(result.rowsAffected);
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((err) => {
         console.log(err);
@@ -805,36 +824,39 @@ async function fetchFromDb(tablename) {
 }
 
 async function deleteFromDb(tableName, primaryKeyValues) {
+    console.log("tableName is: ", tableName);
+    console.log("primary key(s) is: ", primaryKeyValues);
+    console.log("primary key type is:", typeof primaryKeyValues[0]);
 
     const pkOfTable = dbTables.get(tableName).p;
-
-    if (pkOfTable.length === 0 || pkOfTable.length > 2) {
-        throw new Error(`Table ${tableName} has an unsupported number of primary keys.`);
-    }
+    console.log("the primary key of this table is: ", pkOfTable);
 
     let query = `DELETE FROM ${tableName} WHERE `;
     const queryParams = {};
 
-    if (pkOfTable.length === 1) {
-        query += `${pkOfTable[0]} = :primaryKeyValue1`;
-        queryParams.primaryKeyValue1 = primaryKeyValues[0];
-    } else if (pkOfTable.length === 2) {
-        query += `${pkOfTable[0]} = :primaryKeyValue1 AND ${pkOfTable[1]} = :primaryKeyValue2`;
-        queryParams.primaryKeyValue1 = primaryKeyValues[0];
-        queryParams.primaryKeyValue2 = primaryKeyValues[1];
-    }
+    primaryKeyValues.forEach((pkValue, index) => {
+        const pkIndex = `primaryKeyValue${index + 1}`;
+        if (!isNaN(pkValue)) {
+            queryParams[pkIndex] = parseInt(pkValue);
+        } else {
+            queryParams[pkIndex] = pkValue;
+        }
+        query += `${pkOfTable[index]} = :${pkIndex}`;
+        if (index < pkOfTable.length - 1) {
+            query += ' AND ';
+        }
+    });
 
     return await withOracleDB(async (connection) => {
-        connection.autoCommit = true;
-        const result = await connection.execute(query, queryParams);
-        connection.autoCommit = false;
+
+        const result = await connection.execute(query, queryParams, {autoCommit: true});
+        console.log("Query executed:", query, "and queryParams: ", queryParams);
         return result.rowsAffected;
     }).catch((err) => {
-        console.error(err);
+        console.error("Error occured in appService delete: ", err);
         return false;
     });
 }
-
 
 
 
