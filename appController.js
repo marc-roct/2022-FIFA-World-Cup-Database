@@ -44,7 +44,6 @@ router.post('/projection', async (req, res) => {
     res.json({data: tableContent});
 });
 
-
 router.post("/initiate-stadiumtable", async (req, res) => {
     const initiateResult = await appService.initiateStadiumTable();
     if (initiateResult) {
