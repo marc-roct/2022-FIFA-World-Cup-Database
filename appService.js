@@ -75,6 +75,7 @@ async function selectTable(selectedTables, projections, filter) {
         //     `SELECT * from Stadium2`
         // );
         let availableColumns = [];
+        console.log("appservice's projection is", projections);
 
         // check if table names are valid
         for (const tbl of selectedTables) {
@@ -87,7 +88,7 @@ async function selectTable(selectedTables, projections, filter) {
         }
 
         // check if column names are valid
-        if (projections.length() === 0) {
+        if (projections.length === 0) {
             projections.push('*');
         } else {
             for (const colm of projections) {
