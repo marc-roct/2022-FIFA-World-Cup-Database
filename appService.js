@@ -176,12 +176,14 @@ async function selectTable(selectedTables, projections, filter) {
 
         let query = `SELECT ` + projections.join(", ")
                         + ` FROM ` + selectedTables.join(", ");
-        if (filter.length !== 0) {
+
+        if (projections.length === 0) {
             query += ` WHERE ` + getFilter(selectedTables, filter);
         }
-        // console.log(query);
+
+         console.log('query is: ', query);
         const result = await connection.execute(query);
-        // console.log('after execute');
+         console.log('after execute in appService');
         return result.rows;
     }).catch((err) => {
         console.error("There was an error in SPJ: ", err);
