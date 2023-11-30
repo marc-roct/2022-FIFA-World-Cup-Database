@@ -18,7 +18,7 @@ router.get('/check-connection', async (req, res) => {
 // selectedTables should be a string list of tables
 // projections should be a string list of selected columns from the tables
 // filter should be a valid string of the where clause
-router.get('/select-table', async (req, res) => {
+router.post('/select-table', async (req, res) => {
     const {selectedTables, projections, filter} = req.body;
     // const tableContent = await appService.selectTable(["Stadium2"], ["st_address","st_city"],
     //     'st_address = \'Building Number: 125 Street: 393 Zone: 74\'');
