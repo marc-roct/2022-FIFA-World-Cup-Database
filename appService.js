@@ -590,7 +590,7 @@ async function initiatePlayerTable() {
             CREATE TABLE Player (
                 playerID integer PRIMARY KEY,
                 teamID   INTEGER,
-                Passes   INTEGER,
+                passes   INTEGER,
                 assists  INTEGER,
                 name     VARCHAR(255),
                 age      INTEGER,
@@ -656,8 +656,8 @@ async function insertPlayerTable(playerType, playerData, subclassData) {
         try {
             // Insert into Player table
             await connection.execute(
-                `INSERT INTO Player (playerID, teamID, Passes, assists, name, age) VALUES (:playerID, :teamID, :Passes, :assists, :name, :age)`,
-                { playerID: playerData.playerID, teamID: playerData.teamID, Passes: playerData.Passes, assists: playerData.assists, name: playerData.name, age: playerData.age },
+                `INSERT INTO Player (playerID, teamID, passes, assists, name, age) VALUES (:playerID, :teamID, :passes, :assists, :name, :age)`,
+                { playerID: playerData.playerID, teamID: playerData.teamID, passes: playerData.passes, assists: playerData.assists, name: playerData.name, age: playerData.age },
                 { autoCommit: false }
             );
 
