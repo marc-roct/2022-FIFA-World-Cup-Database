@@ -97,8 +97,8 @@ async function selectTable(selectedTables, projections, filter) {
 
         let query = `SELECT ` + projections.join(", ")
                         + ` FROM ` + selectedTables.join(", ");
-        if (filter !== "") {
-            query += ` WHERE ` + filter;
+        if (filter.length !== 0) {
+            query += ` WHERE ` + getFilter(filter);
         }
         // console.log(query);
         const result = await connection.execute(query);
@@ -107,6 +107,27 @@ async function selectTable(selectedTables, projections, filter) {
     }).catch((err) => {
         console.error("There was an error in SPJ: ", err);
     });
+}
+
+function getFilter(filterArray) {
+
+    let filterString = '';
+
+    filterArray.forEach((filter, index) => {
+        const attribute = filter[0];
+        const value = filter[1];
+        const logicalOperator = filter[2]; // Can be 'AND' or 'OR', undefined for the last filter
+
+        // Append the condition to the filter string
+        filterString += `${attribute} = '${value}'`;
+
+        // Add AND/OR if it's not the last filter
+        if (index < filterArray.length - 1 && logicalOperator) {
+            filterString += ` ${logicalOperator} `;
+        }
+    });
+
+    return filterString;
 }
 
 
