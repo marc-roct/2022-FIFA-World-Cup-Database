@@ -16,7 +16,7 @@ const tableInsertInputFields = {
     Match: ["matchID", "stadiumName", "result", "matchDate", "time", "phase"],
     Country: ["name", "ranking"],
     Manager: ["managerID", "name", "age", "nationality"],
-    Team: ["teamID", "size", "countryName", "managerID"],
+    Team: ["teamID", "teamSize", "countryName", "managerID"],
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
     Forward: ["playerID", "teamID", "passes", "assists", "name", "age", "shots", "goals"],
@@ -141,18 +141,13 @@ async function performInsertAPI(insertedData) {
                 body: JSON.stringify({selectedTable: dropDown,
                     args: updateData}),
             });
-            // const responseData = await response.json();
-            // if (responseData.success) {
-            //     console.log("You have successfully updated the data");
-            // } else {
-            //     console.log("Unfortunately, update is unsuccessful");
-            // }
-            const responseJson = response.json();
+
+            const responseJson = await response.json();
+            const messageElement = document.getElementById("updateResultMsg");
             if (responseJson.success) {
-                const messageElement = document.getElementById("updateResultMsg");
                 messageElement.textContent = "Congratulations, it is successfully updated!!"
             } else {
-                alert("The updated is not successful!");
+                messageElement.textContent = "The updated is not successful!";
             }
         } catch (error) {
             console.error("error: " + error);
