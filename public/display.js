@@ -1,18 +1,3 @@
-// function handleDisplayAPIResponse(responseHandle) {
-//     try {
-//         const tableArea = document.getElementById("result-table");
-//         responseHandle.forEach(eachRow => {
-//             const div = document.createElement('div');
-//             for (const attribute in eachRow) {
-//                 div.innerHTML += `<b>${attribute}:</b> ${eachRow[attribute]}`;
-//             }
-//         tableArea.appendChild(div);
-//         })
-//     } catch (error) {
-//         console.error("Error: " + error)
-//     }
-//
-// }
 document.getElementById("confirm-button").addEventListener("click", displayTable);
 document.getElementById("DropDown").addEventListener("change", showTableHeaders);
 
@@ -23,7 +8,7 @@ const tableDisplayFields = {
     Match2: ["stadiumName", "result", "date", "time"],
     Country: ["name", "ranking"],
     Manager: ["managerID", "name", "age", "nationality"],
-    Team: ["teamID", "size", "countryName", "managerID"],
+    Team: ["teamID", "teamSize", "countryName", "managerID"],
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
     Player: ["playerID", "teamID", "passes", "assists", "name", "age"],
