@@ -67,14 +67,14 @@ function createSelectionJoinData() {
                 const arrayToInsert = [];
                 arrayToInsert.push(att);
                 arrayToInsert.push(document.querySelector(`[name=${att}]`).value);
-                if (document.querySelector(`[name=${att}operator]`) !== null) {
-                    arrayToInsert.push(document.querySelector(`[name=${att}operator]`).value);
-                }
+                arrayToInsert.push(document.querySelector(`[name=${att}operator]`).value);
                 filter.push(arrayToInsert);
             }
         });
     });
-    filter[filter.length - 1].pop();
+    if (filter.length > 0) {
+        filter[filter.length - 1].pop();
+    }
     return {
         selectedTables: selectedTables,
         filter: filter,
@@ -83,6 +83,7 @@ function createSelectionJoinData() {
 
 async function confirmSJ() {
     const sjData = createSelectionJoinData();
+    console.log(sjData);
     await performSJAPI(sjData);
 }
 
