@@ -9,9 +9,10 @@
             if (selectedDropDown.value === "selectionProjection") {
                 const selectionInputFieldElement = document.getElementById("selectionInputFields");
                 const projectionInputFieldElement = document.getElementById("projectionInputFields");
+                const filterInputFieldElement = document.getElementById("filterInputFields");
                 selectionInputFieldElement.innerHTML = "";
                 projectionInputFieldElement.innerHTML = "";
-
+                filterInputFieldElement.innerHTML = "";
             } else {
                 const joinInputFieldElement = document.getElementById("joinInputFields");
                 joinInputFieldElement.innerHTML = "";

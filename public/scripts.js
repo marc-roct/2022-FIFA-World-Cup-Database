@@ -194,6 +194,13 @@ async function performInsertAPI(insertedData) {
             // } else {
             //     console.log("Unfortunately, update is unsuccessful");
             // }
+            const responseJson = response.json();
+            if (responseJson.success) {
+                const messageElement = document.getElementById("updateResultMsg");
+                messageElement.textContent = "Congratulations, it is successfully updated!!"
+            } else {
+                alert("The updated is not successful!");
+            }
         } catch (error) {
             console.error("error: " + error);
         }
@@ -201,8 +208,11 @@ async function performInsertAPI(insertedData) {
 
 function handleInsertDeleteAPIResponse(responseHandle) {
     if (responseHandle.success) {
+        const messageElement = document.getElementById("insertResultMsg");
+        messageElement.textContent = "You successfully inserted the data!";
         console.log("You have successfully added the data");
     } else {
+        alert("Unfortunately, insertion is unsuccessful");
         console.log("Unfortunately, insertion is unsuccessful");
     }
 }
