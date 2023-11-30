@@ -18,7 +18,7 @@ router.get('/check-connection', async (req, res) => {
 // selectedTables should be a string list of tables
 // projections should be a string list of selected columns from the tables
 // filter should be a 2d array
-// eg. [[age, 30], [passes, 30]]
+// eg. [[age, 30, OR], [passes, 30]]
 router.post('/select-table', async (req, res) => {
     console.log("reqbody is", req.body);
     const selectedTables = req.body.selectedTables;
