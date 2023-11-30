@@ -367,6 +367,7 @@ router.post("/update-table", async (req, res) => {
     const { selectedTable, args } = req.body;
     console.log(args);
     const updateResult = await appService.updateTable(selectedTable, args);
+    console.log("update result is: ", updateResult);
     if (updateResult) {
         res.json({ success: true });
     } else {

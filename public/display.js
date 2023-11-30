@@ -53,7 +53,6 @@ async function displayTable() {
 
     tableBody.innerHTML = '';
 
-
     tableContent.forEach(rowArray => {
         const row = tableBody.insertRow();
         rowArray.forEach((cellData, index) => {

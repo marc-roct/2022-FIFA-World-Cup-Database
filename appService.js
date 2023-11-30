@@ -767,6 +767,7 @@ async function updateTable(selectedTable, args) {
         result = await connection.execute(query);
 
         oracledb.autoCommit = false;
+        console.log(result.rowsAffected);
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((err) => {
         console.log(err);
