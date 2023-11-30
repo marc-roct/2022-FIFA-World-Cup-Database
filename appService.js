@@ -787,6 +787,23 @@ async function joinTable(projections, fromTable, joinTable, onStatement) {
     });
 }
 
+async function divideTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT * FROM Team tx
+            WHERE NOT EXISTS (
+                SELECT s.sponsorID FROM Sponsor s
+                MINUS
+                SELECT f.sponsorID FROM Funds f WHERE f.teamID = tx.teamID )
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
 async function countDemotable() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
@@ -872,6 +889,7 @@ module.exports = {
     insertGoalDetailsTable,
     fetchFromDb,
     deleteFromDb,
+    divideTable,
 
     updateTable,
     countDemotable
