@@ -32,9 +32,9 @@ function developInputSection() {
             inputField.type = "text";
             inputField.name = att;
             const operatorInputField = document.createElement("input");
-            inputField.type = "text";
-            inputField.name = att + "operator";
-            inputField.placeholder = "AND or OR";
+            operatorInputField.type = "text";
+            operatorInputField.name = att + "operator";
+            operatorInputField.placeholder = "AND or OR";
             // const operator = document.createElement("select");
             // operator.name = att + "operator";
             // const and = document.createElement("option");
@@ -48,8 +48,8 @@ function developInputSection() {
             // operator.appendChild(and);
             // operator.appendChild(or);
             div.appendChild(attLabel);
-            div.appendChild(operatorInputField);
             div.appendChild(inputField);
+            div.appendChild(operatorInputField);
             filterEnteringSection.appendChild(div);
         });
     });
@@ -62,16 +62,19 @@ function createSelectionJoinData() {
     selectedTables.forEach(table => {
         const attributes = tableSJFields[table];
         attributes.forEach(att => {
-            if (document.getElementById(att).value !== "") {
+            console.log(document.querySelector(`[name=${att}]`).value);
+            if (document.querySelector(`[name=${att}]`).value !== "") {
                 const arrayToInsert = [];
                 arrayToInsert.push(att);
-                arrayToInsert.push(document.getElementById(att).value);
-                arrayToInsert.push(document.getElementById(att + "operator").value);
+                arrayToInsert.push(document.querySelector(`[name=${att}]`).value);
+                if (document.querySelector(`[name=${att}operator]`) !== null) {
+                    arrayToInsert.push(document.querySelector(`[name=${att}operator]`).value);
+                }
                 filter.push(arrayToInsert);
             }
         });
     });
-
+    filter[filter.length - 1].pop();
     return {
         selectedTables: selectedTables,
         filter: filter,
@@ -90,9 +93,17 @@ async function performSJAPI(data) {
     const SJTableBody = document.querySelector("tbody");
     const attributeArray = [];
     selectedTables.forEach(table => {
-        attributeArray.push(tableSJFields[table]);
+        const attributes = tableSJFields[table];
+        attributes.forEach(att => {
+            attributeArray.push(att);
+        });
     });
-    const response = fetch('/select-table', {
+    console.log(data);
+    const tableHead = document.getElementById("SJFields");
+    tableHead.innerHTML = "";
+    console.log(attributeArray);
+    generateSJHeaders(attributeArray, tableHead);
+    const response = await fetch('/select-table', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -100,10 +111,7 @@ async function performSJAPI(data) {
         body: JSON.stringify(data)
     });
     const responseJson = await response.json();
-    const tableHead = document.getElementById("SJFields");
-    tableHead.innerHTML = "";
     const content = responseJson.data;
-    generateSJHeaders(attributeArray, tableHead);
 
     SJTableBody.innerHTML = '';
     content.forEach(rowArray => {
