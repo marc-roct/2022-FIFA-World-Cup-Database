@@ -377,6 +377,7 @@ router.post("/update-table", async (req, res) => {
 
 router.get('/divide-demotable', async (req, res) => {
     const tableContent = await appService.divideTable();
+    console.log(tableContent.data);
     res.json({data: tableContent});
 });
 

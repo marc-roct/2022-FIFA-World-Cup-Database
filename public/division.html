@@ -6,27 +6,19 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<form>
-    <label>Choose a table:</label>
-    <label>
-        <select>
-            <option>Stadium</option>
-            <option>Match</option>
-            <option>GoalDetails</option>
-            <option>PlayIn</option>
-            <option>Team</option>
-            <option>Country</option>
-            <option>Manager</option>
-            <option>Funds</option>
-            <option>Sponsor</option>
-            <option>Player</option>
-            <option>Forward</option>
-            <option>Midfield</option>
-            <option>Goalkeeper</option>
-            <option>Defender</option>
-        </select>
-    </label>
-</form>
+<label>Click the button to find which team has the sponsors1</label>
+<button id="confirm-button" class="button">confirm</button>
+<br><hr><br> <!-- ========================================================================= -->
+
+<!-- Show 'Demotable'.
+    Data will be fetched and inserted here dynamically using JavaScript. -->
+<h2>Division Result</h2>
+<table id="divisionTable" border="1">
+    <thead id="divisionFields"></thead>
+    <tbody id="divisionTableBody"></tbody>
+</table>
+
+<br><hr><br> <!-- ========================================================================= -->
 <nav>
     <a href="./index.html">Home</a>
     <a href="./insert.html">Insert</a>
@@ -38,5 +30,6 @@
     <a href="./division.html">Division</a>
     <a href="./display.html">Display</a>
 </nav>
+<script src="division.js"></script>
 </body>
 </html>
