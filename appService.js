@@ -912,7 +912,7 @@ async function divideTable() {
 async function aggregateGroupByTable() {
     return await withOracleDB(async (connection) => {
         let query = `
-            SELECT c.name, SUM(passes) FROM Player p, Team t
+            SELECT t.countryName, SUM(passes) FROM Player p, Team t
             WHERE p.teamID = t.teamID
             GROUP BY t.countryName
         `;
@@ -927,7 +927,7 @@ async function aggregateGroupByTable() {
 async function aggregateHavingTable() {
     return await withOracleDB(async (connection) => {
         let query = `
-            SELECT c.name, SUM(passes) FROM Player p, Team t
+            SELECT t.countryName, SUM(passes) FROM Player p, Team t
             WHERE p.teamID = t.teamID
             GROUP BY t.countryName
             HAVING SUM(passes) > 30
