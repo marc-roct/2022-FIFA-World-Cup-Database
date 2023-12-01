@@ -940,6 +940,25 @@ async function aggregateHavingTable() {
     });
 }
 
+async function aggregateNestedTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT t.teamID, COUNT(m.matches) as matchesPlayed
+            FROM Team t,
+                 (SELECT t2.teamID, p.matchID as matches
+            FROM PlayIN p, Team t2
+            WHERE p.teamID = t2.teamID) m 
+            WHERE t.teamID = m.teamID
+            GROUP BY t.teamID
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
 async function countDemotable() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
@@ -1028,6 +1047,7 @@ module.exports = {
     divideTable,
     aggregateGroupByTable,
     aggregateHavingTable,
+    aggregateNestedTable,
 
     updateTable,
     countDemotable
