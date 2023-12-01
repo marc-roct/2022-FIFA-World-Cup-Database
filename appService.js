@@ -909,6 +909,37 @@ async function divideTable() {
     });
 }
 
+async function aggregateGroupByTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT c.name, passes FROM Player p, Team t
+            WHERE p.teamID = t.teamID
+            GROUP BY t.countryName
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function aggregateHavingTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT c.name, SUM(passes) FROM Player p, Team t
+            WHERE p.teamID = t.teamID
+            GROUP BY t.countryName
+            HAVING SUM(passes) > 30
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
 async function countDemotable() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
@@ -995,6 +1026,8 @@ module.exports = {
     fetchFromDb,
     deleteFromDb,
     divideTable,
+    aggregateGroupByTable,
+    aggregateHavingTable,
 
     updateTable,
     countDemotable
