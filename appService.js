@@ -148,6 +148,7 @@ async function testOracleConnection() {
 }
 
 async function selectTable(selectedTables, projections, filter) {
+    let pLen = projections.length;
     return await withOracleDB(async (connection) => {
         let availableColumns = [];
         console.log("appservice's projection is", projections);
@@ -177,7 +178,7 @@ async function selectTable(selectedTables, projections, filter) {
         let query = `SELECT ` + projections.join(", ")
                         + ` FROM ` + selectedTables.join(", ");
 
-        if (projections.length === 0) {
+        if (pLen === 0) {
             query += ` WHERE ` + getFilter(selectedTables, filter);
         }
 
