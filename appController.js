@@ -380,6 +380,18 @@ router.get('/divide-demotable', async (req, res) => {
     res.json({data: tableContent});
 });
 
+router.get('/group-by-table', async (req, res) => {
+    const tableContent = await appService.aggregateGroupByTable();
+    console.log(tableContent.data);
+    res.json({data: tableContent});
+});
+
+router.get('/having-table', async (req, res) => {
+    const tableContent = await appService.aggregateHavingTable();
+    console.log(tableContent.data);
+    res.json({data: tableContent});
+});
+
 router.get('/count-demotable', async (req, res) => {
     const tableCount = await appService.countDemotable();
     if (tableCount >= 0) {
