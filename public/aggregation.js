@@ -1,10 +1,37 @@
     document.getElementById("groupBy").addEventListener("click", doGroupByAggregation);
     document.getElementById("having").addEventListener("click", doHavingAggregation);
+    document.getElementById("nGroupBy").addEventListener("click", doNGroupBy);
 
 
     const groupByTable = {
         attr: ["countryName", "passes"]
     }
+
+    const nGroupByTable = {
+        attr:["teamID", "matchesPlayed"]
+    }
+
+    async function doNGroupBy() {
+        const tableBody = document.getElementById("nGroupByBody");
+        const tableHead = document.getElementById("nGroupByHeadFields");
+        tableHead.innerHTML = "";
+        const allFields =  nGroupByTable.attr;
+        generateGroupByHeaders(allFields, tableHead);
+        const response = await fetch('/nested-table', {
+            method: 'GET'
+        });
+        const responseData = await response.json();
+        const content = responseData.data;
+        content.forEach(rowArray => {
+            const row = tableBody.insertRow();
+            rowArray.forEach((cellData, index) => {
+                const cell = row.insertCell();
+                cell.textContent = cellData;
+                console.log(`Column: ${allFields[index]}, Value: ${cellData}`); // Debug log
+            });
+        });
+    }
+
     async function doHavingAggregation() {
         const tableElement = document.getElementById("havingTable");
         const tableBody = document.getElementById("havingBody");
