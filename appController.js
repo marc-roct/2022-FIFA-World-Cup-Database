@@ -392,6 +392,12 @@ router.get('/having-table', async (req, res) => {
     res.json({data: tableContent});
 });
 
+router.get('/nested-table', async (req, res) => {
+    const tableContent = await appService.aggregateNestedTable();
+    console.log(tableContent.data);
+    res.json({data: tableContent});
+});
+
 router.get('/count-demotable', async (req, res) => {
     const tableCount = await appService.countDemotable();
     if (tableCount >= 0) {

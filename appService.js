@@ -912,7 +912,7 @@ async function divideTable() {
 async function aggregateGroupByTable() {
     return await withOracleDB(async (connection) => {
         let query = `
-            SELECT c.name, SUM(passes) FROM Player p, Team t
+            SELECT t.countryName, SUM(passes) FROM Player p, Team t
             WHERE p.teamID = t.teamID
             GROUP BY t.countryName
         `;
@@ -927,10 +927,29 @@ async function aggregateGroupByTable() {
 async function aggregateHavingTable() {
     return await withOracleDB(async (connection) => {
         let query = `
-            SELECT c.name, SUM(passes) FROM Player p, Team t
+            SELECT t.countryName, SUM(passes) FROM Player p, Team t
             WHERE p.teamID = t.teamID
             GROUP BY t.countryName
             HAVING SUM(passes) > 30
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function aggregateNestedTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT t.teamID, COUNT(m.matches) as matchesPlayed
+            FROM Team t,
+                 (SELECT t2.teamID, p.matchID as matches
+            FROM PlayIN p, Team t2
+            WHERE p.teamID = t2.teamID) m 
+            WHERE t.teamID = m.teamID
+            GROUP BY t.teamID
         `;
 
         const result = await connection.execute(query);
@@ -1028,6 +1047,7 @@ module.exports = {
     divideTable,
     aggregateGroupByTable,
     aggregateHavingTable,
+    aggregateNestedTable,
 
     updateTable,
     countDemotable
