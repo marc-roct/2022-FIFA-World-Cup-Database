@@ -3,38 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<form>
-    <label>Choose a table:</label>
-    <label>
-        <select>
-            <option>Stadium</option>
-            <option>Match</option>
-            <option>GoalDetails</option>
-            <option>PlayIn</option>
-            <option>Team</option>
-            <option>Country</option>
-            <option>Manager</option>
-            <option>Funds</option>
-            <option>Sponsor</option>
-            <option>Player</option>
-            <option>Forward</option>
-            <option>Midfield</option>
-            <option>Goalkeeper</option>
-            <option>Defender</option>
-        </select>
-    </label>
-</form>
+<br>
+<br>
+<br>
+<br><hr><br> <!-- ========================================================================= -->
+
+<!-- Show 'Demotable'.
+    Data will be fetched and inserted here dynamically using JavaScript. -->
+<h2>Aggregation with GROUP BY</h2>
+<table id="groupByTable" border="1">
+    <thead id="groupByHeadFields"></thead>
+    <tbody id="groupByBody"></tbody>
+</table>
+
+<br><br><br><br><br><br><br> <!-- ========================================================================= -->
+<button id="groupBy" class="button">confirm</button>
+<br>
+<br>
+<br>
+<br><hr><br> <!-- ========================================================================= -->
+
+<!-- Show 'Demotable'.
+    Data will be fetched and inserted here dynamically using JavaScript. -->
+<h2>Aggregation with HAVING</h2>
+<table id="havingTable" border="1">
+    <thead id="havingHeadFields"></thead>
+    <tbody id="havingBody"></tbody>
+</table>
+
+<br><br><br><br><br><br><br> <!-- ========================================================================= -->
+<button id="having" class="button">confirm</button>
+<br>
+<br>
+<br>
+<br><hr><br> <!-- ========================================================================= -->
+
+<!-- Show 'Demotable'.
+    Data will be fetched and inserted here dynamically using JavaScript. -->
+<h2>Nested Aggregation with GROUP BY</h2>
+<table id="nGroupByTable" border="1">
+    <thead id="nGroupByHeadFields"></thead>
+    <tbody id="nGroupByBody"></tbody>
+</table>
+
+<br><br><br><br><br><br><br> <!-- ========================================================================= -->
+<button id="nGroupBy" class="button">confirm</button>
 <nav>
     <a href="./index.html">Home</a>
     <a href="./insert.html">Insert</a>
     <a href="./delete.html">Delete</a>
     <a href="./update.html">Update</a>
-    <a href="./selectionProjectionJoin.html">SPJ</a>
+    <a href="./selectionJoin.html">SJ</a>
+    <a href="./projection.html">Projection</a>
     <a href="./aggregation.html">Aggregation</a>
     <a href="./division.html">Division</a>
     <a href="./display.html">Display</a>
 </nav>
+<script src="aggregation.js"></script>
 </body>
 </html>

@@ -15,16 +15,34 @@ router.get('/check-connection', async (req, res) => {
     }
 });
 
-// selectedTables should be a string list of tables
-// projections should be a string list of selected columns from the tables
-// filter should be a valid string of the where clause
-router.get('/select-table', async (req, res) => {
-    const {selectedTables, projections, filter} = req.body;
-    const tableContent = await appService.selectTable(["Stadium2"], ["st_address","st_city"],
-        'st_address = \'Building Number: 125 Street: 393 Zone: 74\'');
+// selectedTables should be a string array of tables
+// filter should be a 2d array
+// eg. joining player and team,
+// selectedTables = [Player, Team]
+// filter = [[age, 30, OR], [passes, 30]]
+// or, another filter could be [[assists, 20, AND], [passes, 200, OR], [age, 18]]
+router.post('/select-table', async (req, res) => {
+    console.log("req body is", req.body);
+    const selectedTables = req.body.selectedTables;
+    const filter = req.body.filter;
+    console.log("selectedTables is", selectedTables);
+    console.log('filter is', filter);
+    const tableContent = await appService.selectTable(selectedTables, [], filter);
+    console.log("content after selecttable is: ", tableContent);
     res.json({data: tableContent});
 });
 
+
+// projections should be a string array of selected columns from the tables
+router.post('/projection', async (req, res) => {
+    console.log("reqbody is", req.body);
+    const selectedTables = req.body.selectedTables;
+    const projections = req.body.selectedAttributes;
+    console.log("projections is", projections);
+    const tableContent = await appService.selectTable(selectedTables, projections, []);
+    console.log(tableContent);
+    res.json({data: tableContent});
+});
 
 router.post("/initiate-stadiumtable", async (req, res) => {
     const initiateResult = await appService.initiateStadiumTable();
@@ -132,8 +150,8 @@ router.post("/initiate-teamtable", async (req, res) => {
 });
 
 router.post("/insert-team", async (req, res) => {
-    const { teamID, size, countryName, managerID } = req.body;
-    const insertResult = await appService.insertTeamTable(teamID, size, countryName, managerID);
+    const { teamID, teamSize, countryName, managerID } = req.body;
+    const insertResult = await appService.insertTeamTable(teamID, teamSize, countryName, managerID);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -225,7 +243,7 @@ router.post("/insert-forward", async (req, res) => {
         goals: goals
     };
 
-    const insertResult = await appService.insertPlayerTable("forward", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Forward", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -253,7 +271,7 @@ router.post("/insert-midfield", async (req, res) => {
         interceptions: interceptions
     };
 
-    const insertResult = await appService.insertPlayerTable("midfield", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Midfield", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -281,7 +299,7 @@ router.post("/insert-defender", async (req, res) => {
         interceptions: interceptions
     };
 
-    const insertResult = await appService.insertPlayerTable("defender", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Defender", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -305,7 +323,7 @@ router.post("/insert-goalkeeper", async (req, res) => {
         saves: saves
     };
 
-    const insertResult = await appService.insertPlayerTable("goalkeeper", playerData, subclassData);
+    const insertResult = await appService.insertPlayerTable("Goalkeeper", playerData, subclassData);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -328,11 +346,10 @@ router.get('/display/:tableName', async (req, res) => {
 // eg. Team might be [001]
 // eg. Funds might be [001, 003], since it has composite PK
 router.delete('/delete/:tableName', async (req, res) => {
-    const tableName = req.params.tableName;
-    const primaryKeyValues = req.body;
-    const parsedPrimaryKey = JSON.parse(primaryKeyValues);
-    const primaryKeyValuesArray = parsedPrimaryKey.toDelete;
     try {
+        const tableName = req.params.tableName;
+        const primaryKeyValues = req.body;
+        const primaryKeyValuesArray = primaryKeyValues.toDelete;
         const deleteResult = await appService.deleteFromDb(tableName, primaryKeyValuesArray);
         if (deleteResult > 0) {
             res.json({ success: true, message: 'Record deleted successfully.' });
@@ -349,11 +366,36 @@ router.post("/update-table", async (req, res) => {
     const { selectedTable, args } = req.body;
     console.log(args);
     const updateResult = await appService.updateTable(selectedTable, args);
+    console.log("update result is: ", updateResult);
     if (updateResult) {
         res.json({ success: true });
     } else {
         res.status(500).json({ success: false });
     }
+});
+
+router.get('/divide-demotable', async (req, res) => {
+    const tableContent = await appService.divideTable();
+    console.log(tableContent.data);
+    res.json({data: tableContent});
+});
+
+router.get('/group-by-table', async (req, res) => {
+    const tableContent = await appService.aggregateGroupByTable();
+    console.log(tableContent.data);
+    res.json({data: tableContent});
+});
+
+router.get('/having-table', async (req, res) => {
+    const tableContent = await appService.aggregateHavingTable();
+    console.log(tableContent.data);
+    res.json({data: tableContent});
+});
+
+router.get('/nested-table', async (req, res) => {
+    const tableContent = await appService.aggregateNestedTable();
+    console.log(tableContent.data);
+    res.json({data: tableContent});
 });
 
 router.get('/count-demotable', async (req, res) => {

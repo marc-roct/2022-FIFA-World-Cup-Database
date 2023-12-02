@@ -16,13 +16,13 @@ const tableInsertInputFields = {
     Match: ["matchID", "stadiumName", "result", "matchDate", "time", "phase"],
     Country: ["name", "ranking"],
     Manager: ["managerID", "name", "age", "nationality"],
-    Team: ["teamID", "size", "countryName", "managerID"],
+    Team: ["teamID", "teamSize", "countryName", "managerID"],
     Sponsor: ["sponsorID", "name"],
     Funds: ["sponsorID", "teamID"],
-    Forward: ["playerID", "shots", "goals"],
-    Midfield: ["playerID", "tackles", "shots", "goals", "interceptions"],
-    Defender: ["playerID", "tackles", "shots", "goals", "interceptions"],
-    Goalkeeper: ["playerID", "saves"],
+    Forward: ["playerID", "teamID", "passes", "assists", "name", "age", "shots", "goals"],
+    Midfield: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
+    Defender: ["playerID", "teamID", "passes", "assists", "name", "age", "tackles", "shots", "goals", "interceptions"],
+    Goalkeeper: ["playerID", "teamID", "passes", "assists", "name", "age", "saves"],
     GoalDetails: ["goalNumber", "matchID", "playerID", "time", "type"],
     PlayIn: ["matchID", "teamID"]
 }
@@ -40,40 +40,6 @@ const tableInsertInputFields = {
         PlayIn: ["matchID", "teamID"]
     }
 
-
-// const tableDeleteInputFields = {
-//     Stadium: ["Name"],
-//     Match: ["matchID"],
-//     GoalDetails: ["goalNumber"],
-//     PlayIn: ["matchID"],
-//     Team: ["teamID"],
-//     Country: ["name"],
-//     Manager: ["managerID"],
-//     Funds: ["sponsorID", "teamID"],
-//     Sponsor: ["sponsorID"],
-//     Player: ["playerID"]
-// }
-    // async function checkDbConnection() {
-    //     const statusElem = document.getElementById('dbStatus');
-    //     const loadingGifElem = document.getElementById('loadingGif');
-    //
-    //     const response = await fetch('/check-db-connection', {
-    //         method: "GET"
-    //     });
-    //
-    //     // Hide the loading GIF once the response is received.
-    //     // loadingGifElem.style.display = 'none';
-    //     // Display the statusElem's text in the placeholder.
-    //     // statusElem.style.display = 'inline';
-    //
-    //     response.text()
-    //         .then((text) => {
-    //             statusElem.textContent = text;
-    //         })
-    //         .catch((error) => {
-    //             statusElem.textContent = 'connection timed out';  // Adjust error handling if required.
-    //         });
-    // }
 
     // This function resets or initializes the demotable.
     async function resetDemotable() {
@@ -120,19 +86,6 @@ async function showInsertFields() {
     tableFieldsHolder.appendChild(confirmButton);
 }
 
-// async function showDeleteFields() {
-//     const selectedDropDown = document.getElementById("DropDown").value;
-//     const tableFieldsHolder = document.getElementById("inputFields")
-//     tableFieldsHolder.innerHTML = "";
-//     const allFields = tableDeleteInputFields[selectedDropDown];
-//     generateFields(allFields, tableFieldsHolder);
-//     const confirmButton = document.createElement("button");
-//     confirmButton.type = "button";
-//     confirmButton.textContent = "Confirm";
-//     confirmButton.addEventListener("click", confirmDelete);
-//     tableFieldsHolder.appendChild(confirmButton);
-// }
-
 async function showUpdateFields() {
     const selectedDropDown = document.getElementById("DropDown").value;
     const tableFieldsContainer = document.getElementById("inputFields")
@@ -147,11 +100,11 @@ async function showUpdateFields() {
 }
 async function confirmInsert() {
         const insertedData = pullInsertData();
-
         await performInsertAPI(insertedData);
 }
 function pullInsertData() {
     const allFields = tableInsertInputFields[document.getElementById("DropDown").value];
+    console.log(allFields);
     const insertedData = {};
     allFields.forEach(function (field) {
         insertedData[field] = document.querySelector(`[name=${field}]`).value;
@@ -162,6 +115,7 @@ function pullInsertData() {
 async function performInsertAPI(insertedData) {
     try {
         const dropDown = document.getElementById("DropDown").value;
+        console.log(insertedData);
         const response = await fetch(`/insert-${dropDown.toLowerCase()}`, {
             method: 'POST',
             headers: {
@@ -187,12 +141,14 @@ async function performInsertAPI(insertedData) {
                 body: JSON.stringify({selectedTable: dropDown,
                     args: updateData}),
             });
-            // const responseData = await response.json();
-            // if (responseData.success) {
-            //     console.log("You have successfully updated the data");
-            // } else {
-            //     console.log("Unfortunately, update is unsuccessful");
-            // }
+
+            const responseJson = await response.json();
+            const messageElement = document.getElementById("updateResultMsg");
+            if (responseJson.success) {
+                messageElement.textContent = "Congratulations, it is successfully updated!!"
+            } else {
+                messageElement.textContent = "The updated is not successful!";
+            }
         } catch (error) {
             console.error("error: " + error);
         }
@@ -200,8 +156,11 @@ async function performInsertAPI(insertedData) {
 
 function handleInsertDeleteAPIResponse(responseHandle) {
     if (responseHandle.success) {
+        const messageElement = document.getElementById("insertResultMsg");
+        messageElement.textContent = "You successfully inserted the data!";
         console.log("You have successfully added the data");
     } else {
+        alert("Unfortunately, insertion is unsuccessful");
         console.log("Unfortunately, insertion is unsuccessful");
     }
 }
