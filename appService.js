@@ -25,7 +25,7 @@ dbTables.set('Player', {p:['playerID'],a:['teamID','passes','assists','name','ag
 dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','time','type']});
 dbTables.set('PlayIn', {p:['matchID','teamID'],a:[]});
 dbTables.set('Funds', {p:['sponsorID','teamID'],a:[]});
-dbTables.set('Sponsor', {p:['sponsorID'],a:['name']});
+dbTables.set('Sponsor', {p:['sponsorID'],a:['sp_name']});
 dbTables.set('Forward', {p:['playerID'],a:['shots','goals']});
 dbTables.set('Midfield', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
 dbTables.set('Defender', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
@@ -930,7 +930,7 @@ async function aggregateHavingTable() {
             SELECT t.countryName, SUM(passes) FROM Player p, Team t
             WHERE p.teamID = t.teamID
             GROUP BY t.countryName
-            HAVING SUM(passes) > 30
+            HAVING SUM(passes) > 300
         `;
 
         const result = await connection.execute(query);
