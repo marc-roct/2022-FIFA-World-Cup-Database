@@ -11,6 +11,8 @@ const dbConfig = {
 };
 
 
+
+
 const dbTables = new Map();
 dbTables.set('Stadium1', {p:['address'], a:['city']});
 dbTables.set('Stadium2', {p:['name'],a:['address','capacity']});
@@ -18,7 +20,7 @@ dbTables.set('Match1', {p:['matchDate'],a:['phase']});
 dbTables.set('Match2', {p:['matchID'],a:['stadiumName','result','matchDate','time']});
 dbTables.set('Country', {p:['name'],a:['ranking']});
 dbTables.set('Manager', {p:['managerID'],a:['name','age','nationality']});
-dbTables.set('Team', {p:['teamID'],a:['size','countryName','managerID']});
+dbTables.set('Team', {p:['teamID'],a:['teamSize','countryName','managerID']});
 dbTables.set('Player', {p:['playerID'],a:['teamID','passes','assists','name','age']});
 dbTables.set('GoalDetails', {p:['goalNumber','matchID'],a:['playerID','time','type']});
 dbTables.set('PlayIn', {p:['matchID','teamID'],a:[]});
@@ -28,6 +30,83 @@ dbTables.set('Forward', {p:['playerID'],a:['shots','goals']});
 dbTables.set('Midfield', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
 dbTables.set('Defender', {p:['playerID'],a:['tackles','shots','goals','interceptions']});
 dbTables.set('Goalkeeper', {p:['playerID'],a:['saves']});
+
+let tableRelations;
+function initializeTableRelations() {
+    const tableRelations = new Map();
+    tableRelations.set('Stadium1', {
+        primaryKey: ['address'],
+        foreignKey: {}
+    });
+    tableRelations.set('Stadium2', {
+        primaryKey: ['name'],
+        foreignKey: { 'address': 'Stadium1' }
+    });
+
+// Match tables
+    tableRelations.set('Match1', {
+        primaryKey: ['matchDate'],
+        foreignKey: {}
+    });
+    tableRelations.set('Match2', {
+        primaryKey: ['matchID'],
+        foreignKey: { 'stadiumName': 'Stadium2', 'matchDate': 'Match1' }
+    });
+
+// Other tables
+    tableRelations.set('Country', {
+        primaryKey: ['name'],
+        foreignKey: {}
+    });
+    tableRelations.set('Manager', {
+        primaryKey: ['managerID'],
+        foreignKey: {}
+    });
+    tableRelations.set('Team', {
+        primaryKey: ['teamID'],
+        foreignKey: { 'countryName': 'Country', 'managerID': 'Manager' }
+    });
+    tableRelations.set('Player', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'teamID': 'Team' }
+    });
+    tableRelations.set('GoalDetails', {
+        primaryKey: ['goalNumber', 'matchID'],
+        foreignKey: { 'matchID': 'Match2', 'playerID': 'Player' }
+    });
+    tableRelations.set('PlayIn', {
+        primaryKey: ['matchID', 'teamID'],
+        foreignKey: { 'matchID': 'Match2', 'teamID': 'Team' }
+    });
+    tableRelations.set('Funds', {
+        primaryKey: ['sponsorID', 'teamID'],
+        foreignKey: { 'sponsorID': 'Sponsor', 'teamID': 'Team' }
+    });
+    tableRelations.set('Sponsor', {
+        primaryKey: ['sponsorID'],
+        foreignKey: {}
+    });
+    tableRelations.set('Forward', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+    tableRelations.set('Midfield', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+    tableRelations.set('Defender', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+    tableRelations.set('Goalkeeper', {
+        primaryKey: ['playerID'],
+        foreignKey: { 'playerID': 'Player' }
+    });
+
+    return tableRelations;
+}
+
+tableRelations = initializeTableRelations();
 
 
 const sKeys = ['address','city','s_name','DATE','phase','stadiumName','m_result','DATE','m_time',
@@ -69,12 +148,10 @@ async function testOracleConnection() {
 }
 
 async function selectTable(selectedTables, projections, filter) {
+    let pLen = projections.length;
     return await withOracleDB(async (connection) => {
-        // console.log('before execute');
-        // const result = await connection.execute(
-        //     `SELECT * from Stadium2`
-        // );
         let availableColumns = [];
+        console.log("appservice's projection is", projections);
 
         // check if table names are valid
         for (const tbl of selectedTables) {
@@ -87,7 +164,7 @@ async function selectTable(selectedTables, projections, filter) {
         }
 
         // check if column names are valid
-        if (projections.size() === 0) {
+        if (projections.length === 0) {
             projections.push('*');
         } else {
             for (const colm of projections) {
@@ -100,16 +177,62 @@ async function selectTable(selectedTables, projections, filter) {
 
         let query = `SELECT ` + projections.join(", ")
                         + ` FROM ` + selectedTables.join(", ");
-        if (filter !== "") {
-            query += ` WHERE ` + filter;
+
+        if (pLen === 0) {
+            query += ` WHERE ` + getFilter(selectedTables, filter);
         }
-        // console.log(query);
+
+         console.log('query is: ', query);
         const result = await connection.execute(query);
-        // console.log('after execute');
+         console.log('after execute in appService');
         return result.rows;
-    }).catch(() => {
-        return [];
+    }).catch((err) => {
+        console.error("There was an error in SPJ: ", err);
     });
+}
+
+function getFilter(selectedTables, filterArray) {
+    let joinConditions = [];
+    let userFilters = '';
+
+    // Create join conditions based on FK-PK relationships
+    selectedTables.forEach(table => {
+        const tableInfo = tableRelations.get(table);
+        if (tableInfo && tableInfo.foreignKey) {
+            Object.keys(tableInfo.foreignKey).forEach(fk => {
+                const refTable = tableInfo.foreignKey[fk];
+                if (selectedTables.includes(refTable)) {
+                    joinConditions.push(`${table}.${fk} = ${refTable}.${fk}`);
+                }
+            });
+        }
+    });
+
+    // Process user specified filters
+    filterArray.forEach((filter, index) => {
+        const attribute = filter[0];
+        const value = filter[1];
+        const logicalOperator = filter[2]; // Can be 'AND' or 'OR', undefined for the last filter
+
+        // Append the condition to the userFilters string
+        userFilters += `${attribute} = '${value}'`;
+
+        // Add AND/OR if it's not the last filter
+        if (index < filterArray.length - 1 && logicalOperator) {
+            userFilters += ` ${logicalOperator} `;
+        }
+    });
+
+    // Combine join conditions and user filters
+    let finalFilter = joinConditions.join(' AND ');
+    if (finalFilter.length > 0 && userFilters.length > 0) {
+        finalFilter += ' AND ';
+    }
+    finalFilter += userFilters;
+
+    console.log("the final filter in the WHERE clause is: ", finalFilter);
+
+    return finalFilter;
 }
 
 
@@ -590,7 +713,7 @@ async function initiatePlayerTable() {
             CREATE TABLE Player (
                 playerID integer PRIMARY KEY,
                 teamID   INTEGER,
-                Passes   INTEGER,
+                passes   INTEGER,
                 assists  INTEGER,
                 name     VARCHAR(255),
                 age      INTEGER,
@@ -604,7 +727,7 @@ async function initiatePlayerTable() {
                     playerID INTEGER PRIMARY KEY,
                     shots    INTEGER,
                     goals    INTEGER,
-                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE 
+                    FOREIGN KEY (playerID) REFERENCES Player (playerID) ON DELETE CASCADE
                                      )
             `);
 
@@ -656,8 +779,8 @@ async function insertPlayerTable(playerType, playerData, subclassData) {
         try {
             // Insert into Player table
             await connection.execute(
-                `INSERT INTO Player (playerID, teamID, Passes, assists, name, age) VALUES (:playerID, :teamID, :Passes, :assists, :name, :age)`,
-                { playerID: playerData.playerID, teamID: playerData.teamID, Passes: playerData.Passes, assists: playerData.assists, name: playerData.name, age: playerData.age },
+                `INSERT INTO Player (playerID, teamID, passes, assists, name, age) VALUES (:playerID, :teamID, :passes, :assists, :name, :age)`,
+                { playerID: playerData.playerID, teamID: playerData.teamID, passes: playerData.passes, assists: playerData.assists, name: playerData.name, age: playerData.age },
                 { autoCommit: false }
             );
 
@@ -707,7 +830,17 @@ async function updateTable(selectedTable, args) {
         let result;
         let toSet = [];
         let where = [];
-        let query = `UPDATE ` + selectedTable;
+        let query = "";
+        if (selectedTable === 'Stadium') {
+            await updateTable('Stadium1', args);
+            return await updateTable('Stadium2', args);
+
+        } else if (selectedTable === 'Match') {
+            await updateTable('Match1', args);
+            return await updateTable('Match2', args);
+        }
+
+        query += `UPDATE ` + selectedTable;
 
         for (const pkey of dbTables.get(selectedTable).p) {
             if (args[pkey] === "") {
@@ -737,116 +870,9 @@ async function updateTable(selectedTable, args) {
         console.log(query);
         console.log(toSet);
         result = await connection.execute(query);
-        // switch (selectedTable) {
-        //     case 'Stadium1':
-        //         query += `Stadium1 SET `;
-        //         let adrID = args.address;
-        //         let newCity = args.city;
-        //         if (newCity === "") {
-        //             oracledb.autoCommit = false;
-        //             throw new Error("Nothing to update");
-        //         }
-        //         query += `city = \'` + newCity +"\'";
-        //         if (adrID === "") {
-        //             oracledb.autoCommit = false;
-        //             throw new Error("Missing Primary key");
-        //         }
-        //         query += ` WHERE address = \'` + adrID + "\'";
-        //         result = await connection.execute(query);
-        //         break;
-        //
-        //     case 'Stadium2':
-        //         query += `Stadium2 SET `;
-        //         if (args.s_name === "") throw new Error("Missing Primary key");
-        //
-        //         if (args.address !== "") akeys.set('address', args.address);
-        //         if (args.s_capacity !== "") akeys.set('s_capacity', Number(args.s_capacity));
-        //         if (akeys.size === 0) throw new Error("Nothing to update");
-        //
-        //         for (const key of akeys.keys()) {
-        //             if (typeof akeys.get(key) === "string") {
-        //                 toSet.push(key + ` = \'` + akeys.get(key) + "\'");
-        //             } else {
-        //                 toSet.push(key + ` = ` + akeys.get(key));
-        //             }
-        //         }
-        //         query += toSet.join(", ");
-        //         query += ` WHERE address = \'` + args.address + "\'";
-        //         result = await connection.execute(query);
-        //         break;
-        //     case 'Match1':
-        //         query += `Match1 SET `;
-        //         if (args.DATE === "") throw new Error("Missing Primary key");
-        //         if (args.phase === "") throw new Error("Nothing to update");
-        //
-        //         query += `phase = \'` + args.phase + "\'";
-        //         query += ` WHERE DATE = \'` + args.DATE + "\'";
-        //         result = await connection.execute(query);
-        //         break;
-        //     case 'Match2':
-        //         query += `Match2 SET `;
-        //         if (args.matchID === "") {
-        //             throw new Error("Missing Primary key");
-        //         } else {
-        //             pkeys.set('matchID', Number(args.matchID));
-        //         }
-        //
-        //         if (args.stadiumName !== "") akeys.set('stadiumName', args.stadiumName);
-        //         if (args.m_result !== "") akeys.set('m_result', args.m_result);
-        //         if (args.DATE !== "") akeys.set('DATE', args.DATE);
-        //         if (args.m_time !== "") akeys.set('m_time', args.m_time);
-        //         if (akeys.size === 0) throw new Error("Nothing to update");
-        //
-        //         for (const key of akeys.keys()) {
-        //             if (typeof akeys.get(key) === "string") {
-        //                 toSet.push(key + ` = \'` + akeys.get(key) + "\'");
-        //             } else {
-        //                 toSet.push(key + ` = ` + akeys.get(key));
-        //             }
-        //         }
-        //         for (const key of akeys.keys()) {
-        //             if (typeof akeys.get(key) === "string") {
-        //                 toSet.push(key + ` = \'` + akeys.get(key) + "\'");
-        //             } else {
-        //                 toSet.push(key + ` = ` + akeys.get(key));
-        //             }
-        //         }
-        //         query += toSet.join(", ");
-        //         query += ` WHERE matchID = \'` + args.matchID + "\'";
-        //         result = await connection.execute(query);
-        //         break;
-        //     case 'Country':
-        //         break;
-        //     case 'Manager':
-        //         break;
-        //     case 'Team':
-        //         break;
-        //     case 'Player':
-        //         break;
-        //     case 'GoalDetails':
-        //         break;
-        //     case 'PlayIn':
-        //         break;
-        //     case 'Funds':
-        //         break;
-        //     case 'Sponsor':
-        //         break;
-        //     case 'Forward':
-        //         break;
-        //     case 'Midfield':
-        //         break;
-        //     case 'Goalkeeper':
-        //         break;
-        //     case 'Defender':
-        //         break;
-        //     default:
-        //         oracledb.autoCommit = false;
-        //         throw Error("Invalid table name: " + selectedTable);
-        //         break;
-        //
-        // }
 
         oracledb.autoCommit = false;
+        console.log(result.rowsAffected);
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((err) => {
         console.log(err);
@@ -859,6 +885,73 @@ async function joinTable(projections, fromTable, joinTable, onStatement) {
     return await withOracleDB(async (connection) => {
         let query = `SELECT ` + projections + ` FROM ` + fromTable +
             ` INNER JOIN ` + joinTable + ` ON ` + onStatement;
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function divideTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT * FROM Team tx
+            WHERE NOT EXISTS (
+                SELECT s.sponsorID FROM Sponsor s
+                MINUS
+                SELECT f.sponsorID FROM Funds f WHERE f.teamID = tx.teamID )
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function aggregateGroupByTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT t.countryName, SUM(passes) FROM Player p, Team t
+            WHERE p.teamID = t.teamID
+            GROUP BY t.countryName
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function aggregateHavingTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT t.countryName, SUM(passes) FROM Player p, Team t
+            WHERE p.teamID = t.teamID
+            GROUP BY t.countryName
+            HAVING SUM(passes) > 30
+        `;
+
+        const result = await connection.execute(query);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function aggregateNestedTable() {
+    return await withOracleDB(async (connection) => {
+        let query = `
+            SELECT t.teamID, COUNT(m.matches) as matchesPlayed
+            FROM Team t,
+                 (SELECT t2.teamID, p.matchID as matches
+            FROM PlayIN p, Team t2
+            WHERE p.teamID = t2.teamID) m
+            WHERE t.teamID = m.teamID
+            GROUP BY t.teamID
+        `;
+
         const result = await connection.execute(query);
         return result.rows;
     }).catch(() => {
@@ -889,34 +982,39 @@ async function fetchFromDb(tablename) {
 }
 
 async function deleteFromDb(tableName, primaryKeyValues) {
+    console.log("tableName is: ", tableName);
+    console.log("primary key(s) is: ", primaryKeyValues);
+    console.log("primary key type is:", typeof primaryKeyValues[0]);
 
     const pkOfTable = dbTables.get(tableName).p;
-
-    if (pkOfTable.length === 0 || pkOfTable.length > 2) {
-        throw new Error(`Table ${tableName} has an unsupported number of primary keys.`);
-    }
+    console.log("the primary key of this table is: ", pkOfTable);
 
     let query = `DELETE FROM ${tableName} WHERE `;
     const queryParams = {};
 
-    if (pkOfTable.length === 1) {
-        query += `${pkOfTable[0]} = :primaryKeyValue1`;
-        queryParams.primaryKeyValue1 = primaryKeyValues[0];
-    } else if (pkOfTable.length === 2) {
-        query += `${pkOfTable[0]} = :primaryKeyValue1 AND ${pkOfTable[1]} = :primaryKeyValue2`;
-        queryParams.primaryKeyValue1 = primaryKeyValues[0];
-        queryParams.primaryKeyValue2 = primaryKeyValues[1];
-    }
+    primaryKeyValues.forEach((pkValue, index) => {
+        const pkIndex = `primaryKeyValue${index + 1}`;
+        if (!isNaN(pkValue)) {
+            queryParams[pkIndex] = parseInt(pkValue);
+        } else {
+            queryParams[pkIndex] = pkValue;
+        }
+        query += `${pkOfTable[index]} = :${pkIndex}`;
+        if (index < pkOfTable.length - 1) {
+            query += ' AND ';
+        }
+    });
 
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute(query, queryParams);
+
+        const result = await connection.execute(query, queryParams, {autoCommit: true});
+        console.log("Query executed:", query, "and queryParams: ", queryParams);
         return result.rowsAffected;
     }).catch((err) => {
-        console.error(err);
+        console.error("Error occured in appService delete: ", err);
         return false;
     });
 }
-
 
 
 
@@ -946,6 +1044,10 @@ module.exports = {
     insertGoalDetailsTable,
     fetchFromDb,
     deleteFromDb,
+    divideTable,
+    aggregateGroupByTable,
+    aggregateHavingTable,
+    aggregateNestedTable,
 
     updateTable,
     countDemotable
